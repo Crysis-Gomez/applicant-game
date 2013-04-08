@@ -1,0 +1,9 @@
+{%extends 'base.html'%}
+
+{%block content%}
+<ul>
+	{% for vacancy in vacancies %}
+		<li><a href="{% url 'game' vacancy.id %}">{{vacancy}}</a>
+	{%endfor%}
+</ul>
+{% endblock %}
