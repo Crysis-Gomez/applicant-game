@@ -3,7 +3,7 @@
 {%block content%}
 <ul>
 	{% for vacancy in vacancies %}
-		<li><a href="{% url 'game' vacancy.id %}">{{vacancy}}</a>
+		<li><a href="{% url 'game' slug=vacancy.slug %}">{{vacancy}}</a>
 	{%endfor%}
 </ul>
 {% endblock %}

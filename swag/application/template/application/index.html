@@ -1,22 +1,108 @@
 <!DOCTYPE html>
 <head>
     <script type="text/javascript" src="/static/crafty.js"></script>
-    <script type="text/javascript" src="/static/game.js"></script>
+    <script type="text/javascript" src="/{{instance_id}}/game.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
     <script type="text/javascript">
-	function performClick(node) {
-	   var evt = document.createEvent("MouseEvents");
-	   evt.initEvent("click", true, false);
-	   node.dispatchEvent(evt);
-	}
+    $(document).ready(function() {
+
+
+(function () {
+    var input = document.getElementById("id_file"), 
+        formdata = false;
+
+    function showUploadedItem (source) {
+        return true;
+    }   
+
+    if (window.FormData) {
+        formdata = new FormData();
+        document.getElementById("upload_btn").style.display = "none";
+    }
+    
+    input.addEventListener("change", function (evt) {
+        document.getElementById("success_div").innerHTML = "Uploading . . ."
+        var i = 0, len = this.files.length, img, reader, file;
+    
+        for ( ; i < len; i++ ) {
+            file = this.files[i];
+    
+            if ( window.FileReader ) {
+                reader = new FileReader();
+                reader.onloadend = function (e) { 
+                    showUploadedItem(e.target.result, file.fileName);
+                };
+                reader.readAsDataURL(file);
+            }
+            if (formdata) {
+                formdata.append('title', document.getElementById('id_title').value)
+                formdata.append("file", file);
+            }
+        }
+    
+        if (formdata) {
+            $.ajax({
+                url: "/submitfile/{{instance_id}}/",
+                type: "POST",
+                data: formdata,
+                processData: false,
+                contentType: false,
+                success: function (res) {
+                    // alert('test');
+                    response = JSON.parse(res);
+                    console.log(response);
+                    document.getElementById("success_div").innerHTML = response['file_upload']['result']; 
+
+                    document.getElementById('myform').style.display = "none";
+                }
+            });
+        }
+    }, false);
+}());
+
+    // $('#myform').submit(function() { // catch the form's submit event
+    //     alert('hallo!');
+    //     $.ajax({ // create an AJAX call...
+    //         data: $(this).serialize(), // get the form data
+    //         type: $(this).attr('method'), // GET or POST
+    //         url: $(this).attr('action'), // the file to call
+    //         success: function(response) { // on success..
+    //             $('#success_div').html(response); // update the DIV
+    //         },
+    //         error: function(e, x, r) { // on error..
+    //             $('#error_div').html(e); // update the DIV
+    //         }
+    //     });
+    //     return false;
+    // });
+});
+   
 </script>
 
-<input type="file" id="theFile" />
-    <title>My Crafty Game</title>
-    <style>
-    body, html { margin:0; padding: 0; overflow:hidden; font-family:Arial; font-size:20px }
-    #cr-stage { border:2px solid black; margin:5px auto; color:white }
-    </style>
 </head>
 <body>
+
+{% block upload %}
+
+<form enctype="multipart/form-data" method="post" name="myform" 
+    id="myform" action= "/submitfile/{{instance_id}}/">
+    
+    <table>
+    {{ form.as_table }}
+    
+    {% for error in form.errors %}
+    {{error}}
+    {% endfor %}
+    
+    </table> 
+    
+    <input type="submit" value="Submit CV" id="upload_btn" />
+</form>
+{% endblock %}
+<div id="success_div" name="response">Response will be placed here on submit.</div>
+
+
+
 </body>
 </html>

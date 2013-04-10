@@ -8,6 +8,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'swag.views.home', name='home'),
+
     # url(r'^swag/', include('swag.foo.urls')),
     url(r'^', include('application.urls')),
 

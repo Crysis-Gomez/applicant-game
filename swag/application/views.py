@@ -1,12 +1,15 @@
-# from django.template import Context
-# from django.template import loader
-# from django.shortcuts import get_object_or_404
 from django.core.urlresolvers import reverse
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
+from django.shortcuts import render
 from application.models import GameInstance
 from application.models import Vacancy
+from form import UploadFileForm
+from django.conf import settings
 import uuid
+import os
+import json
+from django.views.decorators.csrf import csrf_exempt
 
 
 def index(request):
@@ -16,57 +19,64 @@ def index(request):
     })
 
 
-def start_game(request, vacancy_id):
-    vacancy = Vacancy.objects.get(id=vacancy_id)
+def start_game(request, slug):
+    _vacancy = Vacancy.objects.get(slug=slug)
     instance_id = str(uuid.uuid4()).replace('-', '')
-    print instance_id
+    print _vacancy
 
     game_instance = GameInstance()
     game_instance.uid = instance_id
-    game_instance.vacancy = vacancy
+    game_instance.vacancy = _vacancy
     game_instance.save()
 
     return HttpResponseRedirect(reverse('play', args=(instance_id,)))
 
 
-def play(request, unique_id):
-    # get instance:
+def gamejs(request, unique_id):
     game = GameInstance.objects.get(uid=unique_id)
-    print 'My instance is: %s' % game
 
-    return render_to_response("index.html", {})
+    return render(request, "game.js", {'game': game}, content_type="application/javascript")
 
 
-# def vote(request, poll_id):
-#     p = get_object_or_404(Poll, pk=poll_id)
-#     try:
-#         selected_choice = p.choice_set.get(pk=request.POST['choice'])
-#     except (KeyError, Choice.DoesNotExist):
-#         # Redisplay the poll voting form.
-#         return render(request, 'polls/detail.html', {
-#             'poll': p,
-#             'error_message': "You didn't select a choice.",
-#         })
-#     else:
-#          += 1
-#         selected_choice.save()
-#         # Always return an HttpResponseRedirect after successfully dealing
-#         # with POST data. This prevents data from being posted twice if a
-#         # user hits the Back button.
-#         return HttpResponseRedirect(reverse('polls:results', args=(p.id,)))
+def play(request, unique_id):
+    game = GameInstance.objects.get(uid=unique_id)
+    context = dict(request)  # csrf(request)
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            handle_uploaded_file(request.FILES['file'], form.cleaned_data['title'])
+        else:
+            print(form.errors)
+    else:
+        form = UploadFileForm()
+        context.update({'instance_id': game.uid, 'form': form})
 
-# def upload_file(request):
-#     if request.method == 'POST':
-#         form = UploadFileForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             handle_uploaded_file(request.FILES['file'])
-#             return HttpResponseRedirect('/success/url/')
-#     else:
-#         form = UploadFileForm()
-#     return render_to_response('list.html', {'form': form})
-    
+    return render_to_response("index.html", context)
 
-# def handle_uploaded_file(f):
-#     with open('some/file/name.txt', 'wb+') as destination:
-#         for chunk in f.chunks():
-#             destination.write(chunk)
+
+def handle_uploaded_file(submitted_file, title):
+    name = "{title_name}_{filename}".format(title_name=title, filename=submitted_file.name)
+    with open(os.path.join(settings.MEDIA_ROOT, name), 'wb+') as destination:
+        for chunk in submitted_file.chunks():
+            destination.write(chunk)
+
+
+@csrf_exempt
+def process_upload(request, unique_id):
+
+    upload_state = {'success': 'false'}
+    if not request.method == "POST":
+        return render(request, "upload_message.js", upload_state, content_type="application/json")
+
+    print request.POST
+
+    form = UploadFileForm(request.POST, request.FILES)
+    if form.is_valid():
+        print 'form is valid'
+        handle_uploaded_file(request.FILES['file'], form.cleaned_data['title'])
+        upload_state['success'] = 'Thanks for submitting'
+    else:
+        upload_state['success'] = json.dumps(form.errors)
+
+
+    return render(request, "upload_message.js", upload_state, content_type="text/html")
