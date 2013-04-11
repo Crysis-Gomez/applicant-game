@@ -1,4 +1,4 @@
-window.onload = function () {
+var crafty = function() {
     //start crafty
     // alert('your applying for role: {{game.vacancy}} in department: {{game.vacancy.department}}');
     Crafty.init(990, 600);
@@ -10,9 +10,9 @@ window.onload = function () {
   
     });
 
-var dialog;    
+	var dialog;    
     
-function generateWorld(){
+	function generateWorld(){
 	
 	for (i = 0; i < 31; i++)
 	{
@@ -29,11 +29,11 @@ function generateWorld(){
 		}
 	}
 	
-  generateObjects();
-}
+	generateObjects();
+	}
 
 
-function generateObjects(){
+	function generateObjects(){
 	
 	for (i = 0; i < 31; i++)
 	{
@@ -78,10 +78,10 @@ function generateObjects(){
 			   
 			}
 		}
-	}	
-}
+		}
+	}
 
-Crafty.c("RightControls", {
+	Crafty.c("RightControls", {
         init: function() {
             this.requires('Multiway');
         },
@@ -91,10 +91,10 @@ Crafty.c("RightControls", {
             return this;
         }
         
- });
+	});
  
  
-Crafty.c('SetSorting',{
+	Crafty.c('SetSorting',{
 	
 	sort:function(alpha,z){
 		this.alpha = alpha;
@@ -102,10 +102,10 @@ Crafty.c('SetSorting',{
 		
 	},
 	
-});
+	});
 
 
-Crafty.c('NPC',{
+	Crafty.c('NPC',{
 	
 	isCollidingWithPlayer:false,
 
@@ -116,18 +116,19 @@ Crafty.c('NPC',{
 		
 		.requires('Keyboard').bind('KeyDown', function () { 
 		if (this.isDown('SPACE') && this.isCollidingWithPlayer){  
-			console.log("hitting space");
-			dialog.startDialog(this.dailogText);
+		
+			//dialog.startDialog(this.dailogText);
 		}
 		})
      }
 	
-});
+	});
 
 
-Crafty.c('Player',{
+	Crafty.c('Player',{
 	
 	house:Object,
+	isCollidingWithHouse: false,
 	dir:0,
 	
 	convert:function(obj){
@@ -182,31 +183,37 @@ Crafty.c('Player',{
 				
 				if(dialog.hasStarted)dialog.closeDialog();
 					
-					this.isCollidingWithNpc = false;
                     if(this.hit('house')){
+                    	this.isCollidingWithHouse = true;
 					   if(this.y <= this.hit('house')[0].obj.y+80){
 							this.convert(this.hit('house')[0].obj);
 							this.house.sort(0.5,2);
 						}
 						else{
 							this.attr({x: from.x, y:from.y});
-							if(this.dir.y > 0)this.house.sort(1,1); //this.setSortin(1,1);
+							if(this.dir.y > 0)this.house.sort(1,1);
 						}
-					}else this.resetSorting();
+					}else{
+						this.resetSorting();
+						this.isCollidingWithHouse = false;
+					} 
 
 			})/*.onHit('npc',function(hit){
 				this.isCollidingWithNpc = true;
-			})
-			
-			.requires('Keyboard').bind('KeyDown', function () { 
-			if (this.isDown('SPACE') && this.isCollidingWithNpc)  
-				dialog.startDialog(); 
 			})*/
-	}
+			
+			.bind('KeyDown', function () { 
+			if (this.isDown('SPACE') && this.isCollidingWithHouse){  
+				console.log("house")
+				$(".form2").show();
+				$("#cr-stage").hide(); 
+				}
+			})
+		}
 	
-});
+	});
 
-Crafty.c("RightControls", {
+	Crafty.c("RightControls", {
         init: function() {
             this.requires('Multiway');
         },
@@ -216,9 +223,9 @@ Crafty.c("RightControls", {
             return this;
         }
         
- });
+	});
 
-Crafty.c("Dialog",{
+	Crafty.c("Dialog",{
 	
 		DataText:"",
 		hasStarted: false,
@@ -228,8 +235,8 @@ Crafty.c("Dialog",{
 			this.addComponent("2D, DOM,Color,Text");
 			this.x = 0;
 			this.y = 0;
-			this.w = 990;    // width
-			this.h = 0;    // height
+			this.w = 990;  
+			this.h = 0;   
 			this.color("#FFFFFF");
 			this.textColor('#FF0000')
 			this.bind('EnterFrame', function() {
@@ -260,11 +267,11 @@ Crafty.c("Dialog",{
 			this.h = 100;
 			
 		}
-	
-});    
+		
+	});    
 
 
-Crafty.scene("loading", function () {
+	Crafty.scene("loading", function () {
         //load takes an array of assets and a callback when complete
         Crafty.load(["/static/Sprite.png","/static/house.png"], function () {
             Crafty.scene("main"); //when everything is loaded, run the main scene
@@ -297,4 +304,9 @@ Crafty.scene("loading", function () {
         
                      
     });
+
+    return {
+    	"crafty": Crafty,
+    	"init_game": Crafty.init(900,600)
+    }
 };

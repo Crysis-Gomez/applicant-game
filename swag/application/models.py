@@ -18,10 +18,10 @@ class Vacancy(models.Model):
 class GameInstance(models.Model):
     uid = models.CharField(max_length=200)
     progress = models.IntegerField(default=0)
-    playerPositionX = models.IntegerField(default=0)
-    playerPositionY = models.IntegerField(default=0)
-    playerName = models.CharField(max_length=50)
-    playerEmail = models.CharField(max_length=100)
+    player_position_y = models.IntegerField(default=0)
+    player_position_y = models.IntegerField(default=0)
+    player_name = models.CharField(max_length=50)
+    player_email = models.CharField(max_length=100)
     vacancy = models.ForeignKey(Vacancy)
 
     def __unicode__(self):

@@ -5,7 +5,7 @@ from django.shortcuts import (render, get_object_or_404)
 from application.models import GameInstance
 from application.models import Vacancy
 from application.models import ApplicationDocument
-from form import ContactInformation
+from form import ContactInformationForm
 from form import UploadFileForm
 from django.conf import settings
 import uuid
@@ -14,6 +14,10 @@ import mimetypes
 from django.views.decorators.csrf import csrf_exempt
 from database_storage import DatabaseStorage
 from django.template import RequestContext
+
+
+def get_contact_info(game):
+    return 'no' if not game.player_name and not game.player_email else 'yes'
 
 
 def index(request):
@@ -41,14 +45,33 @@ def gamejs(request, unique_id):
     return render(request, "game.js", {'game': game}, content_type="application/javascript")
 
 
+def playerdatajs(request, unique_id):
+    game = GameInstance.objects.get(uid=unique_id)
+    context = {'game': game}
+
+    contact_info = get_contact_info(game)
+    print game.player_email, game.player_name
+    context.update({'contact_info': contact_info})
+
+    print 'Contact info: %s' % contact_info
+
+    return render(request, "playerdata.js", context, content_type="application/javascript")
+
+
 def play(request, unique_id):
     game = GameInstance.objects.get(uid=unique_id)
     context = dict(request)
 
-    contact_info = ContactInformation()
+    has_contact_info = get_contact_info(game)
+    if 'no' is has_contact_info:
+        contact_info = ContactInformationForm()
+        context.update({'contact_info': contact_info})
 
     form = UploadFileForm(initial={'title': 'cv'})
-    context.update({'instance_id': game.uid, 'form': form, 'contact_info': contact_info})
+    context.update({
+        'instance_id': game.uid,
+        'form': form,
+        'has_contact_info': has_contact_info})
 
     return render_to_response("index.html", context)
 
@@ -72,7 +95,7 @@ def show_uploaded_file(request, filename):
 def handle_uploaded_file(submitted_file, title, unique_id):
 
     game = GameInstance.objects.get(uid=unique_id)
-    name = "{name}-{title}".format(name=game.playerName, title=title)
+    name = "{name}-{title}".format(name=game.player_name, title=title)
 
     print(game)
     application_document = ApplicationDocument()
@@ -90,18 +113,16 @@ def handle_uploaded_file(submitted_file, title, unique_id):
     return False
 
 
-
-
 @csrf_exempt
 def process_contact(request, unique_id):
 
     game = GameInstance.objects.get(uid=unique_id)
-    form = ContactInformation(request.POST)
+    form = ContactInformationForm(request.POST)
     upload_state = {"action": "contact", 'success': 'Thx for submitting!'}
 
     if form.is_valid():
-        game.playerName = form.cleaned_data['name']
-        game.playerEmail = form.cleaned_data['email']
+        game.player_name = form.cleaned_data['name']
+        game.player_email = form.cleaned_data['email']
         game.save()
         print("PROCESS CONTACT")
     else:

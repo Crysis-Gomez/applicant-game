@@ -1,111 +1,22 @@
 <!DOCTYPE html>
 <head>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
     <script type="text/javascript" src="/static/crafty.js"></script>
     <script type="text/javascript" src="/{{instance_id}}/game.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-
-    <script type="text/javascript">
-
-        function sendContactInfo()
-        {
-
-            var email = document.getElementById("id_email");
-            var name = document.getElementById("id_name");
-
-            if (window.FormData) {
-                formdata = new FormData();
-                formdata.append('name', name.value)
-                formdata.append('email', email.value)
-                    
-            }
-
-            if (formdata) {
-                $.ajax({
-                    url: "/uploadcontact/{{instance_id}}/",
-                    type: "POST",
-                    data: formdata,
-                    processData: false,
-                    contentType: false,
-                    success: function (res) {
-                        response = JSON.parse(res),
-                        text = response['contact']['result'];
-                        console.log(text);
-                    
-                
-                        //console.log(response);
-                        document.getElementById("info_div").innerHTML = text; 
-       
-                    }
-                });
-            }
-        }
-
-
-    $(document).ready(function() {
-
-
-(function () {
-    var input = document.getElementById("id_file"), 
-        formdata = false;
-        
-    function showUploadedItem (source) {
-        return true;
-    }   
-
-    if (window.FormData) {
-        formdata = new FormData();
-        document.getElementById("upload_btn").style.display = "none";
-    }
-    
-
-    input.addEventListener("change", function (evt) {
-        document.getElementById("success_div").innerHTML = "Uploading . . ."
-        var i = 0, len = this.files.length, img, reader, file;
-    
-        for ( ; i < len; i++ ) {
-            file = this.files[i];
-    
-            if ( window.FileReader ) {
-                reader = new FileReader();
-                reader.onloadend = function (e) { 
-                    showUploadedItem(e.target.result, file.fileName);
-                };
-                reader.readAsDataURL(file);
-            }
-            if (formdata) {
-                formdata.append('title', document.getElementById('id_title').value)
-                formdata.append("file", file);
-            }
-        }
-    
-        if (formdata) {
-            $.ajax({
-                url: "/submitfile/{{instance_id}}/",
-                type: "POST",
-                data: formdata,
-                processData: false,
-                contentType: false,
-                success: function (res) {
-                    response = JSON.parse(res);
-                    console.log(response);
-                    document.getElementById("success_div").innerHTML = response['file_upload']['result']; 
-
-                    document.getElementById('myform').style.display = "none";
-                }
-            });
-        }
-    }, false);
-}());
-
-});
-   
-</script>
+    <script type="text/javascript" src="/{{instance_id}}/playerdata.js">
+    </script>
 
 </head>
 <body>
 
 {% block contact %}
+ 
 
+<div class="container">
+
+{% if 'no' == has_contact_info %}
+    <div class="form">
 
 <form enctype="multipart/form-data" method="post" name="myform" 
     id="myinfo" >
@@ -122,11 +33,14 @@
     <button type="button" onclick="sendContactInfo()">Submit contact</button>
     <div id="info_div" name="response">Response will be placed here on submit.</div>
 </form>
+{%endif%} 
 
 {% endblock %}
+</div>
 
+ <div class="form2">
 {% block upload %}
-<form enctype="multipart/form-data" method="post" name="myform" 
+<form2 enctype="multipart/form-data" method="post" name="myform" 
     id="myform" action= "/submitfile/{{instance_id}}/">
     
     <table>
@@ -139,11 +53,11 @@
     </table> 
     
     <input type="submit" value="Submit CV" id="upload_btn" />
-</form>
+</form2>
 {% endblock %}
 <div id="success_div" name="response">Response will be placed here on submit.</div>
-
-
+</div>
+</div>
 
 </body>
 </html>

@@ -1,0 +1,38 @@
+body {background-color:#c0c0c0;
+}
+.container
+{
+	/*width:500px;
+	margin:0px auto;
+	height:50%;
+	text-align:left;
+	padding:15px;
+	background-color:#eee;
+	vertical-align:middle;*/
+
+	width:300px;
+    height:200px;
+    position:absolute;
+    background-color:#eee;
+    left:50%;
+    top:50%;
+    padding:15px;
+    margin:-100px 0 0 -150px;
+
+}
+.form
+{
+
+}
+.form2
+{
+	display: none;
+
+}
+
+
+#cr-stage
+{
+	margin: auto;
+	display: none;
+}

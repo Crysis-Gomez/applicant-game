@@ -7,7 +7,7 @@ class UploadFileForm(forms.Form):
     file = forms.FileField()
 
 
-class ContactInformation(forms.Form):
+class ContactInformationForm(forms.Form):
 
     name = forms.CharField(max_length=50)
     email = forms.EmailField(max_length=50)
