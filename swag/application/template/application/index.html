@@ -16,7 +16,7 @@
 <div class="container">
 
 {% if 'no' == has_contact_info %}
-    <div class="form">
+<div class="form">
 
 <form enctype="multipart/form-data" method="post" name="myform" 
     id="myinfo" >
@@ -33,10 +33,11 @@
     <button type="button" onclick="sendContactInfo()">Submit contact</button>
     <div id="info_div" name="response">Response will be placed here on submit.</div>
 </form>
-{%endif%} 
+</div>
+{%endif%}
 
 {% endblock %}
-</div>
+
 
  <div class="form2">
 {% block upload %}
