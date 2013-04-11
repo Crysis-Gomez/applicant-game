@@ -1,4 +1,6 @@
 from django.db import models
+from database_storage import DatabaseStorage
+from django.conf import settings
 
 
 class Vacancy(models.Model):
@@ -18,6 +20,8 @@ class GameInstance(models.Model):
     progress = models.IntegerField(default=0)
     playerPositionX = models.IntegerField(default=0)
     playerPositionY = models.IntegerField(default=0)
+    playerName = models.CharField(max_length=50)
+    playerEmail = models.CharField(max_length=100)
     vacancy = models.ForeignKey(Vacancy)
 
     def __unicode__(self):
@@ -27,3 +31,12 @@ class GameInstance(models.Model):
         )
 
         return my_name
+
+
+class ApplicationDocument(models.Model):
+    title = models.CharField(max_length=200)
+    game_instance = models.ForeignKey(GameInstance)
+    attachment = models.FileField(upload_to=settings.DBS_OPTIONS['base_url'], storage=DatabaseStorage(options=settings.DBS_OPTIONS))
+
+    def __unicode__(self):
+        return self.title

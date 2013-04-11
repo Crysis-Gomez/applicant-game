@@ -5,13 +5,49 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
     <script type="text/javascript">
+
+        function sendContactInfo()
+        {
+
+            var email = document.getElementById("id_email");
+            var name = document.getElementById("id_name");
+
+            if (window.FormData) {
+                formdata = new FormData();
+                formdata.append('name', name.value)
+                formdata.append('email', email.value)
+                    
+            }
+
+            if (formdata) {
+                $.ajax({
+                    url: "/uploadcontact/{{instance_id}}/",
+                    type: "POST",
+                    data: formdata,
+                    processData: false,
+                    contentType: false,
+                    success: function (res) {
+                        response = JSON.parse(res),
+                        text = response['contact']['result'];
+                        console.log(text);
+                    
+                
+                        //console.log(response);
+                        document.getElementById("info_div").innerHTML = text; 
+       
+                    }
+                });
+            }
+        }
+
+
     $(document).ready(function() {
 
 
 (function () {
     var input = document.getElementById("id_file"), 
         formdata = false;
-
+        
     function showUploadedItem (source) {
         return true;
     }   
@@ -21,6 +57,7 @@
         document.getElementById("upload_btn").style.display = "none";
     }
     
+
     input.addEventListener("change", function (evt) {
         document.getElementById("success_div").innerHTML = "Uploading . . ."
         var i = 0, len = this.files.length, img, reader, file;
@@ -49,7 +86,6 @@
                 processData: false,
                 contentType: false,
                 success: function (res) {
-                    // alert('test');
                     response = JSON.parse(res);
                     console.log(response);
                     document.getElementById("success_div").innerHTML = response['file_upload']['result']; 
@@ -61,21 +97,6 @@
     }, false);
 }());
 
-    // $('#myform').submit(function() { // catch the form's submit event
-    //     alert('hallo!');
-    //     $.ajax({ // create an AJAX call...
-    //         data: $(this).serialize(), // get the form data
-    //         type: $(this).attr('method'), // GET or POST
-    //         url: $(this).attr('action'), // the file to call
-    //         success: function(response) { // on success..
-    //             $('#success_div').html(response); // update the DIV
-    //         },
-    //         error: function(e, x, r) { // on error..
-    //             $('#error_div').html(e); // update the DIV
-    //         }
-    //     });
-    //     return false;
-    // });
 });
    
 </script>
@@ -83,8 +104,28 @@
 </head>
 <body>
 
-{% block upload %}
+{% block contact %}
 
+
+<form enctype="multipart/form-data" method="post" name="myform" 
+    id="myinfo" >
+    
+    <table>
+    {{ contact_info.as_table }}
+    
+    {% for error in contact_info.errors %}
+    {{error}}
+    {% endfor %}
+    
+    </table> 
+    
+    <button type="button" onclick="sendContactInfo()">Submit contact</button>
+    <div id="info_div" name="response">Response will be placed here on submit.</div>
+</form>
+
+{% endblock %}
+
+{% block upload %}
 <form enctype="multipart/form-data" method="post" name="myform" 
     id="myform" action= "/submitfile/{{instance_id}}/">
     

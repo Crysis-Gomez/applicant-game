@@ -11,6 +11,12 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+
+DBS_OPTIONS = {
+    'table': 'ApplicationDocumentFiles',
+    'base_url': '/ApplicationDocument/attachment/',
+}
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.

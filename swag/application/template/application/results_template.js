@@ -1,3 +1,5 @@
-{"file_upload": {
+
+{"{{action}}": {
 	"result": "{{ success }}"
 }}
+
