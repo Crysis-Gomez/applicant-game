@@ -888,11 +888,12 @@
                 if (onFrame) {
                     tick = function () {
                         Crafty.timer.step();
+                        if(tick !== null)
                         requestID = onFrame(tick);
                         //console.log(requestID + ', ' + frame)
                     }
 
-                    tick();
+                   if(tick !== null)tick();
                 } else {
                     tick = setInterval(function () { Crafty.timer.step(); }, 1000 / FPS);
                 }

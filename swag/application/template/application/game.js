@@ -130,6 +130,8 @@ var crafty = function() {
 	house:Object,
 	isCollidingWithHouse: false,
 	dir:0,
+	count:0,
+	mayStop:false,
 	
 	convert:function(obj){
 		if(typeof this.house === obj)return;
@@ -147,14 +149,16 @@ var crafty = function() {
 	},
 	
 	Player:function(){
-	
+
+		
+
 		this.requires("SpriteAnimation")
 		 .animate("walk_left",8,0,10)
 		 .animate("walk_right",11,0,13)
 		 .animate("walk_up",5,0,7)
 		 .animate("walk_down",2,0,4)
 		 .bind('EnterFrame', function() {
-
+		 
 		 })
 		 .bind("NewDirection",
 			function (direction) {
@@ -201,21 +205,62 @@ var crafty = function() {
 			})/*.onHit('npc',function(hit){
 				this.isCollidingWithNpc = true;
 			})*/
+			// .bind('KeyUp', function (e) {
+			// 	var $textBox = $("#id_entry");
+
+			// 	if($textBox.is(":focus"))	{
+			// 		var existingVal = $textBox.val();
+			// 		$textBox.val(existingVal+ String.fromCharCode(e.which));
+			// 		return false;
+			// 	}
+
+			// 	return true;
+				
+			// })
 			
-			.bind('KeyDown', function () { 
-			if (this.isDown('SPACE') && this.isCollidingWithHouse){  
-				console.log("house")
-				$(".form2").show();
-				$("#cr-stage").hide(); 
-				}
+			.bind('KeyUp', function (e) { 
+				if (e.key == 32 && this.isCollidingWithHouse){  
+
+						if (!$(".letter")[0]){
+							this.count+=1;
+
+						}
+						if (!$(".form2")[0]){
+							this.count+=1;
+
+						}
+
+						if(!this.mayStop && this.count == 1){
+							$(".letter").show();
+							$(".container").show();
+							Crafty.stop();
+							this.mayStop = true;
+							this.count +=1;
+							return true;
+
+						}
+						
+						if(this.count == 0){
+							$(".form2").show();
+							$(".container").show();
+							this.count +=1
+						}
+
+						
+						 
+					}
+				return true;
+
 			})
 		}
 	
 	});
 
+
 	Crafty.c("RightControls", {
         init: function() {
             this.requires('Multiway');
+      
         },
         
         rightControls: function(speed) {
@@ -232,7 +277,7 @@ var crafty = function() {
 		DialogText:"",
 		TextIndex:0,
 		init:function(){
-			this.addComponent("2D, DOM,Color,Text");
+			this.addComponent("2D, Canvas,Color,Text");
 			this.x = 0;
 			this.y = 0;
 			this.w = 990;  
@@ -278,11 +323,16 @@ var crafty = function() {
         });
     });
 
+
     //automatically play the loading scene
     Crafty.scene("loading");
+
+
     
     Crafty.scene("main", function () {
-		
+        $("#container").hide();
+
+		Crafty.settings.modify("autoPause",true)
 		generateWorld();
 		
 		 dialog = Crafty.e("Dialog")

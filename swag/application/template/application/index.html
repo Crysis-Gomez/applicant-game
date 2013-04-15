@@ -10,15 +10,39 @@
 </head>
 <body>
 
-{% block contact %}
  
 
-<div class="container">
 
+<div class="container" id="container">
+
+{% block letters %}
+
+{% if has_motivation_letter == False %}
+<div class="letter">
+
+    <table>
+    {% for error in letter.errors %}
+    {{error}}
+    {% endfor %}
+     
+    {{letter.as_table}}
+  
+    </table> 
+     <button type="button" onclick="sendMotivation()">Send motivation</button>
+     <div id="success_div" name="response">Response will be placed here on submit.</div>
+</div>
+{%endif%}
+
+{% endblock %}
+
+
+
+
+{% block contact %}
 {% if 'no' == has_contact_info %}
 <div class="form">
 
-<form enctype="multipart/form-data" method="post" name="myform" 
+<form enctype="multipart/form-data" method="post" name="myinfo" 
     id="myinfo" >
     
     <table>
@@ -38,9 +62,10 @@
 
 {% endblock %}
 
-
- <div class="form2">
 {% block upload %}
+{% if has_cv == False %}
+ <div class="form2">
+
 <form2 enctype="multipart/form-data" method="post" name="myform" 
     id="myform" action= "/submitfile/{{instance_id}}/">
     
@@ -55,8 +80,11 @@
     
     <input type="submit" value="Submit CV" id="upload_btn" />
 </form2>
-{% endblock %}
+
+
 <div id="success_div" name="response">Response will be placed here on submit.</div>
+{%endif%}
+{% endblock %}
 </div>
 </div>
 

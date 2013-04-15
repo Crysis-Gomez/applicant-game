@@ -15,6 +15,7 @@ urlpatterns = patterns('',
     url(r'^(?P<unique_id>\w+)/playerdata.js', views.playerdatajs, name='playerdata'),
     url(r'^submitfile/(?P<unique_id>\w+)/', views.process_upload, name='submitfile'),
     url(r'^uploadcontact/(?P<unique_id>\w+)/', views.process_contact, name='submitcontact'),
+    url(r'^uploadmotivation/(?P<unique_id>\w+)/', views.process_motivation_letter, name='submitmotivation'),
     url(r'^' + upload_url + '(?P<filename>[a-zA-Z\-0-9\.\_]+)', views.show_uploaded_file, name="file_show")
     #submit form
 )
