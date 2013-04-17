@@ -8,7 +8,12 @@ from application.models import MotivationLetter
 class VacancyAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
 
-admin.site.register(GameInstance)
+
+class GameInstanceAdmin(admin.ModelAdmin):
+    list_display = ('name', 'vacancy', 'has_cv', 'has_motivation')
+    # self.has_cv.short_description = "Uploaded cv"
+
+admin.site.register(GameInstance, GameInstanceAdmin)
 admin.site.register(CvDocument)
 admin.site.register(Vacancy, VacancyAdmin)
 admin.site.register(MotivationLetter)

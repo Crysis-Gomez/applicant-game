@@ -33,7 +33,6 @@ def index(request):
 def start_game(request, slug):
     _vacancy = Vacancy.objects.get(slug=slug)
     instance_id = str(uuid.uuid4()).replace('-', '')
-    print _vacancy
 
     game_instance = GameInstance()
     game_instance.uid = instance_id
@@ -79,7 +78,12 @@ def playerdatajs(request, unique_id):
 
 
 def play(request, unique_id):
-    game = GameInstance.objects.get(uid=unique_id)
+
+    try:
+        game = get_object_or_404(GameInstance, uid=unique_id)
+        # game = GameInstance.objects.get(uid=unique_id)
+    except Http404:
+        return HttpResponseRedirect('/')
     context = dict(request)
 
     has_contact_info = get_contact_info(game)
@@ -87,35 +91,14 @@ def play(request, unique_id):
         contact_info = ContactInformationForm()
         context.update({'contact_info': contact_info})
 
-    has_motivation_letter = False
-    has_cv = False
-
-    # try:
-    #     application_document = get_object_or_404(CvDocument, game_instance=game)
-    #     print(len(application_document))
-    #    # if len(application_document.motivation_letter) > 0:
-    #        # has_motivation_letter = True
-
-    #     try:
-    #         #if application_document.attachment is not None and len(application_document.attachment) > 0:
-    #             #has_cv = True
-
-    #     except ValueError, ve:
-    #         print(has_cv)
-
-    # except Http404:
-    #         print(has_cv)
-
-    print(has_cv)
-    print(has_motivation_letter)
-    letter = LetterForm()
+    letter = LetterForm(initial={'title': 'motivation'})
     context.update({'letter': letter})
 
     form = UploadFileForm(initial={'title': 'cv'})
     context.update({
         'instance_id': game.uid,
         'form': form,
-        'has_contact_info': has_contact_info, 'has_motivation_letter': has_motivation_letter, 'has_cv': has_cv})
+        'has_contact_info': has_contact_info, 'has_motivation_letter': game.has_motivation, 'has_cv': game.has_cv})
 
     return render_to_response("index.html", context)
 
@@ -151,6 +134,27 @@ def handle_uploaded_file(submitted_file, title, unique_id):
         application_document.attachment = submitted_file
         application_document.save()
 
+        return True
+
+    return False
+
+
+def handle_uploaded_motivation(submitted_file, title, unique_id):
+
+    game = GameInstance.objects.get(uid=unique_id)
+    name = "{name}-{title}".format(name=game.player_name, title=title)
+
+    motivation_letter = MotivationLetter()
+
+    try:
+        motivation_letter = get_object_or_404(MotivationLetter, game_instance=game)
+    except Http404:
+        motivation_letter.game_instance = game
+        motivation_letter.title = name
+        submitted_file.name = "{uid}-{filename}".format(uid=unique_id, filename=submitted_file.name)
+        motivation_letter.attachment = submitted_file
+        motivation_letter.save()
+
         print("UPLOAD CV")
         return True
 
@@ -161,25 +165,22 @@ def handle_uploaded_file(submitted_file, title, unique_id):
 def process_motivation_letter(request, unique_id):
 
     game = GameInstance.objects.get(uid=unique_id)
-
     form = LetterForm(request.POST)
     motivation_letter = MotivationLetter()
 
     upload_state = {"action": "motivation", 'success': 'Thx for submitting!'}
-    if form.is_valid():
-        try:
-            motivation_letter = get_object_or_404(MotivationLetter)
 
+    if not form.is_valid():
+        error = form.errors
+        upload_state['success'] = json.dumps(error)
+    else:
+        try:
+            motivation_letter = get_object_or_404(MotivationLetter, game_instance=game)
         except Http404:
             motivation_letter.entry = form.cleaned_data['entry']
             motivation_letter.game_instance = game
+            motivation_letter.title = str(game.player_name) + ' - Motivation text'
             motivation_letter.save()
-            print("finished")
-
-    else:
-        error = form.errors
-        print(form.errors)
-        upload_state['success'] = json.dumps(error)
 
     return render(request, "results_template.js", upload_state, content_type=RequestContext(request))
 
@@ -189,15 +190,17 @@ def process_contact(request, unique_id):
 
     game = GameInstance.objects.get(uid=unique_id)
     form = ContactInformationForm(request.POST)
-    upload_state = {"action": "contact", 'success': 'Thx for submitting!'}
+    #print form
+    upload_state = {"action": "contact", 'success': 'Thx for submitting!', 'playername': 'name'}
 
     if form.is_valid():
         game.player_name = form.cleaned_data['name']
         game.player_email = form.cleaned_data['email']
         game.save()
+        upload_state['playername'] = json.dumps(game.player_name)
     else:
-        error = form.errors
-        upload_state['success'] = json.dumps(error)
+        print(form.errors)
+        upload_state['success'] = json.dumps(form.errors)
 
     return render(request, "results_template.js", upload_state, content_type=RequestContext(request))
 
@@ -209,12 +212,16 @@ def process_upload(request, unique_id):
     if not request.method == "POST":
         return render(request, "results_template.js", upload_state, content_type="application/json")
 
-    print request.POST
+    print(request.POST)
+    #print 'cv' in request.POST['title']
 
     form = UploadFileForm(request.POST, request.FILES)
     if form.is_valid():
-        print 'form is valid'
+        upload_success = True
+        # if x[1] == "document":
         upload_success = handle_uploaded_file(request.FILES['document'], form.cleaned_data['title'], unique_id)
+        #else:
+           # upload_success = handle_uploaded_motivation(request.FILES['document'], form.cleaned_data['title'], unique_id)
         if upload_success:
             upload_state['success'] = 'Thanks for submitting'
         else:
@@ -224,3 +231,5 @@ def process_upload(request, unique_id):
         upload_state['success'] = json.dumps(form.errors)
 
     return render(request, "results_template.js", upload_state, content_type="text/html")
+
+

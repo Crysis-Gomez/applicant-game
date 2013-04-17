@@ -1,5 +1,5 @@
 
-{"player": {
+{"{{action}}": {
 	"result": "{{ success }}",
 	"playername": "{{ name }}"
 }}

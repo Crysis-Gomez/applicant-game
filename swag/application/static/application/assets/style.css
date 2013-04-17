@@ -1,30 +1,9 @@
 body {background-color:#c0c0c0;
 }
-.container
-{
-	/*width:500px;
-	margin:0px auto;
-	height:50%;
-	text-align:left;
-	padding:15px;
-	background-color:#eee;
-	vertical-align:middle;*/
 
-	width:400px;
-    height:300px;
-    position:absolute;
-    background-color:#eee;
-    left:50%;
-    top:50%;
-    padding:15px;
-    margin:-100px 0 0 -150px;
-    z-index:4;
-    
-
-}
 .form
 {
-	
+	 z-index:3;
 }
 .form2
 {
@@ -39,9 +18,37 @@ body {background-color:#c0c0c0;
 }
 
 
+#contact
+{
+	display: none;
+}
+
+#cv
+{
+	display: none;
+}
+
+#container
+{
+	width:200px;
+    height:150px;
+    position:absolute;
+    background-color:#eee;
+    border:1px solid #0F0;
+    left:50%;
+    top:50%;
+    padding:15px;
+    margin:-100px 0 0 -150px;
+    z-index:4;
+    display: none;
+
+}
+
+
 #cr-stage
 {
 	margin: auto;
 	
+
 	
 }

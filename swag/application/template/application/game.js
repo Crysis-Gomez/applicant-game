@@ -1,6 +1,53 @@
+var state = function() {
+	this.name = '{{ game.player_name }}';
+	this.email = '{{ game.player_email }}';
+	this.has_cv = '{{ game.has_cv }}';
+	
+	var that = this;
+
+	var init = function() {
+
+	}
+
+	var setName = function(name) {
+		this.name = name
+	}
+
+	var get_cv = function() {
+		var my_val = false;
+		if (has_cv == 'True') {
+			my_val = true;
+		}
+
+		return my_val;
+	}
+
+
+	return {
+		getState: function() { init() },
+		my_name: function() {
+			return name;
+		}, 
+		check_cv: get_cv,
+
+		update_key: function (value){
+			has_cv = value;
+			return true;
+		},
+		update: function(key, value) {
+			that[key] = value;
+			return true;
+		},
+		name: function() { 
+			console.log("Hello! " + name +"!");  
+			return name; 
+		}
+	}
+}();
+
 var crafty = function() {
     //start crafty
-    // alert('your applying for role: {{game.vacancy}} in department: {{game.vacancy.department}}');
+    // alert('your applying for role: {{game.has_cv}} in department: {{game.vacancy.department}}');
     Crafty.init(990, 600);
 
      Crafty.sprite(32, "/static/Sprite.png", {
@@ -50,7 +97,7 @@ var crafty = function() {
 			}
 			
 			
-			if(i  == 15 && j == 5){
+			/*if(i  == 15 && j == 5){
 				  var house  = Crafty.e("2D, Canvas,Image,Collision, house,SetSorting")
 				  .collision(new Crafty.polygon([5,0],[110,0],[110,180],[5,180]));
 				  house.image("/static/house.png");
@@ -76,7 +123,7 @@ var crafty = function() {
 				  house.x = 32*i;
 				  house.y = 32*j
 			   
-			}
+			}*/
 		}
 		}
 	}
@@ -112,16 +159,30 @@ var crafty = function() {
 	init: function() {
 		this.onHit('player',function(hit){
 			this.isCollidingWithPlayer = true;
+			if(!dialog.inConversation) dialog.startDialog(this.dailogText);
 		})
 		
 		.requires('Keyboard').bind('KeyDown', function () { 
-		if (this.isDown('SPACE') && this.isCollidingWithPlayer){  
-		
-			//dialog.startDialog(this.dailogText);
+		if (this.isDown('ENTER') && !Crafty.isPaused()){  
+			if(dialog.finished){
+				dialog.nextDialog();
+			}
 		}
 		})
      }
 	
+	});
+
+	Crafty.c('AI',{
+
+		walkToPlayer:function(){
+
+		},
+
+		update:function(){
+			walkToPlayer();
+		}
+
 	});
 
 
@@ -149,8 +210,6 @@ var crafty = function() {
 	},
 	
 	Player:function(){
-
-		
 
 		this.requires("SpriteAnimation")
 		 .animate("walk_left",8,0,10)
@@ -184,9 +243,7 @@ var crafty = function() {
 				}
 			})
 			.bind('Moved', function(from) {
-				
-				if(dialog.hasStarted)dialog.closeDialog();
-					
+						
                     if(this.hit('house')){
                     	this.isCollidingWithHouse = true;
 					   if(this.y <= this.hit('house')[0].obj.y+80){
@@ -202,52 +259,13 @@ var crafty = function() {
 						this.isCollidingWithHouse = false;
 					} 
 
-			})/*.onHit('npc',function(hit){
-				this.isCollidingWithNpc = true;
-			})*/
-			// .bind('KeyUp', function (e) {
-			// 	var $textBox = $("#id_entry");
-
-			// 	if($textBox.is(":focus"))	{
-			// 		var existingVal = $textBox.val();
-			// 		$textBox.val(existingVal+ String.fromCharCode(e.which));
-			// 		return false;
-			// 	}
-
-			// 	return true;
-				
-			// })
+			})
 			
 			.bind('KeyUp', function (e) { 
 				if (e.key == 32 && this.isCollidingWithHouse){  
 
-						if (!$(".letter")[0]){
-							this.count+=1;
+					
 
-						}
-						if (!$(".form2")[0]){
-							this.count+=1;
-
-						}
-
-						if(!this.mayStop && this.count == 1){
-							$(".letter").show();
-							$(".container").show();
-							Crafty.stop();
-							this.mayStop = true;
-							this.count +=1;
-							return true;
-
-						}
-						
-						if(this.count == 0){
-							$(".form2").show();
-							$(".container").show();
-							this.count +=1
-						}
-
-						
-						 
 					}
 				return true;
 
@@ -276,40 +294,80 @@ var crafty = function() {
 		hasStarted: false,
 		DialogText:"",
 		TextIndex:0,
+		dialogIndex:0,
+		finished:false,
+		inConversation:false,
+		data:[],
 		init:function(){
-			this.addComponent("2D, Canvas,Color,Text");
+			this.addComponent("2D, DOM,Color,Text");
 			this.x = 0;
 			this.y = 0;
 			this.w = 990;  
 			this.h = 0;   
 			this.color("#FFFFFF");
-			this.textColor('#FF0000')
+			this.textColor('#FF0000');
 			this.bind('EnterFrame', function() {
 
-				if(this.hasStarted){
+				if(this.hasStarted && this.finished == false){
 					if(this.DialogText.length != this.DataText.length){
-						
+						console.log("texting");
 						this.DialogText += this.DataText[this.TextIndex];
-						this.text('<div style="margin-top:12px;">' + this.DialogText);
+						this.text('<div style="margin-top:12px;">' + this.DialogText  + '<div style="margin-top:50px;">'  +"Enter to continue");
 						this.TextIndex++;
-					}
+
+					}else this.finished = true;
 				}
 			})
 		},
+
+		nextDialog:function(){
+			if(!Crafty.isPaused()) this.dialogIndex += 1;
+			
+			if(this.dialogIndex == this.data.length-1){
+				this.closeDialog();
+				return true;
+			} 
+			this.DataText = this.data[this.dialogIndex];
+			if(this.DataText == "CONTACT"){
+				$("#container").show();
+				$("#contact").show();
+				Crafty.pause();
+				return true;
+			}
+			if(this.DataText == "UPLOAD"){
+				$("#container").show();
+				$(".form2").show();
+				console.log("upload")
+				Crafty.pause(true);
+				return true;
+			}
+			if(this.DataText =="Bob: Welcome to the vacancy of {{game.vacancy}},"){
+			   this.DataText += window.state.name() + "!";
+			}  
+
+			this.finished = false;
+			this.DialogText = "";
+			this.text("");
+			this.TextIndex = 0;
+			
 		
+		},
 	
 		closeDialog:function(){
 			this.DialogText = "";
 			this.text("");
 			this.TextIndex = 0;
 			this.hasStarted = false;
+			this.finished = false;
 			this.h =  0;
 		},
 		
 		startDialog:function(data){
-			this.DataText = data;
+			this.data = data
+			this.DataText = this.data[this.dialogIndex];
 			this.hasStarted = true;
 			this.h = 100;
+			this.inConversation = true;
 			
 		}
 		
@@ -328,11 +386,8 @@ var crafty = function() {
     Crafty.scene("loading");
 
 
-    
     Crafty.scene("main", function () {
-        $("#container").hide();
 
-		Crafty.settings.modify("autoPause",true)
 		generateWorld();
 		
 		 dialog = Crafty.e("Dialog")
@@ -345,14 +400,16 @@ var crafty = function() {
                 
         var player2 = Crafty.e("2D,  Canvas, player,Collision,npc,NPC")
 			.attr({ x: 400, y: 364, z: 1});
-			player2.dailogText = "Hi I`m mister swag";
-                
-        
-		var player3 = Crafty.e("2D,  Canvas, player,Collision,npc,NPC")
-			.attr({ x: 450, y: 400, z: 1});
-			player3.dailogText = "Welcome to this awesome land";
-        
-                     
+			player2.dailogText = ["Bob: Hi I`m bob nice to meet you!",
+								  "How may I call you?",
+								  "CONTACT", // Player enters name....
+								  "Bob: Welcome to the vacancy of {{game.vacancy}},", 
+								  "Bob: Next thing you need to do for is to upload your C.V.",
+								  "UPLOAD",
+								  "Bob: THX for Uploading!!!."
+
+
+			];           
     });
 
     return {

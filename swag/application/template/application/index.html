@@ -15,25 +15,25 @@
 
 <div class="container" id="container">
 
-{% block letters %}
+    {% block letters %}
 
-{% if has_motivation_letter == False %}
-<div class="letter">
+    {% if has_motivation_letter == False %}
+    <div class="letter">
 
-    <table>
-    {% for error in letter.errors %}
-    {{error}}
-    {% endfor %}
-     
-    {{letter.as_table}}
-  
-    </table> 
-     <button type="button" onclick="sendMotivation()">Send motivation</button>
-     <div id="success_div" name="response">Response will be placed here on submit.</div>
-</div>
-{%endif%}
+        <table>
+        {% for error in letter.errors %}
+        {{error}}
+        {% endfor %}
+         
+        {{letter.as_table}}
+      
+        </table> 
+         <button type="button" onclick="sendFiles(id_attachment,restartCrafty)">Send motivation</button>
+         <!--<div id="success_div" name="response">Response will be placed here on submit.</div>-->
+    </div>
+    {%endif%}
 
-{% endblock %}
+    {% endblock %}
 
 
 
@@ -54,8 +54,8 @@
     
     </table> 
     
-    <button type="button" onclick="sendContactInfo()">Submit contact</button>
-    <div id="info_div" name="response">Response will be placed here on submit.</div>
+    <button id="contactButton" type="button" onclick="sendContactInfo()">Submit contact</button>
+    <!--<div id="info_div" name="response">Response will be placed here on submit.</div>-->
 </form>
 </div>
 {%endif%}
@@ -78,15 +78,38 @@
     
     </table> 
     
-    <input type="submit" value="Submit CV" id="upload_btn" />
+    <button type="button" onclick="sendFiles(id_document)">Send CV</button>
 </form2>
 
 
-<div id="success_div" name="response">Response will be placed here on submit.</div>
+
 {%endif%}
 {% endblock %}
 </div>
+<div id="success_div" name="response">Response will be placed here on submit.</div>
 </div>
+
+<div id="cr-stage">
+
+    <!--<div id="uploadcontainer">
+        <div id="contact">
+                <div id="name" > </div>
+                <div id="mail" > </div>
+                <button id="contactButton" type="button" onclick="sendContactInfo()">Submit contact</button>
+        </div>
+
+
+        <div id="cv">
+         <form enctype="multipart/form-data" method="post" name="uploading"> 
+            <input type="file" name="datafile" size="40">
+            <button id="cvButton" type="button" onclick="sendFiles()">Submit CV</button>
+        
+        </form>
+        </div>
+    </div> -->   
+</div>
+
+
 
 </body>
 </html>
