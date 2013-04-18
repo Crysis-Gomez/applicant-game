@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<head>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+    <script type="text/javascript" src="/static/crafty.js"></script>
+    <script type="text/javascript" src="/{{instance_id}}/game.js"></script>
+    <script type="text/javascript" src="/{{instance_id}}/playerdata.js">
+    </script>
+
+</head>
+<body>
+
+ 
+
+
+<div class="container" id="container">
+
+    {% block letters %}
+
+    {% if has_motivation_letter == False %}
+    <div class="letter">
+
+        <table>
+        {% for error in letter.errors %}
+        {{error}}
+        {% endfor %}
+         
+        {{letter.as_table}}
+      
+        </table> 
+         <button type="button" onclick="sendFiles(id_attachment,restartCrafty)">Send motivation</button>
+         <!--<div id="success_div" name="response">Response will be placed here on submit.</div>-->
+    </div>
+    {%endif%}
+
+    {% endblock %}
+
+
+
+
+{% block contact %}
+{% if 'no' == has_contact_info %}
+<div class="form">
+
+<form enctype="multipart/form-data" method="post" name="myinfo" 
+    id="myinfo" >
+    
+    <table>
+    {{ contact_info.as_table }}
+    
+    {% for error in contact_info.errors %}
+    {{error}}
+    {% endfor %}
+    
+    </table> 
+    
+    <button id="contactButton" type="button" onclick="sendContactInfo()">Submit contact</button>
+    <!--<div id="info_div" name="response">Response will be placed here on submit.</div>-->
+</form>
+</div>
+{%endif%}
+
+{% endblock %}
+
+{% block upload %}
+{% if has_cv == False %}
+ <div class="form2">
+
+<form2 enctype="multipart/form-data" method="post" name="myform" 
+    id="myform" action= "/submitfile/{{instance_id}}/">
+    
+    <table>
+    {{ form.as_table }}
+    
+    {% for error in form.errors %}
+    {{error}}
+    {% endfor %}
+    
+    </table> 
+    
+    <button type="button" onclick="sendFiles(id_document)">Send CV</button>
+</form2>
+
+
+
+{%endif%}
+{% endblock %}
+</div>
+<div id="success_div" name="response">Response will be placed here on submit.</div>
+</div>
+
+<div id="cr-stage">
+
+    <!--<div id="uploadcontainer">
+        <div id="contact">
+                <div id="name" > </div>
+                <div id="mail" > </div>
+                <button id="contactButton" type="button" onclick="sendContactInfo()">Submit contact</button>
+        </div>
+
+
+        <div id="cv">
+         <form enctype="multipart/form-data" method="post" name="uploading"> 
+            <input type="file" name="datafile" size="40">
+            <button id="cvButton" type="button" onclick="sendFiles()">Submit CV</button>
+        
+        </form>
+        </div>
+    </div> -->   
+</div>
+
+
+
+</body>
+</html>
