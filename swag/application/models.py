@@ -27,8 +27,7 @@ class GameInstance(models.Model):
     vacancy = models.ForeignKey(Vacancy)
 
     def __unicode__(self):
-        my_name = self.name()
-        return my_name
+        return self.name()
 
     def name(self):
         if not self.player_name:
