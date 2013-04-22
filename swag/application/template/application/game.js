@@ -1,7 +1,8 @@
 var state = function() {
-	this.name = '{{ game.player_name }}';
+	this.player_name = '{{ game.player_name }}';
 	this.email = '{{ game.player_email }}';
 	this.has_cv = '{{ game.has_cv }}';
+	this.has_motivation = '{{game.has_motivation}}';
 	
 	var that = this;
 
@@ -10,7 +11,24 @@ var state = function() {
 	}
 
 	var setName = function(name) {
-		this.name = name
+		this.player_name = name
+	}
+
+	var get_name = function(){
+		var my_val = false;
+		if (player_name.length > 0) {
+			my_val = true;
+		}
+		return my_val;
+	}
+
+	var get_motivation = function(){
+		var my_val = false;
+		if (has_motivation == 'True') {
+			my_val = true;
+		}
+
+		return my_val;
 	}
 
 	var get_cv = function() {
@@ -29,6 +47,8 @@ var state = function() {
 			return name;
 		}, 
 		check_cv: get_cv,
+		check_name:get_name,
+		check_motivation:get_motivation,
 
 		update_key: function (value){
 			has_cv = value;
@@ -38,16 +58,16 @@ var state = function() {
 			that[key] = value;
 			return true;
 		},
+
 		name: function() { 
-			console.log("Hello! " + name +"!");  
-			return name; 
+			return player_name; 
 		}
 	}
 }();
+var gamelog = questlog();
 
 var crafty = function() {
-    //start crafty
-    // alert('your applying for role: {{game.has_cv}} in department: {{game.vacancy.department}}');
+
     Crafty.init(990, 600);
 
      Crafty.sprite(32, "/static/Sprite.png", {
@@ -57,8 +77,15 @@ var crafty = function() {
   
     });
 
-	var dialog;    
-    
+	var dialog;
+	
+	var quest2 = new Quest("Upload_your_cv",window.state.check_cv);
+	var quest3 = new Quest("Upload_your_motivation",window.state.check_motivation);
+
+	gamelog.addQuest(quest2); 
+	gamelog.addQuest(quest3);
+
+
 	function generateWorld(){
 	
 	for (i = 0; i < 31; i++)
@@ -82,49 +109,49 @@ var crafty = function() {
 
 	function generateObjects(){
 	
-	for (i = 0; i < 31; i++)
-	{
-
-		for (j = 0; j < 21; j++)
+		for (i = 0; i < 31; i++)
 		{
-			if(i  == 5 && j == 5){
-				  var house  = Crafty.e("2D, Canvas,Image,Collision, house,SetSorting")
-				  .collision(new Crafty.polygon([5,0],[110,0],[110,180],[5,180]));
-				  house.image("/static/house.png");
-				  house.x = 32*i;
-				  house.y = 32*j
-			   
+
+			for (j = 0; j < 21; j++)
+			{
+				if(i  == 5 && j == 5){
+					  var house  = Crafty.e("2D, Canvas,Image,Collision, house,SetSorting")
+					  .collision(new Crafty.polygon([5,0],[110,0],[110,180],[5,180]));
+					  house.image("/static/house.png");
+					  house.x = 32*i;
+					  house.y = 32*j;
+				   
+				}
+				
+				
+				/*if(i  == 15 && j == 5){
+					  var house  = Crafty.e("2D, Canvas,Image,Collision, house,SetSorting")
+					  .collision(new Crafty.polygon([5,0],[110,0],[110,180],[5,180]));
+					  house.image("/static/house.png");
+					  house.x = 32*i;
+					  house.y = 32*j
+				   
+				}
+				
+				if(i  == 19 && j == 5){
+					  var house  = Crafty.e("2D, Canvas,Image,Collision, house,SetSorting")
+					  .collision(new Crafty.polygon([5,0],[110,0],[110,180],[5,180]));
+					  house.image("/static/house.png");
+					  house.x = 32*i;
+					  house.y = 32*j
+				   
+				}
+				
+				
+				if(i  == 15 && j == 1){
+					  var house  = Crafty.e("2D, Canvas,Image,Collision, house,SetSorting")
+					  .collision(new Crafty.polygon([5,0],[110,0],[110,180],[5,180]));
+					  house.image("/static/house.png");
+					  house.x = 32*i;
+					  house.y = 32*j
+				   
+				}*/
 			}
-			
-			
-			/*if(i  == 15 && j == 5){
-				  var house  = Crafty.e("2D, Canvas,Image,Collision, house,SetSorting")
-				  .collision(new Crafty.polygon([5,0],[110,0],[110,180],[5,180]));
-				  house.image("/static/house.png");
-				  house.x = 32*i;
-				  house.y = 32*j
-			   
-			}
-			
-			if(i  == 19 && j == 5){
-				  var house  = Crafty.e("2D, Canvas,Image,Collision, house,SetSorting")
-				  .collision(new Crafty.polygon([5,0],[110,0],[110,180],[5,180]));
-				  house.image("/static/house.png");
-				  house.x = 32*i;
-				  house.y = 32*j
-			   
-			}
-			
-			
-			if(i  == 15 && j == 1){
-				  var house  = Crafty.e("2D, Canvas,Image,Collision, house,SetSorting")
-				  .collision(new Crafty.polygon([5,0],[110,0],[110,180],[5,180]));
-				  house.image("/static/house.png");
-				  house.x = 32*i;
-				  house.y = 32*j
-			   
-			}*/
-		}
 		}
 	}
 
@@ -155,15 +182,24 @@ var crafty = function() {
 	Crafty.c('NPC',{
 	
 	isCollidingWithPlayer:false,
+	dialogFuction:null,
+	dialogText:"",
 
 	init: function() {
 		this.onHit('player',function(hit){
 			this.isCollidingWithPlayer = true;
-			if(!dialog.inConversation) dialog.startDialog(this.dailogText);
-		})
+			if(!dialog.inConversation){
+				//show dialog
+			}
+		},function(noHit){
+				//drop dialog
+			this.isCollidingWithPlayer = false;
+			} 
+		)
 		
 		.requires('Keyboard').bind('KeyDown', function () { 
-		if (this.isDown('ENTER') && !Crafty.isPaused()){  
+		if (this.isDown('ENTER') && !Crafty.isPaused() && this.isCollidingWithPlayer){
+			if(!dialog.inConversation)dialog.startDialog(this);
 			if(dialog.finished){
 				dialog.nextDialog();
 			}
@@ -261,12 +297,16 @@ var crafty = function() {
 
 			})
 			
-			.bind('KeyUp', function (e) { 
-				if (e.key == 32 && this.isCollidingWithHouse){  
-
+			.bind('KeyUp', function (e) {
+				
+				if (e.key == 76 && !Crafty.isPaused()){  
+					var doc = document.getElementById("questlog");
+					if(doc.style.display == '')doc.style.display = 'block';
+					
+					else if(doc.style.display == 'block')doc.style.display = '';
 					
 
-					}
+				}
 				return true;
 
 			})
@@ -298,6 +338,8 @@ var crafty = function() {
 		finished:false,
 		inConversation:false,
 		data:[],
+
+
 		init:function(){
 			this.addComponent("2D, DOM,Color,Text");
 			this.x = 0;
@@ -308,9 +350,8 @@ var crafty = function() {
 			this.textColor('#FF0000');
 			this.bind('EnterFrame', function() {
 
-				if(this.hasStarted && this.finished == false){
+				if(this.hasStarted && !this.finished && this.checkDialog()){
 					if(this.DialogText.length != this.DataText.length){
-						console.log("texting");
 						this.DialogText += this.DataText[this.TextIndex];
 						this.text('<div style="margin-top:12px;">' + this.DialogText  + '<div style="margin-top:50px;">'  +"Enter to continue");
 						this.TextIndex++;
@@ -320,29 +361,45 @@ var crafty = function() {
 			})
 		},
 
+		checkDialog:function(){
+			if(this.dialogIndex == this.data.length){
+				this.closeDialog();
+				return false;
+			}
+
+			return true; 
+		},
+
 		nextDialog:function(){
 			if(!Crafty.isPaused()) this.dialogIndex += 1;
 			
-			if(this.dialogIndex == this.data.length-1){
-				this.closeDialog();
-				return true;
-			} 
+
 			this.DataText = this.data[this.dialogIndex];
 			if(this.DataText == "CONTACT"){
 				$("#container").show();
 				$("#contact").show();
+				$(".form").show();
+				document.getElementById("id_name").focus();
 				Crafty.pause();
 				return true;
 			}
 			if(this.DataText == "UPLOAD"){
 				$("#container").show();
 				$(".form2").show();
-				console.log("upload")
-				Crafty.pause(true);
+				Crafty.pause();
 				return true;
 			}
-			if(this.DataText =="Bob: Welcome to the vacancy of {{game.vacancy}},"){
-			   this.DataText += window.state.name() + "!";
+
+			if(this.DataText == "MOTIVATION"){
+				$("#container").show();
+				$(".Choice").show();
+				Crafty.pause();
+				return true;
+			}
+
+
+			if(this.DataText == "Bob: Welcome to the vacancy of "){
+				this.DataText += "{{game.vacancy}},"+ window.state.name() + "!";
 			}  
 
 			this.finished = false;
@@ -359,11 +416,15 @@ var crafty = function() {
 			this.TextIndex = 0;
 			this.hasStarted = false;
 			this.finished = false;
+			this.inConversation = false;
+			this.dialogIndex = 0;
 			this.h =  0;
+
 		},
 		
-		startDialog:function(data){
-			this.data = data
+		startDialog:function(npc){
+			this.npc = npc;
+			this.data = npc.dialogFuction(state);
 			this.DataText = this.data[this.dialogIndex];
 			this.hasStarted = true;
 			this.h = 100;
@@ -397,22 +458,22 @@ var crafty = function() {
 			.attr({ x: 200, y: 364, z: 1})
 			.rightControls(2)
 			.Player();
-                
-        var player2 = Crafty.e("2D,  Canvas, player,Collision,npc,NPC")
-			.attr({ x: 400, y: 364, z: 1});
-			player2.dailogText = ["Bob: Hi I`m bob nice to meet you!",
-								  "How may I call you?",
-								  "CONTACT", // Player enters name....
-								  "Bob: Welcome to the vacancy of {{game.vacancy}},", 
-								  "Bob: Next thing you need to do for is to upload your C.V.",
-								  "UPLOAD",
-								  "Bob: THX for Uploading!!!."
 
+		var player2 = Crafty.e("2D,  Canvas, player,Collision,npc,NPC")
+			.attr({ x: 400, y: 364, z: 1})
+			.dialogFuction = getDialogData1;
 
-			];           
+		var player3 = Crafty.e("2D,  Canvas, player,Collision,npc,NPC")
+			.attr({ x: 700, y: 300, z: 1})
+			.dialogFuction = getDialogData2;
+		
+
     });
 
     return {
+    	start:function(){
+
+    	},
     	"crafty": Crafty,
     	"init_game": Crafty.init(900,600)
     }
