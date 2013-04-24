@@ -80,8 +80,7 @@ function sendMotivation()
                 $("#id_attachment").hide();
                 $(".letter").hide();
                 $("#id_entry").hide();
-                window.gamelog.updateQuest("Upload_your_motivation");
-                 
+
             }
         });
     }
@@ -121,7 +120,7 @@ function sendContactInfo()
                     $("#container").hide();
                     window.state.update('player_name', name.value);
                     var game = window.game.crafty.pause(false);
-                    
+                    window.quest_log.update();
                     
                     //remo       
                 //} 
@@ -146,7 +145,6 @@ function sendFiles(){
     document.getElementById("cvButton").blur();
     form = document.getElementById("id_document");
   //document.getElementById("success_div").innerHTML = "Uploading . . ."
-        console.log("SENDING FILES");
         var img, reader, file;
         formdata = new FormData();
       
@@ -175,13 +173,11 @@ function sendFiles(){
                 contentType: false,
                 success: function (res) {
                     response = JSON.parse(res);
-                    console.log(response);
                     $("#container").hide();
                     $(".form2").hide();
                     window.state.update('has_cv', 'True');
-                    window.gamelog.updateQuest("Upload_your_cv");
                     var game = window.game.crafty.pause(false);
-                        
+                    window.quest_log.update()
                 }
             });
         }

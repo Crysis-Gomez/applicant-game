@@ -3,8 +3,20 @@ var state = function() {
 	this.email = '{{ game.player_email }}';
 	this.has_cv = '{{ game.has_cv }}';
 	this.has_motivation = '{{game.has_motivation}}';
+	this.playerPositionx = 50;
+	this.playerPositiony = 50;
 	
 	var that = this;
+
+	var checkPosition = function(){
+
+		return[playerPositionx,playerPositiony];
+	}
+
+	var setPosition = function(x,y){
+		playerPositiony = y;
+		playerPositionx = x;
+	}
 
 	var init = function() {
 
@@ -49,6 +61,8 @@ var state = function() {
 		check_cv: get_cv,
 		check_name:get_name,
 		check_motivation:get_motivation,
+		checkPosition:checkPosition,
+		setPosition:setPosition,
 
 		update_key: function (value){
 			has_cv = value;
@@ -64,48 +78,59 @@ var state = function() {
 		}
 	}
 }();
-var gamelog = questlog();
+
+var quest_log; 
+	
+
 
 var crafty = function() {
 
     Crafty.init(990, 600);
 
-     Crafty.sprite(32, "/static/Sprite.png", {
-		 grass:[0,0],
-		 sand:[1,0],
-		 player:[2,0]
+    Crafty.sprite(32, "/static/Sprite.png", {
+		grass:[0,0],
+		sand:[1,0],
+		player:[2,0]
   
+    });
+
+    Crafty.sprite(32, "/static/Sprite2.png", {
+		 tiles:[0,0]
     });
 
 	var dialog;
 	
-	var quest2 = new Quest("Upload_your_cv",window.state.check_cv);
-	var quest3 = new Quest("Upload_your_motivation",window.state.check_motivation);
-
-	gamelog.addQuest(quest2); 
-	gamelog.addQuest(quest3);
-
-
 	function generateWorld(){
 	
-	for (i = 0; i < 31; i++)
-	{
-		for (j = 0; j < 21; j++)
+		for (i = 0; i < 31; i++)
 		{
-			if(i != 10  && j != 15){
-				
-				Crafty.e("2D, Canvas, grass")
-                    .attr({ x: i * 32, y: j * 32, z:-1 });
-            }else{
-				 Crafty.e("2D, Canvas, sand")
-                    .attr({ x: i * 32, y: j * 32, z:-1 });
-                }    
+			for (j = 0; j < 21; j++)
+			{
+				if(i != 10  && j != 15){
+					
+					Crafty.e("2D, Canvas, grass")
+	                    .attr({ x: i * 32, y: j * 32, z:-1 });
+	            }else{
+					 Crafty.e("2D, Canvas, sand")
+	                    .attr({ x: i * 32, y: j * 32, z:-1 });
+	                }    
+			}
 		}
-	}
-	
-	generateObjects();
+		generateObjects();
 	}
 
+
+	function generateIndoors()
+	{
+		for (i = 0; i < 31; i++)
+		{
+			for (j = 0; j < 21; j++)
+			{
+				Crafty.e("2D, Canvas, tiles")
+                 .attr({ x: i * 32, y: j * 32, z:-1 });
+    		}
+		}
+	}
 
 	function generateObjects(){
 	
@@ -115,15 +140,14 @@ var crafty = function() {
 			for (j = 0; j < 21; j++)
 			{
 				if(i  == 5 && j == 5){
-					  var house  = Crafty.e("2D, Canvas,Image,Collision, house,SetSorting")
+					  var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard")
 					  .collision(new Crafty.polygon([5,0],[110,0],[110,180],[5,180]));
 					  house.image("/static/house.png");
+					  house.setScene("BuildingMotivation");
 					  house.x = 32*i;
 					  house.y = 32*j;
-				   
+					  console.log(house.y);
 				}
-				
-				
 				/*if(i  == 15 && j == 5){
 					  var house  = Crafty.e("2D, Canvas,Image,Collision, house,SetSorting")
 					  .collision(new Crafty.polygon([5,0],[110,0],[110,180],[5,180]));
@@ -164,170 +188,74 @@ var crafty = function() {
             this.multiway(speed, {UP_ARROW: -90, DOWN_ARROW: 90, RIGHT_ARROW: 0, LEFT_ARROW: 180})
             return this;
         }
-        
+	});
+
+
+	Crafty.c('Building',{
+		sceneString:"",
+
+		setScene:function(str){
+			this.sceneString = str;
+		},
+
+		enterBuilding:function(){
+			Crafty.scene(this.sceneString);
+		}
 	});
  
  
 	Crafty.c('SetSorting',{
 	
-	sort:function(alpha,z){
-		this.alpha = alpha;
-		this.z = z;
-		
-	},
+		sort:function(alpha,z){
+			this.alpha = alpha;
+			this.z = z;
+		},
 	
 	});
 
 
 	Crafty.c('NPC',{
 	
-	isCollidingWithPlayer:false,
-	dialogFuction:null,
-	dialogText:"",
+		isCollidingWithPlayer:false,
+		dialogFuction:null,
+		dialogText:"",
 
-	init: function() {
-		this.onHit('player',function(hit){
-			this.isCollidingWithPlayer = true;
-			if(!dialog.inConversation){
-				//show dialog
-			}
-		},function(noHit){
-				//drop dialog
-			this.isCollidingWithPlayer = false;
-			} 
-		)
-		
-		.requires('Keyboard').bind('KeyDown', function () { 
-		if (this.isDown('ENTER') && !Crafty.isPaused() && this.isCollidingWithPlayer){
-			if(!dialog.inConversation)dialog.startDialog(this);
-			if(dialog.finished){
-				dialog.nextDialog();
-			}
-		}
-		})
-     }
-	
-	});
-
-	Crafty.c('AI',{
-
-		walkToPlayer:function(){
-
-		},
-
-		update:function(){
-			walkToPlayer();
-		}
-
-	});
-
-
-	Crafty.c('Player',{
-	
-	house:Object,
-	isCollidingWithHouse: false,
-	dir:0,
-	count:0,
-	mayStop:false,
-	
-	convert:function(obj){
-		if(typeof this.house === obj)return;
-		if(typeof this.house.sort === 'undefined')this.house = obj;
-		
-		this.house.sort(1,1);
-		this.house = obj;
-	},
-
-	resetSorting:function(){
-		
-		if(typeof this.house.sort === 'undefined')return;
-		else this.house.sort(1,1);
-		
-	},
-	
-	Player:function(){
-
-		this.requires("SpriteAnimation")
-		 .animate("walk_left",8,0,10)
-		 .animate("walk_right",11,0,13)
-		 .animate("walk_up",5,0,7)
-		 .animate("walk_down",2,0,4)
-		 .bind('EnterFrame', function() {
-		 
-		 })
-		 .bind("NewDirection",
-			function (direction) {
-				this.dir = direction.y;
-				if (direction.x < 0) {
-					if (!this.isPlaying("walk_left"))
-						this.stop().animate("walk_left", 15, -1);
+		init: function() {
+			this.onHit('player',function(hit){
+				this.isCollidingWithPlayer = true;
+				if(!dialog.inConversation){
+					//show dialog
 				}
-				if (direction.x > 0) {
-					if (!this.isPlaying("walk_right"))
-						this.stop().animate("walk_right", 10, -1);
-				}
-				if (direction.y < 0) {
-					if (!this.isPlaying("walk_up"))
-						this.stop().animate("walk_up", 10, -1);
-				}
-				if (direction.y > 0) {
-					if (!this.isPlaying("walk_down"))
-						this.stop().animate("walk_down", 10, -1);
-				}
-				if(!direction.x && !direction.y) {
-					this.stop();
-				}
-			})
-			.bind('Moved', function(from) {
-						
-                    if(this.hit('house')){
-                    	this.isCollidingWithHouse = true;
-					   if(this.y <= this.hit('house')[0].obj.y+80){
-							this.convert(this.hit('house')[0].obj);
-							this.house.sort(0.5,2);
-						}
-						else{
-							this.attr({x: from.x, y:from.y});
-							if(this.dir.y > 0)this.house.sort(1,1);
-						}
-					}else{
-						this.resetSorting();
-						this.isCollidingWithHouse = false;
-					} 
-
-			})
+			},function(noHit){
+					//drop dialog
+				this.isCollidingWithPlayer = false;
+				} 
+			)
 			
-			.bind('KeyUp', function (e) {
-				
-				if (e.key == 76 && !Crafty.isPaused()){  
-					var doc = document.getElementById("questlog");
-					if(doc.style.display == '')doc.style.display = 'block';
-					
-					else if(doc.style.display == 'block')doc.style.display = '';
-					
-
+			.requires('Keyboard').bind('KeyDown', function () { 
+			if (this.isDown('ENTER') && !Crafty.isPaused() && this.isCollidingWithPlayer){
+				if(!dialog.inConversation)dialog.startDialog(this);
+				if(dialog.finished){
+					dialog.nextDialog();
 				}
-				return true;
-
+			}
 			})
-		}
+	     }
+		
+		});
+
+		Crafty.c('AI',{
+
+			walkToPlayer:function(){
+
+			},
+
+			update:function(){
+				walkToPlayer();
+			}
+	});
+
 	
-	});
-
-
-	Crafty.c("RightControls", {
-        init: function() {
-            this.requires('Multiway');
-      
-        },
-        
-        rightControls: function(speed) {
-            this.multiway(speed, {UP_ARROW: -90, DOWN_ARROW: 90, RIGHT_ARROW: 0, LEFT_ARROW: 180})
-            return this;
-        }
-        
-	});
-
 	Crafty.c("Dialog",{
 	
 		DataText:"",
@@ -338,7 +266,6 @@ var crafty = function() {
 		finished:false,
 		inConversation:false,
 		data:[],
-
 
 		init:function(){
 			this.addComponent("2D, DOM,Color,Text");
@@ -383,6 +310,7 @@ var crafty = function() {
 				Crafty.pause();
 				return true;
 			}
+
 			if(this.DataText == "UPLOAD"){
 				$("#container").show();
 				$(".form2").show();
@@ -406,8 +334,6 @@ var crafty = function() {
 			this.DialogText = "";
 			this.text("");
 			this.TextIndex = 0;
-			
-		
 		},
 	
 		closeDialog:function(){
@@ -419,7 +345,6 @@ var crafty = function() {
 			this.inConversation = false;
 			this.dialogIndex = 0;
 			this.h =  0;
-
 		},
 		
 		startDialog:function(npc){
@@ -429,15 +354,13 @@ var crafty = function() {
 			this.hasStarted = true;
 			this.h = 100;
 			this.inConversation = true;
-			
 		}
-		
 	});    
 
 
 	Crafty.scene("loading", function () {
         //load takes an array of assets and a callback when complete
-        Crafty.load(["/static/Sprite.png","/static/house.png"], function () {
+        Crafty.load(["/static/Sprite.png","/static/house.png","/static/Sprite2.png"], function () {
             Crafty.scene("main"); //when everything is loaded, run the main scene
         });
     });
@@ -446,19 +369,35 @@ var crafty = function() {
     //automatically play the loading scene
     Crafty.scene("loading");
 
-
     Crafty.scene("main", function () {
 
 		generateWorld();
 		
 		 dialog = Crafty.e("Dialog")
 			.attr({ x: 0, y: 500, z: 1});
-		
-		var player1 = Crafty.e("2D,  Canvas, player,Player,RightControls,Collision,Keyboard")
-			.attr({ x: 200, y: 364, z: 1})
+
+		info = Crafty.e("Infolog");
+
+		quest_log = Crafty.e("Questlog")
+		.attr({ x: -150, y: 100, z: 1});
+
+		quest1 = Crafty.e("Quest");
+		quest2 = Crafty.e("Quest");
+		quest3 = Crafty.e("Quest");
+
+		quest1.addQuestInfo("Contact","Need sumbit your cotant info",state.check_name);
+		quest2.addQuestInfo("Cv","Need to upload your cv",state.check_cv);
+		quest3.addQuestInfo("Motivation","Need to upload your motivationLetter",state.check_motivation);
+
+
+		quest_log.addQuest(quest1);
+		quest_log.addQuest(quest2);
+		quest_log.addQuest(quest3);
+
+		player1 = Crafty.e("2D,  Canvas, player,Player,RightControls,Collision,Keyboard,Respawn")
 			.rightControls(2)
 			.Player();
-
+		
 		var player2 = Crafty.e("2D,  Canvas, player,Collision,npc,NPC")
 			.attr({ x: 400, y: 364, z: 1})
 			.dialogFuction = getDialogData1;
@@ -466,14 +405,42 @@ var crafty = function() {
 		var player3 = Crafty.e("2D,  Canvas, player,Collision,npc,NPC")
 			.attr({ x: 700, y: 300, z: 1})
 			.dialogFuction = getDialogData2;
+
+	
 		
 
     });
+	
+	Crafty.scene("BuildingMotivation", function(){
+	
+		generateIndoors();
+
+		info = Crafty.e("Infolog");
+
+		quest_log = Crafty.e("Questlog")
+		.attr({ x: -150, y: 100, z: 1});
+
+		quest1 = Crafty.e("Quest");
+		quest2 = Crafty.e("Quest");
+		quest3 = Crafty.e("Quest");
+
+		quest1.addQuestInfo("Contact","Need sumbit your cotant info",state.check_name);
+		quest2.addQuestInfo("Cv","Need to upload your cv",state.check_cv);
+		quest3.addQuestInfo("Motivation","Need to upload your motivationLetter",state.check_motivation);
+
+		quest_log.addQuest(quest1);
+		quest_log.addQuest(quest2);
+		quest_log.addQuest(quest3);
+
+		var player1 = Crafty.e("2D,  Canvas, player,Player,RightControls,Collision,Keyboard")
+			.attr({ x: 20, y: 20, z: 1})
+			.rightControls(2)
+			.Player();
+
+		Crafty.scene("main");
+	});
 
     return {
-    	start:function(){
-
-    	},
     	"crafty": Crafty,
     	"init_game": Crafty.init(900,600)
     }
