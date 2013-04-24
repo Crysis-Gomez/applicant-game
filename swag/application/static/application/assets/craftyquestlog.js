@@ -5,7 +5,7 @@ Crafty.c("Infolog",{
 			this.y = 0;
 			this.z = 1;
 			this.w = 250;  
-			this.h = 100;
+			this.h = 0;
 			this.color("#eee");
 		}
 	});
@@ -27,17 +27,24 @@ Crafty.c("Infolog",{
 			this.popDown = false;
 			this.arrayIndex = 0;
 			this.maySelected = false;
+			this.slideSpeed = 10;
+			this.maxPosition= 10;
+			this.minPosition = -150;
+			this.marginX = 5;
+			this.marginY = 30;
+			this.infoLogHeight = 100;
 
 			this.bind('EnterFrame', function() {
-				if(this.popUp && this.x < 10)this.x+=5;
-				if(this.popDown && this.x  > -150) this.x-=5;
+				if(this.popUp && this.x < this.maxPosition)this.x+=this.slideSpeed;
+				if(this.popDown && this.x  > this.minPosition) this.x-=this.slideSpeed;
 
-				if(this.x == 10 && this.maySelected == false){
+				if(this.x >= this.maxPosition && this.maySelected == false){
 					this.goselect();
 					this.maySelected = true;
+					this.infolog.h = this.infoLogHeight;
 				}
 
-				if(this.x < -140) this.maySelected = false;
+				if(this.x <= this.minPosition+this.maxPosition) this.maySelected = false;
 
 			});
 
@@ -88,7 +95,7 @@ Crafty.c("Infolog",{
 		show:function(){
 			this.infolog.x = this.x+this.w;
 			this.infolog.y = this.y;
-			this.h = this.array.length *100;
+			this.h = this.array.length *100; //make the questlog background longer
 			this.attachAllQuests();
 			for (var i = 0; i < this.array.length; i++) {
 				this.array[i].showText();
@@ -115,15 +122,13 @@ Crafty.c("Infolog",{
 
 		addQuest:function(quest){
 			this.array.push(quest);
-			quest.x = this.x+5;
-			quest.y = this.y +30*this.array.length;
+			quest.x = this.x + this.marginX;
+			quest.y = this.y + this.marginY*this.array.length;
 			this.detachAllQuests();
 			quest.z =1;
 			quest.infolog = this.infolog;
 			quest.questlog = this;
 			this.show();
-			this.infolog.h =0; 
-
 		}
 
 	});
@@ -162,8 +167,6 @@ Crafty.c("Infolog",{
 
 			if(this.isSelected) this.color("#ccc");
 			else this.color("#eee");
-			
-            this.infolog.h = 100;
            	this.infolog.text('<div style="margin-top:12px;">' + this.info);
 		},
 

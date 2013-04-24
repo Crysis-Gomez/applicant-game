@@ -51,7 +51,7 @@ Crafty.c('Player',{
 				this.dir = direction.y;
 				if (direction.x < 0) {
 					if (!this.isPlaying("walk_left"))
-						this.stop().animate("walk_left", 15, -1);
+						this.stop().animate("walk_left", 10, -1);
 				}
 				if (direction.x > 0) {
 					if (!this.isPlaying("walk_right"))

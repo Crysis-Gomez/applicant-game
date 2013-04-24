@@ -75,7 +75,7 @@ function sendMotivation()
                // text = response['motivation']['result'];
                 window.state.update('has_motivation', 'True');
                 var game = window.game.crafty.pause(false);
-
+                window.quest_log.update();
                 $("#container").hide();
                 $("#id_attachment").hide();
                 $(".letter").hide();

@@ -4,7 +4,7 @@ var state = function() {
 	this.has_cv = '{{ game.has_cv }}';
 	this.has_motivation = '{{game.has_motivation}}';
 	this.playerPositionx = 50;
-	this.playerPositiony = 50;
+	this.playerPositiony = 50;///django shit doen.
 	
 	var that = this;
 
@@ -79,7 +79,8 @@ var state = function() {
 	}
 }();
 
-var quest_log; 
+var quest_log;
+var TILE_SIZE = 32; 
 	
 
 
@@ -87,14 +88,14 @@ var crafty = function() {
 
     Crafty.init(990, 600);
 
-    Crafty.sprite(32, "/static/Sprite.png", {
+    Crafty.sprite(TILE_SIZE, "/static/Sprite.png", {
 		grass:[0,0],
 		sand:[1,0],
 		player:[2,0]
   
     });
 
-    Crafty.sprite(32, "/static/Sprite2.png", {
+    Crafty.sprite(TILE_SIZE, "/static/Sprite2.png", {
 		 tiles:[0,0]
     });
 
@@ -109,10 +110,10 @@ var crafty = function() {
 				if(i != 10  && j != 15){
 					
 					Crafty.e("2D, Canvas, grass")
-	                    .attr({ x: i * 32, y: j * 32, z:-1 });
+	                    .attr({ x: i * TILE_SIZE, y: j * TILE_SIZE, z:-1 });
 	            }else{
 					 Crafty.e("2D, Canvas, sand")
-	                    .attr({ x: i * 32, y: j * 32, z:-1 });
+	                    .attr({ x: i * TILE_SIZE, y: j * TILE_SIZE, z:-1 });
 	                }    
 			}
 		}
@@ -127,7 +128,7 @@ var crafty = function() {
 			for (j = 0; j < 21; j++)
 			{
 				Crafty.e("2D, Canvas, tiles")
-                 .attr({ x: i * 32, y: j * 32, z:-1 });
+                 .attr({ x: i * TILE_SIZE, y: j * TILE_SIZE, z:-1 });
     		}
 		}
 	}
@@ -144,9 +145,8 @@ var crafty = function() {
 					  .collision(new Crafty.polygon([5,0],[110,0],[110,180],[5,180]));
 					  house.image("/static/house.png");
 					  house.setScene("BuildingMotivation");
-					  house.x = 32*i;
-					  house.y = 32*j;
-					  console.log(house.y);
+					  house.x = TILE_SIZE*i;
+					  house.y = TILE_SIZE*j;
 				}
 				/*if(i  == 15 && j == 5){
 					  var house  = Crafty.e("2D, Canvas,Image,Collision, house,SetSorting")
@@ -266,6 +266,8 @@ var crafty = function() {
 		finished:false,
 		inConversation:false,
 		data:[],
+		maxHeight:100,
+		minHeight:0,
 
 		init:function(){
 			this.addComponent("2D, DOM,Color,Text");
@@ -301,8 +303,8 @@ var crafty = function() {
 			if(!Crafty.isPaused()) this.dialogIndex += 1;
 			
 
-			this.DataText = this.data[this.dialogIndex];
-			if(this.DataText == "CONTACT"){
+			this.DataText = this.data[this.dialogIndex]; 
+			if(this.DataText == "CONTACT"){ 
 				$("#container").show();
 				$("#contact").show();
 				$(".form").show();
@@ -344,7 +346,7 @@ var crafty = function() {
 			this.finished = false;
 			this.inConversation = false;
 			this.dialogIndex = 0;
-			this.h =  0;
+			this.h =  this.minHeight;
 		},
 		
 		startDialog:function(npc){
@@ -352,7 +354,7 @@ var crafty = function() {
 			this.data = npc.dialogFuction(state);
 			this.DataText = this.data[this.dialogIndex];
 			this.hasStarted = true;
-			this.h = 100;
+			this.h = this.maxHeight;
 			this.inConversation = true;
 		}
 	});    
