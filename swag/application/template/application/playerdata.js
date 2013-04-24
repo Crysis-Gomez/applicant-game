@@ -1,31 +1,85 @@
+var isFreeFrom = false;
+
+function freeForm()
+{
+    $("#container").show();
+    $("#id_entry").show();
+    $(".letter").show();
+    $(".Choice").hide();
+    document.getElementById("id_entry").focus();
+    document.getElementById("freeformbutton").blur();
+    isFreeFrom = true;
+}
+
+function uploadDocument()
+{
+    $("#container").show();
+    $("#id_attachment").show();
+    $(".letter").show();
+    $(".Choice").hide();
+    document.getElementById("uploaddocumentbutton").blur();
+    isFreeFrom:false;
+}
+
+
 function sendMotivation()
 {
-
+    var img, reader, file;
     var entry = document.getElementById("id_entry");
+    var form = document.getElementById("id_attachment");
+    document.getElementById("letterbutton").blur();
     var formdata;
-
-    console.log(entry);
+    var uploadURL = "";
     if (window.FormData) {
         formdata = new FormData();
+
+    }
+
+    if(isFreeFrom){
+        uploadURL = "/uploadmotivation/{{game.uid}}/";
+    }else{
+      uploadURL = "/uploadfilemotivation/{{game.uid}}/";
+          for ( i=0, len=form.files.length; i < len; i++   ) {
+                file = form.files[i];
+        
+                if ( window.FileReader ) {
+                    reader = new FileReader();
+                    reader.onloadend = function (e) { 
+                        showUploadedItem(e.target.result, file.fileName);
+                    };
+                    reader.readAsDataURL(file);
+                }
+                if (formdata) {
+                    formdata.append('title', "CV");
+                    formdata.append('document', file);
+                }
+        }  
+    } 
+
+    
+
+    if(entry.value.length > 0){
         formdata.append('entry',entry.value);
     }
 
 
     if (formdata) {
         $.ajax({
-            url: "/uploadmotivation/{{game.uid}}/",
+            url: uploadURL,
             type: "POST",
             data: formdata,
             processData: false,
             contentType: false,
             success: function (res) {
                 response = JSON.parse(res);
-                text = response['motivation']['result'];
-  
-                var game = window.game.crafty.init(900, 600);
-
-                   $(".container").hide();
-                   $(".letter").hide();
+               // text = response['motivation']['result'];
+                window.state.update('has_motivation', 'True');
+                var game = window.game.crafty.pause(false);
+                window.quest_log.update();
+                $("#container").hide();
+                $("#id_attachment").hide();
+                $(".letter").hide();
+                $("#id_entry").hide();
 
             }
         });
@@ -37,7 +91,7 @@ function sendContactInfo()
 {
     var name = document.getElementById("id_name");
     var email = document.getElementById("id_email");
-
+    document.getElementById("contactButton").blur();
     if (window.FormData) {
         formdata = new FormData();
         formdata.append('name', name.value);
@@ -64,10 +118,10 @@ function sendContactInfo()
                     //$("#myinfo").hide();
                     $(".form").hide();
                     $("#container").hide();
-                    window.state.update('name', name.value);
+                    window.state.update('player_name', name.value);
                     var game = window.game.crafty.pause(false);
+                    window.quest_log.update();
                     
-                    document.getElementById("contactButton").blur();
                     //remo       
                 //} 
 
@@ -77,21 +131,20 @@ function sendContactInfo()
 
 }
 
+
 function showUploadedItem (source) {
         return true;
 }
 
 function restartCrafty(){
 
-    console.log("restartCrafty");
     var game = window.game.crafty.init(900, 600);
 }   
 
 function sendFiles(){
-
-  form = document.getElementById("id_document");
+    document.getElementById("cvButton").blur();
+    form = document.getElementById("id_document");
   //document.getElementById("success_div").innerHTML = "Uploading . . ."
-        console.log("SENDING FILES");
         var img, reader, file;
         formdata = new FormData();
       
@@ -120,21 +173,11 @@ function sendFiles(){
                 contentType: false,
                 success: function (res) {
                     response = JSON.parse(res);
-                    console.log(response);
                     $("#container").hide();
                     $(".form2").hide();
                     window.state.update('has_cv', 'True');
                     var game = window.game.crafty.pause(false);
-                    //document.getElementById("cvButton").blur();
-                    //document.getElementById("success_div").innerHTML = response['file_upload']['result']; 
-                        // $(hide_id).hide();
-                        // $("#container").hide();
-                        // $(".letter").hide();
-                        // $(".form").hide();
-                        // $(".form2").hide();
-             
-                        // if(callback)callback();
-                        
+                    window.quest_log.update()
                 }
             });
         }
@@ -149,9 +192,6 @@ $(document).ready(function() {
     {% endif %}
 
     (function () {
-
-    //var input2 = document.getElementById("id_attachment"),
-        //formdata = false;
         
     function showUploadedItem (source) {
         return true;

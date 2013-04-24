@@ -4,6 +4,7 @@ body {background-color:#c0c0c0;
 .form
 {
 	 z-index:3;
+     display: none;
 }
 .form2
 {
@@ -15,6 +16,74 @@ body {background-color:#c0c0c0;
 {
 
 	display: none;
+}
+.Choice
+{
+
+    display: none;
+}
+
+#quest_row
+{
+
+    background-color: #eee;
+}
+
+
+#quest_row:hover
+{
+    background-color: #ccc;
+    cursor:pointer;
+}
+
+
+
+#quest_title
+{
+    z-index:3;
+    width:50px;
+    height:40px;
+}
+
+#quest_container
+{
+
+    float: left;
+    width:200px;
+
+}
+
+#quest_info
+{
+    width:150px;
+    float: left;
+    margin-left:50px;
+
+}
+
+#questlog
+{
+    z-index:3;
+    width:400px;
+    height:200px;
+    position:absolute;
+    background-color:#eee;
+    border:1px solid #0F0;
+    left:50%;
+    top:50%;
+    padding:15px;
+    margin:-100px 0 0 -150px;
+    display: none;
+}
+
+#id_attachment
+{
+    display: none;
+}
+
+#id_entry
+{
+    display: none;
 }
 
 
@@ -30,8 +99,8 @@ body {background-color:#c0c0c0;
 
 #container
 {
-	width:200px;
-    height:150px;
+	width:450px;
+    height:250px;
     position:absolute;
     background-color:#eee;
     border:1px solid #0F0;
@@ -41,14 +110,12 @@ body {background-color:#c0c0c0;
     margin:-100px 0 0 -150px;
     z-index:4;
     display: none;
-
 }
 
 
 #cr-stage
 {
 	margin: auto;
-	
 
 	
 }

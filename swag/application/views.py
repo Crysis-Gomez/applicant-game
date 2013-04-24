@@ -51,26 +51,9 @@ def playerdatajs(request, unique_id):
     game = GameInstance.objects.get(uid=unique_id)
     context = {'game': game}
 
-    has_motivation_letter = False
-    has_cv = False
-
-    # try:
-    #     application_document = get_object_or_404(CvDocument, game_instance=game)
-    #     if application_document.motivation_letter is not None:
-    #         has_motivation_letter = True
-
-    #     try:
-    #         if application_document.attachment is not None and len(application_document.attachment) > 0:
-    #             has_cv = True
-
-    #     except ValueError, ve:
-    #         has_cv = False
-    # except Http404:
-    #print("got it")
-
     contact_info = get_contact_info(game)
     print game.player_email, game.player_name
-    context.update({'contact_info': contact_info, 'has_motivation_letter': has_motivation_letter, 'has_cv': has_cv})
+    context.update({'contact_info': contact_info, 'has_motivation_letter': game.has_motivation, 'has_cv': game.has_cv})
 
     print 'Contact info: %s' % contact_info
 
@@ -81,7 +64,6 @@ def play(request, unique_id):
 
     try:
         game = get_object_or_404(GameInstance, uid=unique_id)
-        # game = GameInstance.objects.get(uid=unique_id)
     except Http404:
         return HttpResponseRedirect('/')
     context = dict(request)
@@ -139,28 +121,6 @@ def handle_uploaded_file(submitted_file, title, unique_id):
     return False
 
 
-def handle_uploaded_motivation(submitted_file, title, unique_id):
-
-    game = GameInstance.objects.get(uid=unique_id)
-    name = "{name}-{title}".format(name=game.player_name, title=title)
-
-    motivation_letter = MotivationLetter()
-
-    try:
-        motivation_letter = get_object_or_404(MotivationLetter, game_instance=game)
-    except Http404:
-        motivation_letter.game_instance = game
-        motivation_letter.title = name
-        submitted_file.name = "{uid}-{filename}".format(uid=unique_id, filename=submitted_file.name)
-        motivation_letter.attachment = submitted_file
-        motivation_letter.save()
-
-        print("UPLOAD CV")
-        return True
-
-    return False
-
-
 @csrf_exempt
 def process_motivation_letter(request, unique_id):
 
@@ -172,6 +132,7 @@ def process_motivation_letter(request, unique_id):
 
     if not form.is_valid():
         error = form.errors
+
         upload_state['success'] = json.dumps(error)
     else:
         try:
@@ -206,6 +167,50 @@ def process_contact(request, unique_id):
 
 
 @csrf_exempt
+def handle_uploaded_motivation(submitted_file, title, unique_id):
+
+    game = GameInstance.objects.get(uid=unique_id)
+    name = "{name}-{title}".format(name=game.player_name, title=title)
+
+    motivation_letter = MotivationLetter()
+
+    try:
+        motivation_letter = get_object_or_404(MotivationLetter, game_instance=game)
+    except Http404:
+        motivation_letter.game_instance = game
+        motivation_letter.title = name
+        submitted_file.name = "{uid}-{filename}".format(uid=unique_id, filename=submitted_file.name)
+        motivation_letter.attachment = submitted_file
+        motivation_letter.save()
+        return True
+
+    return False
+
+
+@csrf_exempt
+def process_motivation_upload(request, unique_id):
+
+    upload_state = {"action": "file_upload", 'success': 'false'}
+    if not request.method == "POST":
+        return render(request, "results_template.js", upload_state, content_type="application/json")
+
+    form = UploadFileForm(request.POST, request.FILES)
+    if form.is_valid():
+        upload_success = True
+        upload_success = handle_uploaded_motivation(request.FILES['document'], form.cleaned_data['title'], unique_id)
+
+        if upload_success:
+            upload_state['success'] = 'Thanks for submitting'
+        else:
+            upload_state['success'] = 'did you try to re-upload? Thats not possible at the moment!'
+    else:
+        print(form.errors)
+        upload_state['success'] = json.dumps(form.errors)
+
+    return render(request, "results_template.js", upload_state, content_type="text/html")
+
+
+@csrf_exempt
 def process_upload(request, unique_id):
 
     upload_state = {"action": "file_upload", 'success': 'false'}
@@ -231,5 +236,4 @@ def process_upload(request, unique_id):
         upload_state['success'] = json.dumps(form.errors)
 
     return render(request, "results_template.js", upload_state, content_type="text/html")
-
 

@@ -3,6 +3,9 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/style.css">
     <script type="text/javascript" src="/static/crafty.js"></script>
+    <script type="text/javascript" src="/static/player.js"></script>
+    <script type="text/javascript" src="/static/craftyquestlog.js"></script>
+    <script type="text/javascript" src="/static/npc.js"></script>
     <script type="text/javascript" src="/{{instance_id}}/game.js"></script>
     <script type="text/javascript" src="/{{instance_id}}/playerdata.js">
     </script>
@@ -28,13 +31,20 @@
         {{letter.as_table}}
       
         </table> 
-         <button type="button" onclick="sendFiles(id_attachment,restartCrafty)">Send motivation</button>
+         <button id="letterbutton"  type="button" onclick="sendMotivation()">Send motivation</button>
          <!--<div id="success_div" name="response">Response will be placed here on submit.</div>-->
     </div>
     {%endif%}
 
     {% endblock %}
 
+
+    <div class="Choice">
+        <button id="freeformbutton" type="button" onclick="freeForm()">Free From</button>
+        
+        <button id="uploaddocumentbutton" type="button" onclick="uploadDocument()">Upload document</button>
+
+    </div>
 
 
 
@@ -73,43 +83,47 @@
     {{ form.as_table }}
     
     {% for error in form.errors %}
-    {{error}}
+    {{error}}!
     {% endfor %}
     
     </table> 
     
-    <button type="button" onclick="sendFiles(id_document)">Send CV</button>
+    <button type="button" id="cvButton" onclick="sendFiles(id_document)">Send CV</button>
 </form2>
 
-
+<div id="success_div" name="response">Response will be placed here on submit.</div>
 
 {%endif%}
 {% endblock %}
 </div>
-<div id="success_div" name="response">Response will be placed here on submit.</div>
+
 </div>
+
+ <div id="questlog" class="questlog">
+
+    <div id="quest_title" class="quest_title">
+        Questlog
+    </div>
+
+    <table id="quest_container" class="quest_container">
+
+       
+    </table>
+    <div id="quest_info">info of quest
+
+
+    </div>
+
+
+    </div>
+
+
 
 <div id="cr-stage">
 
-    <!--<div id="uploadcontainer">
-        <div id="contact">
-                <div id="name" > </div>
-                <div id="mail" > </div>
-                <button id="contactButton" type="button" onclick="sendContactInfo()">Submit contact</button>
-        </div>
-
-
-        <div id="cv">
-         <form enctype="multipart/form-data" method="post" name="uploading"> 
-            <input type="file" name="datafile" size="40">
-            <button id="cvButton" type="button" onclick="sendFiles()">Submit CV</button>
-        
-        </form>
-        </div>
-    </div> -->   
+   
+     
 </div>
-
-
 
 </body>
 </html>
