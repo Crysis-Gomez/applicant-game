@@ -30,26 +30,34 @@ function sendMotivation()
     document.getElementById("letterbutton").blur();
     var formdata;
     var uploadURL = "";
-    if (window.FormData) {
+    if (window.FormData)
+    {
         formdata = new FormData();
 
     }
 
-    if(isFreeFrom){
+    if(isFreeFrom)
+    {
         uploadURL = "/uploadmotivation/{{game.uid}}/";
-    }else{
+    }
+    else
+    {
       uploadURL = "/uploadfilemotivation/{{game.uid}}/";
-          for ( i=0, len=form.files.length; i < len; i++   ) {
+          for ( i=0, len=form.files.length; i < len; i++)
+          {
                 file = form.files[i];
         
-                if ( window.FileReader ) {
+                if (window.FileReader)
+                {
                     reader = new FileReader();
-                    reader.onloadend = function (e) { 
+                    reader.onloadend = function (e)
+                    { 
                         showUploadedItem(e.target.result, file.fileName);
                     };
                     reader.readAsDataURL(file);
                 }
-                if (formdata) {
+                if (formdata)
+                {
                     formdata.append('title', "CV");
                     formdata.append('document', file);
                 }
@@ -58,19 +66,22 @@ function sendMotivation()
 
     
 
-    if(entry.value.length > 0){
+    if(entry.value.length > 0)
+    {
         formdata.append('entry',entry.value);
     }
 
 
-    if (formdata) {
+    if (formdata)
+    {
         $.ajax({
             url: uploadURL,
             type: "POST",
             data: formdata,
             processData: false,
             contentType: false,
-            success: function (res) {
+            success: function (res)
+            {
                 response = JSON.parse(res);
                // text = response['motivation']['result'];
                 window.state.update('has_motivation', 'True');
@@ -92,21 +103,24 @@ function sendContactInfo()
     var name = document.getElementById("id_name");
     var email = document.getElementById("id_email");
     document.getElementById("contactButton").blur();
-    if (window.FormData) {
+    if (window.FormData)
+    {
         formdata = new FormData();
         formdata.append('name', name.value);
         formdata.append('email', email.value);
         //formdata.append('email', $("#id_email").val()) 
     }
 
-       if (formdata) {
+       if (formdata) 
+       {
         $.ajax({
             url: "/uploadcontact/{{game.uid}}/",
             type: "POST",
             data: formdata,
             processData: false,
             contentType: false,
-             success: function (res) {
+             success: function (res)
+             {
                 //response = JSON.parse(res)
 
                 //text = response['contact']['result'];
@@ -132,46 +146,55 @@ function sendContactInfo()
 }
 
 
-function showUploadedItem (source) {
+function showUploadedItem (source)
+{
         return true;
 }
 
-function restartCrafty(){
+function restartCrafty()
+{
 
     var game = window.game.crafty.init(900, 600);
 }   
 
-function sendFiles(){
+function sendFiles()
+{
     document.getElementById("cvButton").blur();
     form = document.getElementById("id_document");
   //document.getElementById("success_div").innerHTML = "Uploading . . ."
         var img, reader, file;
         formdata = new FormData();
       
-        for ( i=0, len=form.files.length; i < len; i++   ) {
+        for ( i=0, len=form.files.length; i < len; i++) 
+        {
             file = form.files[i];
     
-            if ( window.FileReader ) {
+            if (window.FileReader)
+            {
                 reader = new FileReader();
-                reader.onloadend = function (e) { 
+                reader.onloadend = function (e)
+                { 
                     showUploadedItem(e.target.result, file.fileName);
                 };
                 reader.readAsDataURL(file);
             }
-            if (formdata) {
+            if (formdata)
+            {
                 formdata.append('title', "CV");
                 formdata.append('document', file);
             }
         }
     
-        if (formdata) {
+        if (formdata)
+        {
             $.ajax({
                 url: "/submitfile/{{game.uid}}/",
                 type: "POST",
                 data: formdata,
                 processData: false,
                 contentType: false,
-                success: function (res) {
+                success: function (res)
+                {
                     response = JSON.parse(res);
                     $("#container").hide();
                     $(".form2").hide();
@@ -183,7 +206,8 @@ function sendFiles(){
         }
 }
 
-$(document).ready(function() {
+$(document).ready(function()
+{
      window.game = crafty();
      var game = window.game.crafty.init(900, 600);
     {% if contact_info == 'yes' %}
@@ -191,13 +215,16 @@ $(document).ready(function() {
 
     {% endif %}
 
-    (function () {
+    (function ()
+    {
         
-    function showUploadedItem (source) {
+    function showUploadedItem (source)
+    {
         return true;
     }   
 
-    if (window.FormData) {
+    if (window.FormData) 
+    {
         formdata = new FormData();
 
     }

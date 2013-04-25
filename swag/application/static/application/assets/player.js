@@ -6,14 +6,23 @@ Crafty.c('Respawn',{
 	}
 })
 
+
+Crafty.c('StatePosition',{
+		
+	update:function(){
+		state.setPosition(this.x,this.y);
+	}
+})
+
 Crafty.c('Player',{
 	
 	house:Object,
 	isCollidingWithHouse: false,
-	isCollindingAbove:false,
+	isCollindingWithDoor:false,
 	dir:0,
 	count:0,
 	mayStop:false,
+
 	
 	convert:function(obj){
 		if(typeof this.house === obj)return;
@@ -32,10 +41,69 @@ Crafty.c('Player',{
 		if(typeof this.house.sort === 'undefined')return;
 		else this.house.sort(1,1);
 	},
-	
-	Player:function(){
+
+	stopMovement:function(){
+		this.speed = 0;
+		if (this._movement) {
+			this.x -= this._movement.x;
+			this.y -= this._movement.y;
+		}
+	},
+
+
+	enterCollisionHouse:function(e){
+
+		this.house = e[0].obj;
+		
+		if(this.y <= this.house.y+80){
+			this.convert(this.house);
+			this.house.sort(0.5,2);
+
+		}
+		else
+		{
+			if(this.dir > 0 && this.y <= this.house.y+80)this.house.sort(0.5,2);
+			this.stopMovement();
+			this.isCollidingWithHouse = true;
+			
+		}
+	},
+
+	enterCollisionMachine:function(e){
+		this.stopMovement();
+		Crafty.scene("Game");
+		
+	},
+
+
+	exitCollisionMachine:function(e){
+		
+		
+	},
+
+
+	enterCollisionDoor:function(e){
+		this.stopMovement();
+		this.isCollindingWithDoor = true;
+	},
+
+	exitCollisionHouse:function(){
+		this.house.sort(1,1);
+	},
+
+
+	enterCollisionWall:function(e){
+
+		this.stopMovement();
+		
+	},
+
+
+	Player:function(func){
 
 		this.z = 1;
+		this.collisionFunction = func;
+		
 		this.requires("SpriteAnimation")
 		 .animate("walk_left",8,0,10)
 		 .animate("walk_right",11,0,13)
@@ -69,54 +137,66 @@ Crafty.c('Player',{
 					this.stop();
 				}
 			})
-		.bind('Moved', function(from) {
-			state.setPosition(this.x,this.y);
 
-        	if(this.hit('house')){
-            	this.house = this.hit('house')[0].obj;
-				if(this.y <= this.hit('house')[0].obj.y+80){
-					this.convert(this.house);
-					this.house.sort(0.5,2);
-				}
-				else{
-					this.isCollidingWithHouse = true;
-					this.attr({x: from.x, y:from.y});
-					if(this.dir < 0)this.house.sort(1,1);
-					else if(this.dir > 0) this.isCollidingWithHouse = false;
-				}
-			}else{
-					this.resetSorting();
-					this.isCollidingWithHouse = false;
-				} 
+		.bind('Moved',function(){
+			
+			if(this.update)this.update();
+			
+			if(this.isCollidingWithHouse)
+			{
+				this.isCollidingWithHouse = false;
+			}
+			if(this.isCollindingWithDoor)
+			{
+				this.isCollindingWithDoor = false;
+			}
 		})
-		 .requires('Keyboard').bind('KeyDown', function () { 
-			if (this.isDown('ENTER') && this.isCollidingWithHouse){
 
-				this.enterHouse();
+		.requires('Keyboard').bind('KeyDown', function () { 
+
+			if (this.isDown('ENTER'))
+			{
+				if(this.isCollidingWithHouse && state.checkMayUploadCV())
+				{
+					this.enterHouse();
+					this.isCollidingWithHouse = false;
+				}
+
+				if(this.isCollindingWithDoor)
+				{
+					Crafty.scene("main");
+					this.isCollindingWithDoor = false;
+				}
 			}
 		})
 			
 		.bind('KeyUp', function (e) {
 			if (e.key == 76 && !Crafty.isPaused()){
 				if(quest_log.x  <= -150)quest_log.Up();
-				 	else if(quest_log.x >=  10)quest_log.Out(); 
+				else if(quest_log.x >=  10)quest_log.Out(); 
 			}
 				return true;
 
 			})
-		}
-	
-	});
+
+		.onHit("house",this.enterCollisionHouse,this.exitCollisionHouse)
+		.onHit("Door",this.enterCollisionDoor)
+		.onHit("Wall",this.enterCollisionWall)
+		.onHit("Machine",this.enterCollisionMachine,this.exitCollisionMachine);
+		
+	}
+
+});
 
 
-	Crafty.c("RightControls", {
-        init: function() {
-            this.requires('Multiway');
-        },
-        
-        rightControls: function(speed) {
-            this.multiway(speed, {UP_ARROW: -90, DOWN_ARROW: 90, RIGHT_ARROW: 0, LEFT_ARROW: 180})
-            return this;
-        }
-        
-	});
+Crafty.c("RightControls", {
+    init: function() {
+        this.requires('Multiway');
+    },
+    
+    rightControls: function(speed) {
+        this.multiway(speed, {UP_ARROW: -90, DOWN_ARROW: 90, RIGHT_ARROW: 0, LEFT_ARROW: 180})
+        return this;
+    }
+    
+});
