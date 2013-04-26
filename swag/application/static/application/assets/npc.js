@@ -40,19 +40,24 @@ function getDialogData2(state)
 
  	if(!state.check_name())
  	{
- 		data = ["Richard: pls sumbit your name and e-mail at Bob"];
+ 		data = ["Richard: pls sumbit your name and e-mail at Bob and your first task"];
  	}
-	else if(!state.check_motivation())
+	else if(!state.check_motivation() && !state.checkUnlockedMotivationQuest())
 	{
 		 	data = ["Richard: Hi " + state.name(),
-					"Richard: Here you will upload your motivation letter",
-					MOTIVATION,
-					"Richard: THX for Uploading!!!."];
+					"Richard: you can upload you motivation letter at the other building",
+					 QUEST,
+					"Richard: Good luck."];
+	}
+	else if(!state.check_motivation() && state.checkUnlockedMotivationQuest())
+	{
+		data = ["Richard: Hi " + state.name(),
+		"Richard: Time upload you motivation man"];
 	}
 	else
 	{
 		data = ["Richard: Hi " + state.name(),
-		"Richard: It's time to kick some ass!"];
+		"Richard: Time to kick some ass"];
 	}
 
 	return data;
@@ -64,7 +69,6 @@ function uploadCV()
 
 	document.getElementById("form2").style.display = 'block';
 	document.getElementById("container").style.display = 'block';
-	console.log("hit");
 	return (Crafty.pause(true));
 }
 
@@ -80,12 +84,14 @@ function uploadContact()
 
 function uploadMotivation()
 {
+	document.getElementById("container").style.display = 'block';
+	document.getElementById("choice").style.display = 'block';
 	return false;
 }
 
 function addQuest(npc)
 {
-	quest_log.addQuest(npc.quest);
+	quest_log.addQuest(npc.quest,true);
 
 	return true;
 }

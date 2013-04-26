@@ -11,6 +11,7 @@ Crafty.c('StatePosition',{
 		
 	update:function(){
 		state.setPosition(this.x,this.y);
+
 	}
 })
 
@@ -50,7 +51,6 @@ Crafty.c('Player',{
 		}
 	},
 
-
 	enterCollisionHouse:function(e){
 
 		this.house = e[0].obj;
@@ -69,18 +69,27 @@ Crafty.c('Player',{
 		}
 	},
 
+	enterCollisionMachine2:function(e){
+		this.stopMovement();
+		Crafty.scene("Game2");
+		
+	},
+
+	exitCollisionMachine2:function(e){
+		
+		
+	},
+
 	enterCollisionMachine:function(e){
 		this.stopMovement();
 		Crafty.scene("Game");
 		
 	},
 
-
 	exitCollisionMachine:function(e){
 		
 		
 	},
-
 
 	enterCollisionDoor:function(e){
 		this.stopMovement();
@@ -110,7 +119,7 @@ Crafty.c('Player',{
 		 .animate("walk_up",5,0,7)
 		 .animate("walk_down",2,0,4)
 		 .bind('EnterFrame', function() {
-		 
+
 		 })
 		
 
@@ -156,7 +165,8 @@ Crafty.c('Player',{
 
 			if (this.isDown('ENTER'))
 			{
-				if(this.isCollidingWithHouse && state.checkMayUploadCV())
+
+				if(this.isCollidingWithHouse && state.checkUnlockedCVQuest())
 				{
 					this.enterHouse();
 					this.isCollidingWithHouse = false;
@@ -182,8 +192,8 @@ Crafty.c('Player',{
 		.onHit("house",this.enterCollisionHouse,this.exitCollisionHouse)
 		.onHit("Door",this.enterCollisionDoor)
 		.onHit("Wall",this.enterCollisionWall)
-		.onHit("Machine",this.enterCollisionMachine,this.exitCollisionMachine);
-		
+		.onHit("Machine",this.enterCollisionMachine,this.exitCollisionMachine)
+		.onHit("Machine2",this.enterCollisionMachine2,this.exitCollisionMachine2);	
 	}
 
 });

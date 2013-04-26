@@ -20,10 +20,13 @@ class Vacancy(models.Model):
 class GameInstance(models.Model):
     uid = models.CharField(max_length=200)
     progress = models.IntegerField(default=0)
-    player_position_y = models.IntegerField(default=0)
-    player_position_y = models.IntegerField(default=0)
+    player_position_y = models.IntegerField(default=5)
+    player_position_x = models.IntegerField(default=5)
+    player_cv_unlockedQuest = models.BooleanField(default=False)
+    player_motivation_uplockedQuest = models.BooleanField(default=False)
     player_name = models.CharField(max_length=50)
     player_email = models.CharField(max_length=100)
+
     vacancy = models.ForeignKey(Vacancy)
 
     def __unicode__(self):
@@ -74,5 +77,3 @@ class MotivationLetter(models.Model):
 
     def __unicode__(self):
         return str(self.title)
-
-

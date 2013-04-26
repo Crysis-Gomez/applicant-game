@@ -232,3 +232,24 @@ $(document).ready(function()
     }());
 
 });
+
+
+    function sendQuest(id)
+    {
+          formdata = new FormData();
+          formdata.append('quest_id',id.toString());
+          console.log("sendQuest");
+          console.log(id)
+         
+            $.ajax({
+                url: "/uploadQuest/{{game.uid}}/",
+                type: "POST",
+                data: formdata,
+                processData: false,
+                contentType: false,
+                 success: function (res)
+                 {
+                    
+                }
+            });
+    }

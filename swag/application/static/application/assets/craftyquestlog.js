@@ -117,34 +117,51 @@ Crafty.c("Infolog",{
 		},
 
 		attachAllQuests:function(){
+
+
 			for (var i = 0; i < this.array.length; i++)
 			{
 				 this.attach(this.array[i]);
 			}
+			this.attach(info);
+
 		},
 
 		detachAllQuests:function(){
+			
+			this.detach(info)
+
 			for (var i = 0; i < this.array.length; i++)
 			{
 				 this.detach(this.array[i]);
 			}
+
+			this.h = this.array.length*30 +100;
+
+			this.attachAllQuests();
 		},
 
-		addQuest:function(quest){
-			this.h = this.array.length *100;
+		addQuest:function(quest,condition){
+			this.detachAllQuests();
 			this.array.push(quest);
 			quest.x = this.x + this.marginX;
 			quest.y = this.y + this.marginY*this.array.length;
 			quest.h = 30;
-			this.detachAllQuests();
 			quest.z =1;
 			quest.infolog = this.infolog;
 			quest.questlog = this;
 			quest.unlock();
 			this.show();
+			if(condition) sendQuest(quest.questID);
 		}
 
+
 	});
+
+
+	
+
+
 
 	Crafty.c("Quest",{
 
@@ -161,6 +178,7 @@ Crafty.c("Infolog",{
 			this.completed = false;
 			this.isSelected = false;
 			this.questlog = null;
+			this.questID = 0;
 			this.bind("MouseOver", function(){ 
                 //this.css({"cursor": "pointer"});
                 //this.isSelected = true;
@@ -189,9 +207,10 @@ Crafty.c("Infolog",{
 			this.text('<div style="margin-top:12px;">' + this.name + '<div style="margin-left:100px;">' + this.completed);
 		},
 
-		addQuestInfo:function(name,info,checkFunction,unlock){
+		addQuestInfo:function(id,name,info,checkFunction,unlock){
 			this.name = name;
 			this.info = info;
+			this.questID = id;
 			this.checkFunction = checkFunction;
 			this.completed = checkFunction();
 			this.unlock = unlock;
