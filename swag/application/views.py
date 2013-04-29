@@ -55,7 +55,9 @@ def gamejs(request, unique_id):
     cv_unlock = get_cv_questUnlocked(game)
     motivation_unlock = get_motivation_questUnlock(game)
     context = {'game': game}
-    context.update({'cv_unlock': cv_unlock, 'motivation_unlock': motivation_unlock})
+    context.update({
+        'cv_unlock': cv_unlock,
+        'motivation_unlock': motivation_unlock})
 
     return render(request, "game.js", context, content_type="application/javascript")
 
@@ -65,10 +67,13 @@ def playerdatajs(request, unique_id):
     context = {'game': game}
 
     contact_info = get_contact_info(game)
-    print game.player_email, game.player_name
-    context.update({'contact_info': contact_info, 'has_motivation_letter': game.has_motivation, 'has_cv': game.has_cv})
+    # print game.player_email, game.player_name
+    context.update({
+        'contact_info': contact_info,
+        'has_motivation_letter': game.has_motivation,
+        'has_cv': game.has_cv})
 
-    print 'Contact info: %s' % contact_info
+    # print 'Contact info: %s' % contact_info
 
     return render(request, "playerdata.js", context, content_type="application/javascript")
 
@@ -103,7 +108,6 @@ def getQuest(id_quest, game):
 
 
 def play(request, unique_id):
-
     try:
         game = get_object_or_404(GameInstance, uid=unique_id)
     except Http404:
@@ -122,7 +126,9 @@ def play(request, unique_id):
     context.update({
         'instance_id': game.uid,
         'form': form,
-        'has_contact_info': has_contact_info, 'has_motivation_letter': game.has_motivation, 'has_cv': game.has_cv})
+        'has_contact_info': has_contact_info,
+        'has_motivation_letter': game.has_motivation,
+        'has_cv': game.has_cv})
 
     return render_to_response("index.html", context)
 
@@ -259,7 +265,6 @@ def process_upload(request, unique_id):
     if not request.method == "POST":
         return render(request, "results_template.js", upload_state, content_type="application/json")
 
-    print(request.POST)
     #print 'cv' in request.POST['title']
 
     form = UploadFileForm(request.POST, request.FILES)

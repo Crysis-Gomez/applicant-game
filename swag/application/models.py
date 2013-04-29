@@ -58,11 +58,21 @@ class GameInstance(models.Model):
         return True
 
 
+class GameData(models.Model):
+    game = models.ForeignKey(GameInstance)
+    position_x = models.IntegerField(default=5)
+    position_y = models.IntegerField(default=5)
+    cv_unlocked = models.BooleanField(default=False)
+    motivation_unlocked = models.BooleanField(default=False)
+
+
 class CvDocument(models.Model):
     title = models.CharField(max_length=200)
     game_instance = models.ForeignKey(GameInstance)
     #motivation_letter = models.TextField()
-    attachment = models.FileField(upload_to=settings.DBS_OPTIONS['base_url'], storage=DatabaseStorage(options=settings.DBS_OPTIONS))
+    attachment = models.FileField(
+        upload_to=settings.DBS_OPTIONS['base_url'],
+        storage=DatabaseStorage(options=settings.DBS_OPTIONS))
 
     def __unicode__(self):
         return str(self.title)
@@ -73,7 +83,33 @@ class MotivationLetter(models.Model):
     title = models.CharField(max_length=50, editable=False)
     game_instance = models.ForeignKey(GameInstance, editable=False)
     entry = models.TextField(null=True, blank=True)
-    attachment = models.FileField(upload_to=settings.DBS_OPTIONS['base_url'], storage=DatabaseStorage(options=settings.DBS_OPTIONS), null=True, blank=True)
+    attachment = models.FileField(
+        upload_to=settings.DBS_OPTIONS['base_url'],
+        storage=DatabaseStorage(
+            options=settings.DBS_OPTIONS),
+        null=True,
+        blank=True)
 
     def __unicode__(self):
         return str(self.title)
+
+
+class Applicationdocumentfiles(models.Model):
+    filename = models.CharField(max_length=255, primary_key=True)
+    data = models.TextField()
+    size = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'ApplicationDocumentFiles'
+
+
+# class ApplicationCvdocument(models.Model):
+#     id = models.IntegerField(primary_key=True)
+#     title = models.CharField(max_length=200L)
+#     game_instance = models.ForeignKey('ApplicationGameinstance')
+#     attachment = models.CharField(max_length=100L)
+
+#     class Meta:
+#         managed = False
+#         db_table = 'application_cvdocument'

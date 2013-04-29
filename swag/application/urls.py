@@ -7,7 +7,8 @@ from application import views
 from django.conf import settings
 upload_url = settings.DBS_OPTIONS['base_url'][1:]
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
     url(r'^$', views.index, name='index'),
     url(r'^start_game/(?P<slug>[a-zA-Z\-0-9]+)/$', 'application.views.start_game', name='game'),
     url(r'^game/(?P<unique_id>\w+)/$', views.play, name='play'),
