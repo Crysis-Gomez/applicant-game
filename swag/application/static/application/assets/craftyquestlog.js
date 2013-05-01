@@ -101,7 +101,6 @@ Crafty.c("Infolog",{
 		show:function(){
 			this.infolog.x = this.x+this.w;
 			this.infolog.y = this.y;
-			 //make the questlog background longer
 			this.attachAllQuests();
 			for (var i = 0; i < this.array.length; i++) 
 			{
