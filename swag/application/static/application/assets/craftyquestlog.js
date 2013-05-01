@@ -19,7 +19,7 @@ Crafty.c("Infolog",{
 			this.x = 0;
 			this.y = 0;
 			this.w = 150;  
-			this.h = 300;   
+			this.h = 100;   
 			this.color("#eee");
 			this.array = [];
 			this.infolog = info;
@@ -35,16 +35,18 @@ Crafty.c("Infolog",{
 			this.infoLogHeight = 100;
 
 			this.bind('EnterFrame', function() {
+
+
 				if(this.popUp && this.x < this.maxPosition)this.x+=this.slideSpeed;
 				if(this.popDown && this.x  > this.minPosition) this.x-=this.slideSpeed;
 
-				if(this.x >= this.maxPosition && this.maySelected == false){
+				if(this.x >= this.maxPosition && this.maySelected == false && this.array.length > 0){
 					this.goselect();
 					this.maySelected = true;
 					this.infolog.h = this.infoLogHeight;
 				}
 
-				if(this.x <= this.minPosition+this.maxPosition) this.maySelected = false;
+				if(this.x <= this.minPosition+this.maxPosition && this.array.length > 0) this.maySelected = false;
 
 			});
 
@@ -54,13 +56,17 @@ Crafty.c("Infolog",{
 
 				if(e.key == 40){
 					this.deselect();
+					
 					if(this.arrayIndex < this.array.length-1)this.arrayIndex+=1; 
+					
 					this.goselect();
 				}
 
 				if(e.key == 38){
 					this.deselect();
+					
 					if(this.arrayIndex > 0)this.arrayIndex--;
+					
 					this.goselect(); 
 				}
 			});	
@@ -95,43 +101,66 @@ Crafty.c("Infolog",{
 		show:function(){
 			this.infolog.x = this.x+this.w;
 			this.infolog.y = this.y;
-			this.h = this.array.length *100; //make the questlog background longer
 			this.attachAllQuests();
-			for (var i = 0; i < this.array.length; i++) {
+			for (var i = 0; i < this.array.length; i++) 
+			{
 				this.array[i].showText();
 			}
 		},
 
 		update:function(){
-			for (var i = 0; i < this.array.length; i++) {
+			for (var i = 0; i < this.array.length; i++)
+			{
 				this.array[i].update();
 			}
 		},
 
 		attachAllQuests:function(){
-			for (var i = 0; i < this.array.length; i++) {
+
+
+			for (var i = 0; i < this.array.length; i++)
+			{
 				 this.attach(this.array[i]);
 			}
+			this.attach(info);
+
 		},
 
 		detachAllQuests:function(){
-			for (var i = 0; i < this.array.length; i++) {
+			
+			this.detach(info)
+
+			for (var i = 0; i < this.array.length; i++)
+			{
 				 this.detach(this.array[i]);
 			}
+
+			this.h = this.array.length*30 +100;
+
+			this.attachAllQuests();
 		},
 
-		addQuest:function(quest){
+		addQuest:function(quest,condition){
+			this.detachAllQuests();
 			this.array.push(quest);
 			quest.x = this.x + this.marginX;
 			quest.y = this.y + this.marginY*this.array.length;
-			this.detachAllQuests();
+			quest.h = 30;
 			quest.z =1;
 			quest.infolog = this.infolog;
 			quest.questlog = this;
+			quest.unlock();
 			this.show();
+			if(condition) sendQuest(quest.questID);
 		}
 
+
 	});
+
+
+	
+
+
 
 	Crafty.c("Quest",{
 
@@ -148,6 +177,7 @@ Crafty.c("Infolog",{
 			this.completed = false;
 			this.isSelected = false;
 			this.questlog = null;
+			this.questID = 0;
 			this.bind("MouseOver", function(){ 
                 //this.css({"cursor": "pointer"});
                 //this.isSelected = true;
@@ -167,6 +197,7 @@ Crafty.c("Infolog",{
 
 			if(this.isSelected) this.color("#ccc");
 			else this.color("#eee");
+           	
            	this.infolog.text('<div style="margin-top:12px;">' + this.info);
 		},
 
@@ -175,11 +206,13 @@ Crafty.c("Infolog",{
 			this.text('<div style="margin-top:12px;">' + this.name + '<div style="margin-left:100px;">' + this.completed);
 		},
 
-		addQuestInfo:function(name,info,checkFunction){
+		addQuestInfo:function(id,name,info,checkFunction,unlock){
 			this.name = name;
 			this.info = info;
+			this.questID = id;
 			this.checkFunction = checkFunction;
 			this.completed = checkFunction();
+			this.unlock = unlock;
 		},
 		showText:function(){
 			this.text('<div style="margin-top:12px;">' + this.name + '<div style="margin-left:100px;">' + this.completed);

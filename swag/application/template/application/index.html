@@ -13,9 +13,6 @@
 </head>
 <body>
 
- 
-
-
 <div class="container" id="container">
 
     {% block letters %}
@@ -39,7 +36,7 @@
     {% endblock %}
 
 
-    <div class="Choice">
+    <div class="Choice" id="choice">
         <button id="freeformbutton" type="button" onclick="freeForm()">Free From</button>
         
         <button id="uploaddocumentbutton" type="button" onclick="uploadDocument()">Upload document</button>
@@ -50,7 +47,7 @@
 
 {% block contact %}
 {% if 'no' == has_contact_info %}
-<div class="form">
+<div class="form" id="form">
 
 <form enctype="multipart/form-data" method="post" name="myinfo" 
     id="myinfo" >
@@ -74,7 +71,7 @@
 
 {% block upload %}
 {% if has_cv == False %}
- <div class="form2">
+ <div class="form2" id="form2">
 
 <form2 enctype="multipart/form-data" method="post" name="myform" 
     id="myform" action= "/submitfile/{{instance_id}}/">
@@ -114,15 +111,10 @@
 
     </div>
 
-
     </div>
-
-
 
 <div id="cr-stage">
 
-   
-     
 </div>
 
 </body>

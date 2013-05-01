@@ -6207,6 +6207,7 @@ Crafty.extend({
 	* Unicode of the key pressed
 	*/
 	keyboardDispatch: function (e) {
+
 		e.key = e.keyCode || e.which;
 		if (e.type === "keydown") {
 			if (Crafty.keydown[e.key] !== true) {
@@ -6694,6 +6695,8 @@ Crafty.c("Multiway", {
 	*/
 
   disableControl: function() {
+
+    
 		this.unbind("KeyDown", this._keydown)
 		.unbind("KeyUp", this._keyup)
 		.unbind("EnterFrame", this._enterframe);

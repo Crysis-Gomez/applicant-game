@@ -17,7 +17,7 @@ body {background-color:#c0c0c0;
 
 	display: none;
 }
-.Choice
+#choice
 {
 
     display: none;
@@ -84,12 +84,6 @@ body {background-color:#c0c0c0;
 #id_entry
 {
     display: none;
-}
-
-
-#contact
-{
-	display: none;
 }
 
 #cv
