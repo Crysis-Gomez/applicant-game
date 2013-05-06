@@ -20,7 +20,8 @@ Crafty.c('Player',{
 	house:Object,
 	isCollidingWithHouse: false,
 	isCollindingWithDoor:false,
-	dir:0,
+	dirX:0,
+	dirY:0,
 	count:0,
 	mayStop:false,
 
@@ -62,53 +63,68 @@ Crafty.c('Player',{
 		}
 		else
 		{
-			if(this.dir > 0 && this.y <= this.house.y+80)this.house.sort(0.5,2);
+			if(this.dirY > 0 && this.y <= this.house.y+80)this.house.sort(0.5,2);
 			this.stopMovement();
 			this.isCollidingWithHouse = true;
 			
 		}
 	},
 
-	enterCollisionMachine2:function(e){
+	enterCollisionBlock:function(e)
+	{
+		if(this.dirX != 0 && this.dirY == 0 || this.dirX == 0 && this.dirY != 0){
+			e[0].obj.move(this.dirX,this.dirY,this);
+		}
+		else this.stopMovement();
+	},
+
+	enterCollisionMachine2:function(e)
+	{
 		this.stopMovement();
-		Crafty.scene("Game2");
+		//Crafty.scene("Game2");
 		
 	},
 
-	exitCollisionMachine2:function(e){
+	exitCollisionMachine2:function(e)
+	{
 		
 		
 	},
 
-	enterCollisionMachine:function(e){
+	enterCollisionMachine:function(e)
+	{
 		this.stopMovement();
-		Crafty.scene("Game");
+		Crafty.scene("BlockGame");
 		
 	},
 
-	exitCollisionMachine:function(e){
+	exitCollisionMachine:function(e)
+	{
 		
 		
 	},
 
-	enterCollisionDoor:function(e){
+	enterCollisionDoor:function(e)
+	{
 		this.stopMovement();
 		this.isCollindingWithDoor = true;
 	},
 
-	exitCollisionHouse:function(){
+	exitCollisionHouse:function()
+	{
 		this.house.sort(1,1);
 	},
 
 
-	enterCollisionWall:function(e){
-
+	enterCollisionWall:function(e)
+	{
 		this.stopMovement();
 		
 	},
 
 
-	Player:function(func){
+	Player:function(func)
+	{
 
 		this.z = 1;
 		this.collisionFunction = func;
@@ -118,14 +134,16 @@ Crafty.c('Player',{
 		 .animate("walk_right",11,0,13)
 		 .animate("walk_up",5,0,7)
 		 .animate("walk_down",2,0,4)
-		 .bind('EnterFrame', function() {
+		 .bind('EnterFrame', function()
+		 {
 
 		 })
 		
 
 		.bind("NewDirection",
 			function (direction) {
-				this.dir = direction.y;
+				this.dirX = direction.x;
+				this.dirY = direction.y;
 				if (direction.x < 0) {
 					if (!this.isPlaying("walk_left"))
 						this.stop().animate("walk_left", 10, -1);
@@ -147,7 +165,8 @@ Crafty.c('Player',{
 				}
 			})
 
-		.bind('Moved',function(){
+		.bind('Moved',function()
+		{
 			
 			if(this.update)this.update();
 			
@@ -161,7 +180,8 @@ Crafty.c('Player',{
 			}
 		})
 
-		.requires('Keyboard').bind('KeyDown', function () { 
+		.requires('Keyboard').bind('KeyDown', function ()
+		{ 
 
 			if (this.isDown('ENTER'))
 			{
@@ -180,18 +200,21 @@ Crafty.c('Player',{
 			}
 		})
 			
-		.bind('KeyUp', function (e) {
-			if (e.key == 76 && !Crafty.isPaused()){
+		.bind('KeyUp', function (e)
+		{
+			if (e.key == 76 && !Crafty.isPaused())
+			{
 				if(quest_log.x  <= -150)quest_log.Up();
 				else if(quest_log.x >=  10)quest_log.Out(); 
 			}
 				return true;
 
-			})
+		})
 
 		.onHit("house",this.enterCollisionHouse,this.exitCollisionHouse)
 		.onHit("Door",this.enterCollisionDoor)
 		.onHit("Wall",this.enterCollisionWall)
+		.onHit("Block",this.enterCollisionBlock)
 		.onHit("Machine",this.enterCollisionMachine,this.exitCollisionMachine)
 		.onHit("Machine2",this.enterCollisionMachine2,this.exitCollisionMachine2);	
 	}

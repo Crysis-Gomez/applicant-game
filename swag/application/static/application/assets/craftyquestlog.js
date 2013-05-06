@@ -10,8 +10,7 @@ Crafty.c("Infolog",{
 		}
 	});
 
-
-	Crafty.c("Questlog",{
+Crafty.c("Questlog",{
 
 		init:function(){
 			var that = this;
@@ -159,9 +158,6 @@ Crafty.c("Infolog",{
 
 
 	
-
-
-
 	Crafty.c("Quest",{
 
 		init:function(){

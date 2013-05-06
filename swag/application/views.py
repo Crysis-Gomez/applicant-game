@@ -50,6 +50,13 @@ def start_game(request, slug):
     return HttpResponseRedirect(reverse('play', args=(instance_id,)))
 
 
+def level(request, unique_id):
+
+    game = GameInstance.objects.get(uid=unique_id)
+    context = {'game': game}
+    return render(request, "level.txt", context, content_type="application/javascript")
+
+
 def gamejs(request, unique_id):
     game = GameInstance.objects.get(uid=unique_id)
     cv_unlock = get_cv_questUnlocked(game)

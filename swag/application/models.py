@@ -69,7 +69,6 @@ class GameData(models.Model):
 class CvDocument(models.Model):
     title = models.CharField(max_length=200)
     game_instance = models.ForeignKey(GameInstance)
-    #motivation_letter = models.TextField()
     attachment = models.FileField(
         upload_to=settings.DBS_OPTIONS['base_url'],
         storage=DatabaseStorage(options=settings.DBS_OPTIONS))
