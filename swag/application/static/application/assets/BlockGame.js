@@ -274,6 +274,13 @@ Crafty.c('GameWall',
   },
 });
 
+
+Crafty.c('Timer',{
+  init:function(){
+
+  }
+});
+
  
 Crafty.c('Tile',
 {
@@ -391,11 +398,17 @@ Crafty.c('PlayerCharacter',
 {
   lastDirectionX:0,
   lastDirectionY:0,
+  isMoving:false,
 
   init: function()
   {
-    this.requires('Actor,Color,Keyboard');
+    this.requires('Actor,Color,Keyboard,Delay');
     this.color('rgb(0, 0, 0)');
+    this.bind('EnterFrame',function(e)
+    {
+        this.timeMovement();
+    });
+
     this.requires('Keyboard').bind('KeyDown', function (e)
     { 
 
@@ -424,9 +437,62 @@ Crafty.c('PlayerCharacter',
       {
         this.lastDirectionY = -1;
       }
-      this.checkMovement();
 
     })
+
+    this.bind('KeyUp', function (e)
+    { 
+
+      if(e.key  == 39)
+      {
+        this.lastDirectionX = 0;
+        this.isMoving = false;
+      }
+      if(e.key == 37)
+      {
+        this.lastDirectionX = 0;
+        this.isMoving = false;
+      }
+
+      if(e.key == 40)
+      {
+        this.lastDirectionY = 0;
+        this.isMoving = false;
+      }
+
+      if(e.key == 38)
+      {
+        this.lastDirectionY = 0;
+        this.isMoving = false;
+      }
+
+    });
+
+  },
+
+
+  timeMovement:function(){
+
+    if(this.lastDirectionX != 0 || this.lastDirectionY != 0)
+    {
+        if(!this.isMoving)
+        {
+           start = new Date().getTime();
+           this.checkMovement();
+           this.isMoving = true;
+        }
+
+        if(this.isMoving)
+        {
+          end = new Date().getTime();
+          current = end - start;
+          if(current > 200)
+          {
+             this.checkMovement();
+             start = new Date().getTime();
+          }
+        }
+    }
   },
 
   checkGameComplete:function()
@@ -441,6 +507,7 @@ Crafty.c('PlayerCharacter',
 
   checkMovement:function()
   {
+
     onGridX = (this.x-Game.map_grid.offSetX) / Game.map_grid.tile.width;
     onGridY = (this.y-Game.map_grid.offSetY) / Game.map_grid.tile.height;
 
@@ -475,13 +542,13 @@ Crafty.c('PlayerCharacter',
             this.movePlayer(this.lastDirectionX,this.lastDirectionY);
          }
       }
-  }
-},
+    }
+  },
 
   movePlayer:function(x,y)
   {
     this.x += x*Game.map_grid.tile.width;
     this.y += y*Game.map_grid.tile.height;
-  
+
   },
 });

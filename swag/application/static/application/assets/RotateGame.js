@@ -20,7 +20,7 @@ Crafty.scene("RotateGame", function ()
     balArray:Array,
     wallArray:Array,
     _wall:null,
-    levelNumber: 5,
+    levelNumber: 0,
     ball:null,
     helper:null,
     rotateMiddlePointX:5,
@@ -133,12 +133,20 @@ Crafty.c('RotateWall2',
     this.requires('2D, Canvas, Grid,Keyboard');
     this.bind('KeyDown',function(e){
 
+      if(e.key == 82)
+      {
+        Game.restart();
+        return;
+      }
+
       if(Game.ball.isFalling)return;
 
       if(Game.helper != null)
       {
         if(Game.helper.isFalling)return;
       }
+
+
 
       if(e.key == 37 && this.mayRotate)
       {
