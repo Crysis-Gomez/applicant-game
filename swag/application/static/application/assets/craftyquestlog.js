@@ -51,9 +51,10 @@ Crafty.c("Questlog",{
 
             this.bind('KeyUp', function (e) {
 
-            	if(!this.maySelected)return;
+            	if(!this.maySelected || Crafty.isPaused)return;
 
-				if(e.key == 40){
+				if(e.key == 40)
+				{
 					this.deselect();
 					
 					if(this.arrayIndex < this.array.length-1)this.arrayIndex+=1; 
@@ -73,31 +74,34 @@ Crafty.c("Questlog",{
 			this.attach(info);	
 		},
 
-		deselect:function(){
-
+		deselect:function()
+		{
 			this.array[this.arrayIndex].isSelected = false;
 			this.array[this.arrayIndex].selectQuest();
 		},
 
-		goselect:function(){
+		goselect:function()
+		{
 			this.array[this.arrayIndex].isSelected = true;
 			this.array[this.arrayIndex].selectQuest();
 		},
 
-		Up:function(){
+		Up:function()
+		{
 			this.popUp = true;
 			this.popDown = false;
-
 		},
 
-		Out:function(){
+		Out:function()
+		{
 			this.popUp = false;
 			this.popDown = true;
 			this.infolog.h = 0;
 			this.infolog.text("");
 		},
 
-		show:function(){
+		show:function()
+		{
 			this.infolog.x = this.x+this.w;
 			this.infolog.y = this.y;
 			this.attachAllQuests();
@@ -107,16 +111,16 @@ Crafty.c("Questlog",{
 			}
 		},
 
-		update:function(){
+		update:function()
+		{
 			for (var i = 0; i < this.array.length; i++)
 			{
 				this.array[i].update();
 			}
 		},
 
-		attachAllQuests:function(){
-
-
+		attachAllQuests:function()
+		{
 			for (var i = 0; i < this.array.length; i++)
 			{
 				 this.attach(this.array[i]);
@@ -125,10 +129,9 @@ Crafty.c("Questlog",{
 
 		},
 
-		detachAllQuests:function(){
-			
+		detachAllQuests:function()
+		{
 			this.detach(info)
-
 			for (var i = 0; i < this.array.length; i++)
 			{
 				 this.detach(this.array[i]);
@@ -139,7 +142,8 @@ Crafty.c("Questlog",{
 			this.attachAllQuests();
 		},
 
-		addQuest:function(quest,condition){
+		addQuest:function(quest,condition)
+		{
 			this.detachAllQuests();
 			this.array.push(quest);
 			quest.x = this.x + this.marginX;
@@ -152,13 +156,12 @@ Crafty.c("Questlog",{
 			this.show();
 			if(condition) sendQuest(quest.questID);
 		}
-
-
 	});
 
 
 	
-	Crafty.c("Quest",{
+	Crafty.c("Quest",
+	{
 
 		init:function(){
 			this.addComponent("2D, DOM,Color,Text,Mouse");
@@ -174,35 +177,39 @@ Crafty.c("Questlog",{
 			this.isSelected = false;
 			this.questlog = null;
 			this.questID = 0;
-			this.bind("MouseOver", function(){ 
+			this.bind("MouseOver", function()
+			{ 
                 //this.css({"cursor": "pointer"});
                 //this.isSelected = true;
            		//this.selectQuest();
            		
              });
 			
-			this.bind("MouseOut", function(){ 
+			this.bind("MouseOut", function()
+			{ 
            		//this.isSelected = false;
            		//this.selectQuest();
              });
 		},
 
-		selectQuest:function(){
-
+		selectQuest:function()
+		{
 			if(this.questlog.popDown) return;
-
+			
 			if(this.isSelected) this.color("#ccc");
 			else this.color("#eee");
            	
            	this.infolog.text('<div style="margin-top:12px;">' + this.info);
 		},
 
-		update:function(){
+		update:function()
+		{
 			this.completed = this.checkFunction();
 			this.text('<div style="margin-top:12px;">' + this.name + '<div style="margin-left:100px;">' + this.completed);
 		},
 
-		addQuestInfo:function(id,name,info,checkFunction,unlock){
+		addQuestInfo:function(id,name,info,checkFunction,unlock)
+		{
 			this.name = name;
 			this.info = info;
 			this.questID = id;
@@ -210,7 +217,8 @@ Crafty.c("Questlog",{
 			this.completed = checkFunction();
 			this.unlock = unlock;
 		},
-		showText:function(){
+		showText:function()
+		{
 			this.text('<div style="margin-top:12px;">' + this.name + '<div style="margin-left:100px;">' + this.completed);
 		}
 	});

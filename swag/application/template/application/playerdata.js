@@ -208,11 +208,10 @@ function sendFiles()
 
 $(document).ready(function()
 {
-     window.game = crafty();
-     var game = window.game.crafty.init(900, 600);
+    //window.addEventListener('load', loadLevelTxt());
+    loadLevelTxt();
     {% if contact_info == 'yes' %}
        
-
     {% endif %}
 
     (function ()

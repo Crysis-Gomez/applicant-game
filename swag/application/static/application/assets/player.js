@@ -1,21 +1,25 @@
-Crafty.c('Respawn',{
+Crafty.c('Respawn',
+{
 
-	init:function(){
+	init:function()
+	{
 		this.x = state.checkPosition()[0];
 		this.y = state.checkPosition()[1];
 	}
 })
 
 
-Crafty.c('StatePosition',{
-		
-	update:function(){
+Crafty.c('StatePosition',
+{
+	update:function()
+	{
 		state.setPosition(this.x,this.y);
 
 	}
 })
 
-Crafty.c('Player',{
+Crafty.c('Player',
+{
 	
 	house:Object,
 	isCollidingWithHouse: false,
@@ -26,7 +30,8 @@ Crafty.c('Player',{
 	mayStop:false,
 
 	
-	convert:function(obj){
+	convert:function(obj)
+	{
 		if(typeof this.house === obj)return;
 		if(typeof this.house.sort === 'undefined')this.house = obj;
 		
@@ -34,45 +39,48 @@ Crafty.c('Player',{
 		this.house = obj;
 	},
 
-	enterHouse:function(){
+	enterHouse:function()
+	{
 		this.house.enterBuilding();
 	},
 
-	resetSorting:function(){
+	resetSorting:function()
+	{
 		
 		if(typeof this.house.sort === 'undefined')return;
 		else this.house.sort(1,1);
 	},
 
-	stopMovement:function(){
+	stopMovement:function()
+	{
 		this.speed = 0;
-		if (this._movement) {
+		if (this._movement)
+		{
 			this.x -= this._movement.x;
 			this.y -= this._movement.y;
 		}
 	},
 
-	enterCollisionHouse:function(e){
-
+	enterCollisionHouse:function(e)
+	{
 		this.house = e[0].obj;
-		
-		if(this.y <= this.house.y+80){
+		if(this.y <= this.house.y+80)
+		{
 			this.convert(this.house);
 			this.house.sort(0.5,2);
-
 		}
 		else
 		{
 			if(this.dirY > 0 && this.y <= this.house.y+80)this.house.sort(0.5,2);
 			this.stopMovement();
 			this.isCollidingWithHouse = true;
-			
 		}
 	},
 
 	enterCollisionBlock:function(e)
 	{
-		if(this.dirX != 0 && this.dirY == 0 || this.dirX == 0 && this.dirY != 0){
+		if(this.dirX != 0 && this.dirY == 0 || this.dirX == 0 && this.dirY != 0)
+		{
 			e[0].obj.move(this.dirX,this.dirY,this);
 		}
 		else this.stopMovement();
@@ -81,8 +89,7 @@ Crafty.c('Player',{
 	enterCollisionMachine2:function(e)
 	{
 		this.stopMovement();
-		//Crafty.scene("Game2");
-		
+		Crafty.scene("RotateGame");	
 	},
 
 	exitCollisionMachine2:function(e)
@@ -141,26 +148,32 @@ Crafty.c('Player',{
 		
 
 		.bind("NewDirection",
-			function (direction) {
+			function (direction)
+			{
 				this.dirX = direction.x;
 				this.dirY = direction.y;
-				if (direction.x < 0) {
+				if (direction.x < 0)
+				{
 					if (!this.isPlaying("walk_left"))
 						this.stop().animate("walk_left", 10, -1);
 				}
-				if (direction.x > 0) {
+				if (direction.x > 0)
+				{
 					if (!this.isPlaying("walk_right"))
 						this.stop().animate("walk_right", 10, -1);
 				}
-				if (direction.y < 0) {
+				if (direction.y < 0)
+				{
 					if (!this.isPlaying("walk_up"))
 						this.stop().animate("walk_up", 10, -1);
 				}
-				if (direction.y > 0) {
+				if (direction.y > 0)
+				{
 					if (!this.isPlaying("walk_down"))
 						this.stop().animate("walk_down", 10, -1);
 				}
-				if(!direction.x && !direction.y) {
+				if(!direction.x && !direction.y)
+				{
 					this.stop();
 				}
 			})
@@ -207,8 +220,7 @@ Crafty.c('Player',{
 				if(quest_log.x  <= -150)quest_log.Up();
 				else if(quest_log.x >=  10)quest_log.Out(); 
 			}
-				return true;
-
+			return true;
 		})
 
 		.onHit("house",this.enterCollisionHouse,this.exitCollisionHouse)
@@ -222,14 +234,16 @@ Crafty.c('Player',{
 });
 
 
-Crafty.c("RightControls", {
-    init: function() {
+Crafty.c("RightControls",
+{
+    init: function()
+    {
         this.requires('Multiway');
     },
     
-    rightControls: function(speed) {
+    rightControls: function(speed)
+    {
         this.multiway(speed, {UP_ARROW: -90, DOWN_ARROW: 90, RIGHT_ARROW: 0, LEFT_ARROW: 180})
         return this;
     }
-    
 });

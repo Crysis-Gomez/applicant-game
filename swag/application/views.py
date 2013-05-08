@@ -57,6 +57,12 @@ def level(request, unique_id):
     return render(request, "level.txt", context, content_type="application/javascript")
 
 
+def rotate_level(request, unique_id):
+    game = GameInstance.objects.get(uid=unique_id)
+    context = {'game': game}
+    return render(request, "Rotatelevel.txt", context, content_type="application/javascript")
+
+
 def gamejs(request, unique_id):
     game = GameInstance.objects.get(uid=unique_id)
     cv_unlock = get_cv_questUnlocked(game)

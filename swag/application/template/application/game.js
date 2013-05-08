@@ -40,7 +40,6 @@ var state = function()
 		return MayUploadMotivation;
 	}
 
-
 	var check_UnlockedCVQuest = function()
 	{
 		var my_val = false;
@@ -55,7 +54,6 @@ var state = function()
 	{
 		 unLockedCVQuest = 'True';
 	}
-
 
 	var cv_MayUpload = function()
 	{
@@ -131,7 +129,6 @@ var state = function()
 		return my_val;
 	}
 
-
 	return {
 		getState: function() { init() },
 		my_name: function()
@@ -156,9 +153,6 @@ var state = function()
 		motivationMayUpload:motivation_MayUpload,
 		checkMayUploadMotivation:check_MayUploadMotivation,
 		
-
-		
-
 		update_key: function (value)
 		{
 			has_cv = value;
@@ -186,22 +180,28 @@ var crafty = function() {
 
     Crafty.init(990, 600);
 
-    Crafty.sprite(TILE_SIZE, "/static/Sprite.png", {
+    Crafty.sprite(TILE_SIZE, "/static/Sprite.png",
+    {
 		grass:[0,0],
 		sand:[1,0],
 		player:[2,0]
   
     });
 
-    Crafty.sprite(TILE_SIZE, "/static/Sprite2.png", {
+    Crafty.sprite(TILE_SIZE, "/static/Sprite2.png",
+    {
 		 tiles:[0,0],
 		 wall:[1,0],
 		 machine:[2,0]
+		// Block:[3,0],
+		 //key:[4,0]
     });
 
 	var dialog;
+
 	
-	function generateWorld(){
+	function generateWorld()
+	{
 	
 		for (i = 0; i < 31; i++)
 		{
@@ -337,7 +337,9 @@ var crafty = function() {
 		}
 	}
 
-	Crafty.c('Building',{
+
+	Crafty.c('Building',
+	{
 		sceneString:"",
 		check:null,
 
@@ -349,25 +351,25 @@ var crafty = function() {
 
 		enterBuilding:function()
 		{
-			if(this.check()){
+			if(this.check())
+			{
 				Crafty.scene(this.sceneString);
 			}
 		}
 	});
  
  
-	Crafty.c('SetSorting',{
-	
+	Crafty.c('SetSorting',
+	{
 		sort:function(alpha,z)
 		{
 			this.alpha = alpha;
 			this.z = z;
 		},
-	
 	});
 
-
-	Crafty.c('NPC',{
+	Crafty.c('NPC',
+	{
 	
 		isCollidingWithPlayer:false,
 		dialogFunction:null,
@@ -407,8 +409,8 @@ var crafty = function() {
 		
 	});
 
-	
-	Crafty.c('AI',{
+	Crafty.c('AI',
+	{
 
 		walkToPlayer:function()
 		{
@@ -420,8 +422,9 @@ var crafty = function() {
 			walkToPlayer();
 		}
 	});
-	Crafty.c("Dialog",{
-	
+
+	Crafty.c("Dialog",
+	{
 		DataText:"",
 		hasStarted: false,
 		DialogText:"",
@@ -442,7 +445,8 @@ var crafty = function() {
 			this.h = 0;   
 			this.color("#FFFFFF");
 			this.textColor('#FF0000');
-			this.bind('EnterFrame', function() {
+			this.bind('EnterFrame', function()
+			{
 
 				if(this.hasStarted && !this.finished && this.checkDialog())
 				{
@@ -457,7 +461,8 @@ var crafty = function() {
 			})
 		},
 
-		checkDialog:function(){
+		checkDialog:function()
+		{
 			if(this.dialogIndex == this.data.length)
 			{
 				this.closeDialog();
@@ -482,34 +487,6 @@ var crafty = function() {
 				}
 				return true;
 			}
-
-
-			/*if(this.DataText == "CONTACT")
-			{ 
-				//$("#container").show();
-				//$("#contact").show();
-				//$(".form").show();
-				//document.getElementById("id_name").focus();
-				//Crafty.pause();
-				return true;
-			}
-
-			if(this.DataText == "UPLOAD")
-			{
-				$("#container").show();
-				$(".form2").show();
-				Crafty.pause();
-				return true;
-			}
-
-			if(this.DataText == "MOTIVATION")
-			{
-				$("#container").show();
-				$(".Choice").show();
-				Crafty.pause();
-				return true;
-			}*/
-
 
 			if(this.DataText == "Bob: Welcome to the vacancy of ")
 			{
@@ -545,41 +522,12 @@ var crafty = function() {
 		}
 	}); 
 
-
-		Crafty.c('update',{
-			count:0,
-
-			startGame:function(BuildingString){
-
-				this.bind("EnterFrame",function(){
-					this.count++;
-					if(this.count > 60) Crafty.scene(BuildingString);
-				 });
-				this.addComponent("2D, DOM,Color,Text,Mouse");
-				this.textColor('#000');
-				this.w = 500;
-				this.h = 50;
-				this.x = 350;
-				this.y = 300;
-				this.text('<div style="margin-top:12px;">' + "YOU WIN");
-				if(BuildingString  == "BuildingMotivation"){
-					state.motivationMayUpload();
-				}
-				else
-				{ 
-					state.cvMayUpload();
-				}
-			},
-			
-		})   
-
-
 	Crafty.scene("loading", function () 
 	{
         //load takes an array of assets and a callback when complete
         Crafty.load(["/static/Sprite.png","/static/house.png","/static/Sprite2.png","/static/Door.png"], function ()
         {
-            Crafty.scene("main"); //when everything is loaded, run the main scene
+            Crafty.scene("BlockGame"); //when everything is loaded, run the main scene
         });
     });
 
@@ -633,23 +581,22 @@ var crafty = function() {
 			.setNpcData(quest3,getDialogData2);
     });
 
-	Crafty.scene("Game",function(){
-		player1 = Crafty.e("2D,update")
-		.startGame("BuildingCV");
-	});
-
-	Crafty.scene("Game2",function(){
+	Crafty.scene("Game2",function()
+	{
 		player1 = Crafty.e("2D,update")
 		.startGame("BuildingMotivation");
 	});
 
-	Crafty.scene("BuildingMotivation", function(){
-	
+	Crafty.scene("BuildingMotivation", function()
+	{
 		generateIndoors();
 		generateIndoorObjects2();
 
-		if(state.checkMayUploadMotivation() && !state.check_motivation()){
+		if(state.checkMayUploadMotivation() && !state.check_motivation())
+		{
 			craftyTriggers(MOTIVATION,null);
+			Crafty.pause(true);
+
 		}
 
 		var player1 = Crafty.e("2D,  Canvas, player,Player,RightControls,Collision,Keyboard")
@@ -658,13 +605,15 @@ var crafty = function() {
 			.Player();
 	});
 
-	Crafty.scene("BuildingCV", function(){
-	
+	Crafty.scene("BuildingCV", function()
+	{
 		generateIndoors();
 		generateIndoorObjects();
 
-		if(state.checkMayUploadCV() && !state.check_cv()){
+		if(state.checkMayUploadCV() && !state.check_cv())
+		{
 			craftyTriggers(UPLOAD,null);
+			Crafty.pause(true);
 		}
 
 		var player1 = Crafty.e("2D,  Canvas, player,Player,RightControls,Collision,Keyboard")

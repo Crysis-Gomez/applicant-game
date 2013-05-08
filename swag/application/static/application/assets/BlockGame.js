@@ -1,30 +1,65 @@
 var level = "";
+var rotateLevel = ""
 
-var loadLevelTxt  =   function loadXMLDoc()
-  {
-  var xmlhttp;
+var loadLevelTxt  =   function loadDoc()
+{
+  var dochttp,rotatehttp;
   if (window.XMLHttpRequest)
   {// code for IE7+, Firefox, Chrome, Opera, Safari
-     xmlhttp=new XMLHttpRequest();
+     dochttp =new XMLHttpRequest();
+     rotatehttp =new XMLHttpRequest();
   }
   else
   {// code for IE6, IE5
-     xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+     dochttp=new ActiveXObject("Microsoft.XMLHTTP");
+     rotatehttp=new ActiveXObject("Microsoft.XMLHTTP");
   }
 
-   xmlhttp.onreadystatechange=function()
+  dochttp.onreadystatechange=function(e)
   {
-    if (xmlhttp.readyState==4 && xmlhttp.status==200){
-        level = xmlhttp.responseText;
-        setUpLevel();
+    
+    if (dochttp.readyState==4 && dochttp.status==200){
+        level = dochttp.responseText;
+        level = setUpLevel(level);
+
       }
   }
-    xmlhttp.open("GET","level.txt",true);
-    xmlhttp.send();
+
+  rotatehttp.onreadystatechange=function(e)
+  {
+    if (rotatehttp.readyState==4 && rotatehttp.status==200)
+    {
+        rotateLevel = rotatehttp.responseText;
+        rotateLevel = setUpLevel(rotateLevel);
+        window.game = crafty();
+        var game = window.game.crafty.init(900, 600);
+    }
   }
 
-function setUpLevel(){
-  level = level.split("/");
+  try
+  {
+    dochttp.open("GET","level.txt",true);
+    dochttp.send();
+  }
+  catch(e)
+  {
+      console.log(e);
+  }
+ 
+  try
+  {
+    rotatehttp.open("GET","Rotatelevel.txt",true);
+    rotatehttp.send();
+  }
+  catch(e){
+    console.log(e)
+  }
+}
+
+function setUpLevel(lvl)
+{
+  lvl = lvl.split("/");
+  return lvl;
 }
 
 
@@ -33,12 +68,14 @@ Crafty.scene("BlockGame", function ()
 
 Game = {
   // This defines our grid's size and the size of each of its tiles
-  map_grid: {
+  map_grid:
+  {
     width:  20,
     height: 10,
     offSetX:120,
     offSetY:120,
-    tile: {
+    tile: 
+    {
       width:  32,
       height: 32
     }
@@ -59,7 +96,8 @@ Game = {
     return this.map_grid.height * this.map_grid.tile.height;
   },
 
-  restart:function(){
+  restart:function()
+  {
     Crafty.trigger("Destroy");
     this.loadLevel();
   },
@@ -85,12 +123,15 @@ Game = {
     return currentLevel;
   },
 
-  loadLevel:function(){
+  loadLevel:function()
+  {
     currentLevel = this.getLevel(this.levelNumber);
     Game.myArray = new Array(Game.map_grid.width);
-    for (var x = 0; x < Game.map_grid.width; x++) {
+    for (var x = 0; x < Game.map_grid.width; x++)
+    {
       Game.myArray[x] = new Array();
-      for (var y = 0; y < Game.map_grid.height; y++) {
+      for (var y = 0; y < Game.map_grid.height; y++)
+      {
           Game.myArray[x][y] = Crafty.e('Tile,Destroy').at(x, y); 
           var count = currentLevel[y][x];
            switch(count)
@@ -132,8 +173,7 @@ Game = {
   start: function() 
   {
     Crafty.background('rgb(249, 223, 125)');
-    this.loadLevel();
-      
+    this.loadLevel();  
   }
 }
 
@@ -141,20 +181,24 @@ Game.start();
 });
 
 
-Crafty.c('Destroy',{
-      init:function()
-      {
-         this.bind("Destroy",function()
-         {
-            this.destroy();
-         })
-      }
+Crafty.c('Destroy',
+{
+    init:function()
+    {
+       this.bind("Destroy",function()
+       {
+          this.destroy();
+       })
+    }
 })
 
 
-Crafty.c('Win',{
+Crafty.c('Win',
+{
+    buildingName:"",
 
-    init:function(){
+    init:function()
+    {
         this.addComponent("2D, DOM,Color,Text,Delay");
         this.textColor('#000');
         this.w = 500;
@@ -163,15 +207,21 @@ Crafty.c('Win',{
         this.y = 300;
         this.text('<div style="margin-top:12px;font-size:40px">' + "YOU WIN");
 
-        this.delay(function() {
-          Crafty.scene("BuildingCV");
+        this.delay(function()
+        {
+          Crafty.scene(this.buildingName);
         }, 5000);
+    },
+
+    setBuildingName:function(str)
+    {
+      this.buildingName = str;
     }
-
-
 })
 
-Crafty.c('Grid', {
+
+Crafty.c('Grid',
+{
   init: function()
   {
     this.attr({
@@ -184,7 +234,7 @@ Crafty.c('Grid', {
   {
     if (x === undefined && y === undefined)
     {
-    return { x: this.x/Game.map_grid.tile.width+Game.map_grid.offSetX, y: this.y/Game.map_grid.tile.height+Game.map_grid.offSetY,z:z }
+      return { x: this.x/Game.map_grid.tile.width+Game.map_grid.offSetX, y: this.y/Game.map_grid.tile.height+Game.map_grid.offSetY,z:z }
     } 
     else 
     {
@@ -195,7 +245,8 @@ Crafty.c('Grid', {
 });
 
 
-Crafty.c('putOnTile', {
+Crafty.c('putOnTile',
+{
 
   putOnTile:function()
   {
@@ -214,7 +265,8 @@ Crafty.c('putOnTile', {
 
 
 
-Crafty.c('GameWall', {
+Crafty.c('GameWall',
+{
   init: function()
   {
     this.requires('2D, Canvas, Grid, Color');
@@ -223,7 +275,8 @@ Crafty.c('GameWall', {
 });
 
  
-Crafty.c('Tile', {
+Crafty.c('Tile',
+{
   obj:null,
   init: function() 
   {
@@ -232,14 +285,16 @@ Crafty.c('Tile', {
 });
 
 
-Crafty.c('Key', {
+Crafty.c('Key',
+{
   unlockDoor:false,
 
   init: function() 
   {
     this.requires('2D, Canvas, Grid, Color,Collision');
     this.color('rgb(100,149,237)');
-    this.onHit('block',function(e){
+    this.onHit('block',function(e)
+    {
         if(!this.unlockDoor)
         {
           Crafty.trigger("unlockDoor");
@@ -250,37 +305,41 @@ Crafty.c('Key', {
   },
 });
 
-Crafty.c('GameDoor', {
+Crafty.c('GameDoor',
+{
   init: function() 
   {
     this.requires('2D, Canvas, Grid, Color');
     this.color('rgb(139,69,19)');
     this.bind("unlockDoor",function()
     {
-        this.removeFromTile();
-        this.destroy();
+      this.removeFromTile();
+      this.destroy();
+
     })
   },
 });
 
 
-Crafty.c('Actor', {
+Crafty.c('Actor',
+{
   init: function()
   {
     this.requires('2D, Canvas, Grid');
   },
 });
 
-Crafty.c('Block',{
+Crafty.c('Block',
+{
   lastDirectionX:0,
   lastDirectionY:0,
   onGridX:0,
   onGridY:0,
 
   init: function() 
- {
-      this.requires('2D, Canvas, Grid, Color,Collision');
-      this.color('rgb(0,0,128)');
+  {
+    this.requires('2D, Canvas, Grid, Color,Collision');
+    this.color('rgb(0,0,128)');
   },
 
   moveBlock:function()
@@ -297,7 +356,6 @@ Crafty.c('Block',{
     this.onGridX = (this.x-Game.map_grid.offSetX) / Game.map_grid.tile.width;
     this.onGridY = (this.y-Game.map_grid.offSetY) / Game.map_grid.tile.height;
     Game.myArray[this.onGridX][this.onGridY].obj = this;
-
   },
 
   checkMovement:function(x,y)
@@ -329,7 +387,8 @@ Crafty.c('Block',{
   }
 });
 
-Crafty.c('PlayerCharacter', {
+Crafty.c('PlayerCharacter',
+{
   lastDirectionX:0,
   lastDirectionY:0,
 
@@ -338,36 +397,36 @@ Crafty.c('PlayerCharacter', {
     this.requires('Actor,Color,Keyboard');
     this.color('rgb(0, 0, 0)');
     this.requires('Keyboard').bind('KeyDown', function (e)
-  { 
+    { 
 
-    this.lastDirectionX = 0;
-    this.lastDirectionY = 0;
+      this.lastDirectionX = 0;
+      this.lastDirectionY = 0;
 
+      if(e.key == 82)
+      {
+        Game.restart();
+      }
+      if(e.key  == 39)
+      {
+        this.lastDirectionX = 1;
+      }
+      if(e.key == 37)
+      {
+        this.lastDirectionX = -1;
+      }
 
-    if(e.key == 82){
-      Game.restart();
-    }
-    if(e.key  == 39)
-    {
-      this.lastDirectionX = 1;
-    }
-    if(e.key == 37)
-    {
-      this.lastDirectionX = -1;
-    }
+      if(e.key == 40)
+      {
+        this.lastDirectionY = 1;
+      }
 
-    if(e.key == 40)
-    {
-      this.lastDirectionY = 1;
-    }
+      if(e.key == 38)
+      {
+        this.lastDirectionY = -1;
+      }
+      this.checkMovement();
 
-    if(e.key == 38)
-    {
-      this.lastDirectionY = -1;
-    }
-    this.checkMovement();
-
-  })
+    })
   },
 
   checkGameComplete:function()
@@ -375,7 +434,7 @@ Crafty.c('PlayerCharacter', {
     if(Game.levelNumber  == 3)
     {
       state.cvMayUpload();
-      Crafty.e("Win");
+      Crafty.e("Win").setBuildingName("BuildingCV");
     }
 
   },
@@ -394,7 +453,6 @@ Crafty.c('PlayerCharacter', {
     }
     tile =  Game.myArray[onGridX+this.lastDirectionX][onGridY+this.lastDirectionY];
     
-
     if(tile === undefined)
     {
       this.checkGameComplete()
