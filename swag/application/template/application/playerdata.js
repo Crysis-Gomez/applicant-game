@@ -209,7 +209,10 @@ function sendFiles()
 $(document).ready(function()
 {
     //window.addEventListener('load', loadLevelTxt());
-    loadLevelTxt();
+    
+    //loadLevelTxt();
+    window.game = crafty();
+    var game = window.game.crafty.init(900, 600);
     {% if contact_info == 'yes' %}
        
     {% endif %}

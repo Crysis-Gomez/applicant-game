@@ -60,7 +60,7 @@ Crafty.scene("RotateGame", function ()
     getLevel:function(levelNumber)
     {
       currentLevel = new Array;
-      levelString = rotateLevel[levelNumber];
+      levelString = rotate_levels[levelNumber];
       levelString = levelString.replace(/\r?\n|\r/g,'');
       
       for (var x = 0; x < Game.map_grid.width; x++)

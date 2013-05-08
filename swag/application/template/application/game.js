@@ -527,7 +527,7 @@ var crafty = function() {
         //load takes an array of assets and a callback when complete
         Crafty.load(["/static/Sprite.png","/static/house.png","/static/Sprite2.png","/static/Door.png"], function ()
         {
-            Crafty.scene("RotateGame"); //when everything is loaded, run the main scene
+            Crafty.scene("main"); //when everything is loaded, run the main scene
         });
     });
 

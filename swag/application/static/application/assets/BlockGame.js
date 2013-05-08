@@ -1,67 +1,3 @@
-var level = "";
-var rotateLevel = ""
-
-var loadLevelTxt  =   function loadDoc()
-{
-  var dochttp,rotatehttp;
-  if (window.XMLHttpRequest)
-  {// code for IE7+, Firefox, Chrome, Opera, Safari
-     dochttp =new XMLHttpRequest();
-     rotatehttp =new XMLHttpRequest();
-  }
-  else
-  {// code for IE6, IE5
-     dochttp=new ActiveXObject("Microsoft.XMLHTTP");
-     rotatehttp=new ActiveXObject("Microsoft.XMLHTTP");
-  }
-
-  dochttp.onreadystatechange=function(e)
-  {
-    
-    if (dochttp.readyState==4 && dochttp.status==200){
-        level = dochttp.responseText;
-        level = setUpLevel(level);
-
-      }
-  }
-
-  rotatehttp.onreadystatechange=function(e)
-  {
-    if (rotatehttp.readyState==4 && rotatehttp.status==200)
-    {
-        rotateLevel = rotatehttp.responseText;
-        rotateLevel = setUpLevel(rotateLevel);
-        window.game = crafty();
-        var game = window.game.crafty.init(900, 600);
-    }
-  }
-
-  try
-  {
-    dochttp.open("GET","level.txt",true);
-    dochttp.send();
-  }
-  catch(e)
-  {
-      console.log(e);
-  }
- 
-  try
-  {
-    rotatehttp.open("GET","Rotatelevel.txt",true);
-    rotatehttp.send();
-  }
-  catch(e){
-    console.log(e)
-  }
-}
-
-function setUpLevel(lvl)
-{
-  lvl = lvl.split("/");
-  return lvl;
-}
-
 
 Crafty.scene("BlockGame", function ()
 {
@@ -105,7 +41,7 @@ Game = {
   getLevel:function(levelNumber)
   {
     currentLevel = new Array;
-    levelString = level[levelNumber];
+    levelString = window.block_levels[levelNumber];
     levelString = levelString.replace(/\r?\n|\r/g,'');
     for (var x = 0; x < Game.map_grid.width; x++)
     {
