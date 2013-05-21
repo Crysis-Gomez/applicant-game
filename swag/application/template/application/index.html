@@ -50,6 +50,44 @@
 
 
 
+
+{% block meeting %}
+
+<div class="form3" id="form3">
+
+<form enctype="multipart/form-data" method="post" name="meetingFrom" 
+    id="meetingForm" >
+    
+    <table>
+
+        {{ meetingForm.as_table }}
+    
+        {% for error in meetingForm.errors %}
+        {{error}}
+        {% endfor %}
+
+        <select name="meeting" id="meeting">
+        {% for date in meeting %}
+            {% if date.taken == False%}
+                {% ifequal date.id selected_date.id %}
+                <option value="{{date.dateID}}" selected="selected">{{date.pub_date}}: {{date.pub_time}}</option>
+                {% else %}
+                <option value="{{date.dateID}}"> {{date.pub_date}}: {{date.pub_time}}</option>
+                {% endifequal %}
+            {%endif%}
+        {% endfor %}
+    </select>
+
+    </table>
+    
+    <button id="MeetButton" type="button" onclick="submitMeeting()">Submit meeting</button>
+</form>
+</div>
+
+{% endblock %}
+
+
+
 {% block contact %}
 {% if 'no' == has_contact_info %}
 <div class="form" id="form">
@@ -117,10 +155,12 @@
     </div>
 
     </div>
-
+<canvas id="mycanvas" style="position: absolute; left: 0; top: 0; z-index: 0;"></canvas>
 <div id="cr-stage">
 
 </div>
+
+
 
 </body>
 </html>

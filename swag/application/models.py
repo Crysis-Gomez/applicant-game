@@ -58,6 +58,17 @@ class GameInstance(models.Model):
         return True
 
 
+class Meeting(models.Model):
+    player_name = models.CharField(max_length=50, default="unknown")
+    pub_date = models.DateField()
+    pub_time = models.TimeField()
+    vacancy = models.ForeignKey(Vacancy)
+    dateID = models.SlugField(max_length=50, unique=True)
+
+    def __unicode__(self):
+        return str(self.pub_date)
+
+
 class GameData(models.Model):
     game = models.ForeignKey(GameInstance)
     position_x = models.IntegerField(default=5)

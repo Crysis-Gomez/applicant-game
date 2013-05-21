@@ -97,6 +97,18 @@ function sendMotivation()
     }
 
 }
+
+function submitMeeting()
+{
+    var date = document.getElementById("meeting");
+
+    jQuery.post("/submitmeeting/{{game.uid}}/", {'value1':date.value,
+                        'csrftoken': '{{ csrf_token }}'}, 
+             function(data) {
+
+                        alert("Data Loaded: " + data);
+                            });
+}
         
 function sendContactInfo()
 {

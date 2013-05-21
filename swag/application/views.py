@@ -7,9 +7,11 @@ from application.models import Vacancy
 from application.models import CvDocument
 from application.models import MotivationLetter
 from application.form import LetterForm
+from application.models import Meeting
 
 from form import ContactInformationForm
 from form import UploadFileForm
+from form import MeetingForm
 from django.conf import settings
 import uuid
 import json
@@ -48,19 +50,6 @@ def start_game(request, slug):
     game_instance.save()
 
     return HttpResponseRedirect(reverse('play', args=(instance_id,)))
-
-
-def level(request, unique_id):
-
-    game = GameInstance.objects.get(uid=unique_id)
-    context = {'game': game}
-    return render(request, "level.txt", context, content_type="application/javascript")
-
-
-def rotate_level(request, unique_id):
-    game = GameInstance.objects.get(uid=unique_id)
-    context = {'game': game}
-    return render(request, "Rotatelevel.txt", context, content_type="application/javascript")
 
 
 def gamejs(request, unique_id):
@@ -135,6 +124,9 @@ def play(request, unique_id):
     letter = LetterForm(initial={'title': 'motivation'})
     context.update({'letter': letter})
 
+    meetingList = list(Meeting.objects.all())
+    context.update({'meeting': meetingList})
+
     form = UploadFileForm(initial={'title': 'cv'})
     context.update({
         'instance_id': game.uid,
@@ -183,6 +175,27 @@ def handle_uploaded_file(submitted_file, title, unique_id):
 
 
 @csrf_exempt
+def process_meeting(request, unique_id):
+    game = GameInstance.objects.get(uid=unique_id)
+    meeting = Meeting()
+    upload_state = {"action": "meeting", 'success': 'Thx for submitting!'}
+
+    if request.method == 'POST':
+        date_id = request.POST.get('value1')
+        try:
+            meeting = get_object_or_404(Meeting, dateID=date_id)
+            meeting.player_name = game.player_name
+            meeting.taken = True
+            meeting.save()
+        except Http404:
+            meeting.player_name = game.player_name
+            meeting.taken = True
+            meeting.save()
+
+    return render(request, "results_template.js", upload_state, content_type=RequestContext(request))
+
+
+@csrf_exempt
 def process_motivation_letter(request, unique_id):
 
     game = GameInstance.objects.get(uid=unique_id)
@@ -212,7 +225,6 @@ def process_contact(request, unique_id):
 
     game = GameInstance.objects.get(uid=unique_id)
     form = ContactInformationForm(request.POST)
-    #print form
     upload_state = {"action": "contact", 'success': 'Thx for submitting!', 'playername': 'name'}
 
     if form.is_valid():

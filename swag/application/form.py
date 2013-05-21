@@ -2,6 +2,7 @@ from django import forms
 from django.forms import Textarea
 from django.forms import ModelForm
 from application.models import MotivationLetter
+from application.models import Meeting
 
 
 class UploadFileForm(forms.Form):
@@ -14,6 +15,12 @@ class ContactInformationForm(forms.Form):
 
     name = forms.CharField(max_length=50)
     email = forms.CharField(max_length=50)
+
+
+class MeetingForm(forms.ModelForm):
+
+    class Meta:
+        model = Meeting
 
 
 class LetterForm(ModelForm):
