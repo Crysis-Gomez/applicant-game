@@ -20,6 +20,11 @@ body {background-color:#c0c0c0;
   
 }
 
+.form4
+{
+ z-index:3;
+}
+
 
 .letter
 {
@@ -92,7 +97,7 @@ body {background-color:#c0c0c0;
 
 #id_entry
 {
-    display: none;
+    xdisplay: none;
 }
 
 #cv
@@ -112,7 +117,7 @@ body {background-color:#c0c0c0;
     padding:15px;
     margin:-100px 0 0 -150px;
     z-index:4;
-    display: none;
+    xdisplay: none;
 }
 
 

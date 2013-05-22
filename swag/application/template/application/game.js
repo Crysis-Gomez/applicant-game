@@ -8,6 +8,8 @@ var state = function()
 	this.unLockedCVQuest = '{{cv_unlock}}';
 	this.mayUploadCV = false;
 
+	this.id = '{{game.uid}}';
+
 	this.unLockedMotivationQuest = '{{motivation_unlock}}';
 	this.MayUploadMotivation = false;
 
@@ -152,6 +154,7 @@ var state = function()
 		motivationUnlocked:motivation_Unlocked,
 		motivationMayUpload:motivation_MayUpload,
 		checkMayUploadMotivation:check_MayUploadMotivation,
+		get_id: function() { return id },
 		
 		update_key: function (value)
 		{
@@ -415,6 +418,7 @@ var crafty = function() {
 
 	Crafty.c('BOSS',
 	{ 
+		locked:true,
 
 		init:function()
 		{
@@ -437,6 +441,7 @@ var crafty = function() {
 			Crafty.stage.elem.appendChild(canvas);
 			$("#mycanvas").show();
 			ctx = canvas.getContext('2d');
+			var count = 0;
 			
 			ctx.strokeStyle = "rgb(0,0,200)";
 			for (var i = 0; i < houses.length; i++)
@@ -449,7 +454,16 @@ var crafty = function() {
 		        	ctx.closePath();
 		        	ctx.stroke();
 		        }
+		        else
+		        {
+		       		count++;
+		        }
 			};
+
+			if(count == houses.length)
+			{
+				this.locked = false;
+			}
 		},
 
 		update:function()

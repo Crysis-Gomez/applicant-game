@@ -8,10 +8,12 @@ from application.models import CvDocument
 from application.models import MotivationLetter
 from application.form import LetterForm
 from application.models import Meeting
+from application.models import PortfolioLinks
 
 from form import ContactInformationForm
 from form import UploadFileForm
 from form import MeetingForm
+from form import PortfolioForm
 from django.conf import settings
 import uuid
 import json
@@ -19,6 +21,8 @@ import mimetypes
 from django.views.decorators.csrf import csrf_exempt
 from database_storage import DatabaseStorage
 from django.template import RequestContext
+from django.core.mail import BadHeaderError
+from django.core.mail import send_mail
 
 
 def get_contact_info(game):
@@ -124,12 +128,15 @@ def play(request, unique_id):
     letter = LetterForm(initial={'title': 'motivation'})
     context.update({'letter': letter})
 
-    meetingList = list(Meeting.objects.all())
+    meetingList = Meeting.objects.filter(vacancy=game.vacancy)
     context.update({'meeting': meetingList})
+
+    portfolio = PortfolioForm()
 
     form = UploadFileForm(initial={'title': 'cv'})
     context.update({
         'instance_id': game.uid,
+        'portfolio': portfolio,
         'form': form,
         'has_contact_info': has_contact_info,
         'has_motivation_letter': game.has_motivation,
@@ -172,6 +179,36 @@ def handle_uploaded_file(submitted_file, title, unique_id):
         return True
 
     return False
+
+
+@csrf_exempt
+def process_mail(request, unique_id):
+    game = GameInstance.objects.get(uid=unique_id)
+
+    game.player_defeated_boss = True
+    game.save()
+    # subject = request.POST.get('subject', 'Hello')
+    # message = request.POST.get('message', game.vacancy.mail_text)
+    # from_email = request.POST.get('from_email', 'Crysis.gomez@gmail.com')
+
+    #recipients = [settings.DEFAULT_FROM_EMAIL]
+
+    #send_mail('New article:', message, recipients, ['Crysis.gomez@gmail.com'], fail_silently=False)
+    send_mail('Subject here', 'Here is the message.', settings.DEFAULT_FROM_EMAIL,
+    ['crysis.gomez@gmail.com'], fail_silently=False)
+
+    return HttpResponse('All went well')
+    # if subject and message and from_email:
+    #     try:
+    #         send_mail(subject, message, from_email, ['Jerry.Gomez@spilgames.com'])
+    #     except BadHeaderError:
+    #         return HttpResponse('Invalid header found.')
+    #     return HttpResponse('All went well')
+    # else:
+    #     # In reality we'd use a form class
+    #     # to get proper validation errors.
+    #     return HttpResponse('Make sure all fields are entered and valid.')
+
 
 
 @csrf_exempt

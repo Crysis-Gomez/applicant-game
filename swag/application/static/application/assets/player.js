@@ -77,6 +77,26 @@ Crafty.c('Player',
 		}
 	},
 
+	enterCollisionBoss:function(e)
+	{
+		if(!e[0].obj.locked)
+		{
+			e[0].obj.destroy();
+			$.ajax(
+			{
+	            url: "/mail/" + state.get_id() + "/",
+	            type: "POST",
+	            data: formdata,
+	            processData: false,
+	            contentType: false,
+	            success: function (res)
+	            {
+
+	            }
+        	});
+		}
+	},
+
 	enterCollisionBlock:function(e)
 	{
 		if(this.dirX != 0 && this.dirY == 0 || this.dirX == 0 && this.dirY != 0)
@@ -228,7 +248,8 @@ Crafty.c('Player',
 		.onHit("Wall",this.enterCollisionWall)
 		.onHit("Block",this.enterCollisionBlock)
 		.onHit("Machine",this.enterCollisionMachine,this.exitCollisionMachine)
-		.onHit("Machine2",this.enterCollisionMachine2,this.exitCollisionMachine2);	
+		.onHit("Machine2",this.enterCollisionMachine2,this.exitCollisionMachine2)
+		.onHit("boss",this.enterCollisionBoss);	
 	}
 
 });

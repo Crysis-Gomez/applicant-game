@@ -9,9 +9,13 @@ class Vacancy(models.Model):
     title = models.CharField(max_length=200)
     department = models.CharField(max_length=20)
     slug = models.SlugField(max_length=50, unique=True)
+    mail_text = models.CharField(max_length=500)
 
     def __unicode__(self):
         return str(self.title)
+
+    def active_games(self, finished=True):
+        return len([x for i, x in enumerate(GameInstance.objects.filter(vacancy=self))])
 
     class Meta:
         verbose_name_plural = "Vacancies"
@@ -24,6 +28,7 @@ class GameInstance(models.Model):
     player_position_x = models.IntegerField(default=5)
     player_cv_unlockedQuest = models.BooleanField(default=False)
     player_motivation_uplockedQuest = models.BooleanField(default=False)
+    player_defeated_boss = models.BooleanField(default=False)
     player_name = models.CharField(max_length=50)
     player_email = models.CharField(max_length=100)
 
@@ -75,6 +80,12 @@ class GameData(models.Model):
     position_y = models.IntegerField(default=5)
     cv_unlocked = models.BooleanField(default=False)
     motivation_unlocked = models.BooleanField(default=False)
+
+
+class PortfolioLinks(models.Model):
+    links = models.URLField(max_length=200)
+    entry = models.TextField(null=True, blank=True)
+    game = models.ForeignKey(GameInstance, editable=False)
 
 
 class CvDocument(models.Model):

@@ -20,6 +20,27 @@
 
 <div class="container" id="container">
 
+<div class="form4" id="form4">
+    {% block links %}
+    <div class="links">
+
+        <table>
+        {% for error in portfolio.errors %}
+        {{error}}
+        {% endfor %}
+         
+        {{portfolio.as_table}}
+      
+        </table> 
+         <button id="linksbutton"  type="button" onclick="submitlinks()">Submit links</button>
+         <!--<div id="success_div" name="response">Response will be placed here on submit.</div>-->
+    </div>
+
+    {% endblock %}
+</div>
+
+
+
     {% block letters %}
 
     {% if has_motivation_letter == False %}
@@ -68,13 +89,13 @@
 
         <select name="meeting" id="meeting">
         {% for date in meeting %}
-            {% if date.taken == False%}
+            
                 {% ifequal date.id selected_date.id %}
                 <option value="{{date.dateID}}" selected="selected">{{date.pub_date}}: {{date.pub_time}}</option>
                 {% else %}
                 <option value="{{date.dateID}}"> {{date.pub_date}}: {{date.pub_time}}</option>
                 {% endifequal %}
-            {%endif%}
+           
         {% endfor %}
     </select>
 
