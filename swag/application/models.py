@@ -3,6 +3,16 @@ from database_storage import DatabaseStorage
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.http import Http404
+from django.utils.html import format_html
+
+
+class SkillSet(models.Model):
+    title = models.CharField(max_length=200)
+    score = models.IntegerField(default=0)
+    #vacancy = models.ForeignKey(Vacancy)
+
+    def __unicode__(self):
+            return self.title
 
 
 class Vacancy(models.Model):
@@ -10,6 +20,7 @@ class Vacancy(models.Model):
     department = models.CharField(max_length=20)
     slug = models.SlugField(max_length=50, unique=True)
     mail_text = models.CharField(max_length=500)
+    skill_sets = models.ManyToManyField(SkillSet)
 
     def __unicode__(self):
         return str(self.title)
@@ -19,6 +30,7 @@ class Vacancy(models.Model):
 
     class Meta:
         verbose_name_plural = "Vacancies"
+
 
 
 class GameInstance(models.Model):
@@ -46,6 +58,16 @@ class GameInstance(models.Model):
 
         return self.player_name
 
+    def has_links(self):
+        try:
+            get_object_or_404(PortfolioLinks, game_instance=self.id)
+        except Http404:
+            return False
+
+        return True
+
+    has_links.boolean = True
+
     def has_cv(self):
         try:
             get_object_or_404(CvDocument, game_instance=self.id)
@@ -53,6 +75,7 @@ class GameInstance(models.Model):
             return False
 
         return True
+    has_cv.boolean = True
 
     def has_motivation(self):
         try:
@@ -61,6 +84,7 @@ class GameInstance(models.Model):
             return False
 
         return True
+    has_motivation.boolean = True
 
 
 class Meeting(models.Model):
@@ -75,7 +99,7 @@ class Meeting(models.Model):
 
 
 class GameData(models.Model):
-    game = models.ForeignKey(GameInstance)
+    game_instance = models.ForeignKey(GameInstance)
     position_x = models.IntegerField(default=5)
     position_y = models.IntegerField(default=5)
     cv_unlocked = models.BooleanField(default=False)
@@ -84,8 +108,15 @@ class GameData(models.Model):
 
 class PortfolioLinks(models.Model):
     links = models.URLField(max_length=200)
-    entry = models.TextField(null=True, blank=True)
-    game = models.ForeignKey(GameInstance, editable=False)
+    #entry = models.TextField(null=True, blank=True)
+    game_instance = models.ForeignKey(GameInstance, editable=False)
+
+    def get_link(self):
+        return self.links
+    get_link.allow_tags = True
+
+    def __unicode__(self):
+        return self.links
 
 
 class CvDocument(models.Model):

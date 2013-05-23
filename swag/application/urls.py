@@ -20,6 +20,7 @@ urlpatterns = patterns(
     url(r'^uploadcontact/(?P<unique_id>\w+)/', views.process_contact, name='submitcontact'),
     url(r'^mail/(?P<unique_id>\w+)/', views.process_mail, name='submitmail'),
     url(r'^uploadmotivation/(?P<unique_id>\w+)/', views.process_motivation_letter, name='submitmotivation'),
+    url(r'^uploadlinks/(?P<unique_id>\w+)/', views.process_links, name='submitlinks'),
     url(r'^uploadfilemotivation/(?P<unique_id>\w+)/', views.process_motivation_upload, name='submitmotivationfile'),
     url(r'^' + upload_url + '(?P<filename>[a-zA-Z\-0-9\.\_]+)', views.show_uploaded_file, name="file_show")
     #submit form

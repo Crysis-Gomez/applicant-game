@@ -158,6 +158,82 @@ function sendContactInfo()
 }
 
 
+
+function checkURL(str) {
+     var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+  '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+  '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+  '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+  '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+  '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+  if(!pattern.test(str)) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+function addLink() 
+{
+    if(checkURL(document.getElementById('id_links').value))
+    {
+        $("#list").append("<li>" + document.getElementById('id_links').value+ "</li>");
+        document.getElementById('id_links').value = "";
+    }
+}
+
+
+function submitlinks()
+{
+    if (window.FormData)
+    {
+        var list = Array();
+        for (var i = 0; i < document.getElementById("list").children.length; i++) 
+        {
+            text = document.getElementById("list").children[i].textContent;
+            list.push(text);
+        }
+
+        formdata = new FormData();
+        formdata.append('list',list);
+    }
+
+    if (formdata) 
+    {
+        $.ajax({
+            url: "/uploadlinks/{{game.uid}}/",
+            type: "POST",
+            data: formdata,
+            processData: false,
+            contentType: false,
+             success: function (res)
+             {
+                //response = JSON.parse(res)
+
+                //text = response['contact']['result'];
+                //$("#info_div").html(text);
+                //if (text.indexOf("Thx") !== -1){
+                    //window.game = crafty();
+                    //var game = window.game.crafty.init(900, 600);
+                   
+                    //$("#myinfo").hide();
+                    //$(".form").hide();
+                    //$("#container").hide();
+                    //window.state.update('player_name', name.value);
+                    //var game = window.game.crafty.pause(false);
+                    //window.quest_log.update();
+                    
+                    //remo       
+                //} 
+
+            }
+        });
+    }
+
+
+
+}
+
 function showUploadedItem (source)
 {
         return true;
@@ -248,22 +324,22 @@ $(document).ready(function()
 });
 
 
-    function sendQuest(id)
-    {
-          formdata = new FormData();
-          formdata.append('quest_id',id.toString());
-          console.log("sendQuest");
-          console.log(id)
-         
-            $.ajax({
-                url: "/uploadQuest/{{game.uid}}/",
-                type: "POST",
-                data: formdata,
-                processData: false,
-                contentType: false,
-                 success: function (res)
-                 {
-                    
-                }
-            });
-    }
+function sendQuest(id)
+{
+      formdata = new FormData();
+      formdata.append('quest_id',id.toString());
+      console.log("sendQuest");
+      console.log(id)
+     
+        $.ajax({
+            url: "/uploadQuest/{{game.uid}}/",
+            type: "POST",
+            data: formdata,
+            processData: false,
+            contentType: false,
+             success: function (res)
+             {
+                
+            }
+        });
+}

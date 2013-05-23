@@ -182,6 +182,25 @@ def handle_uploaded_file(submitted_file, title, unique_id):
 
 
 @csrf_exempt
+def process_links(request, unique_id):
+    link_list = str(request.POST.get('list')).split(",")
+    game = GameInstance.objects.get(uid=unique_id)
+
+    for _link in link_list:
+        print _link
+        if not 'http://' or not 'https://' in _link:
+            _link = 'http://' + _link
+            print _link
+
+        port = PortfolioLinks()
+        port.links = _link
+        port.game = game
+        port.save()
+
+    return HttpResponse('All went well')
+
+
+@csrf_exempt
 def process_mail(request, unique_id):
     game = GameInstance.objects.get(uid=unique_id)
 

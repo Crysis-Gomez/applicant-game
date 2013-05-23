@@ -24,8 +24,8 @@ class PortfolioForm(ModelForm):
         widgets = {
             'content': Textarea(
                 attrs={
-                    'cols': 80,
-                    'rows': 40}),
+                    'cols': 40,
+                    'rows': 20}),
         }
 
 
