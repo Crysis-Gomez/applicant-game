@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <head>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+     <script src="http://malsup.github.com/jquery.form.js"></script> 
     <link rel="stylesheet" type="text/css" href="/static/style.css">
     <script type="text/javascript" src="/static/crafty.js"></script>
     <script type="text/javascript" src="/static/BlockGame.js"></script>
@@ -20,6 +21,29 @@
 
 <div class="container" id="container">
 
+<div class="skillSet">
+    <form method="post" name="skill_form" id="skill_form" >
+    {%block skills %}
+     <div class="skillList" id="skillSet">
+        <table>
+        {% for error in skill.errors %}
+        {{error}}
+        {% endfor %}
+         
+        {{skill.as_table}}
+      
+        </table> 
+
+        <button id="submit_skills" type="button" onclick="submitSkills()">Submit</button>
+     </div>
+    </form>
+
+    {% endblock %}
+</div>
+
+
+
+
 <div class="form4" id="form4">
     {% block links %}
     <div class="links">
@@ -32,14 +56,20 @@
         {{portfolio.as_table}}
       
         </table> 
-         <button id="linksbutton"  type="button" onclick="submitlinks()">Submit links</button>
+         <button id="addLink"      type="button" onclick="addLink()">add Links</button>
+         <button id="linksbutton"  type="button" onclick="submitlinks()">Submit</button>
          <!--<div id="success_div" name="response">Response will be placed here on submit.</div>-->
+    </div>
+
+    <div class="linkList" id="linkList">
+        <ul id="list" >
+
+        </ul>
+
     </div>
 
     {% endblock %}
 </div>
-
-
 
     {% block letters %}
 
@@ -68,8 +98,6 @@
         <button id="uploaddocumentbutton" type="button" onclick="uploadDocument()">Upload document</button>
 
     </div>
-
-
 
 
 {% block meeting %}
@@ -180,8 +208,6 @@
 <div id="cr-stage">
 
 </div>
-
-
 
 </body>
 </html>

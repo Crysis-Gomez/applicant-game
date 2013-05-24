@@ -8,12 +8,14 @@ from application.models import CvDocument
 from application.models import MotivationLetter
 from application.form import LetterForm
 from application.models import Meeting
-from application.models import PortfolioLinks
-
+from application.models import PortfolioLink
+from application.models import SkillSet
+from application.models import PlayerSkill
 from form import ContactInformationForm
 from form import UploadFileForm
 from form import MeetingForm
 from form import PortfolioForm
+from form import SkillSetForm
 from django.conf import settings
 import uuid
 import json
@@ -23,6 +25,8 @@ from database_storage import DatabaseStorage
 from django.template import RequestContext
 from django.core.mail import BadHeaderError
 from django.core.mail import send_mail
+from django.forms.models import inlineformset_factory
+from django.db import IntegrityError
 
 
 def get_contact_info(game):
@@ -113,12 +117,22 @@ def getQuest(id_quest, game):
 #     return render(request, "playerdatajs", context, content_type="application/javascript")
 
 
+def get_skill(game, skill):
+    try:
+        obj = PlayerSkill.objects.get(game_instance=game, skill=skill)
+    except PlayerSkill.DoesNotExist:
+        obj = PlayerSkill()
+    return obj
+
+
+@csrf_exempt
 def play(request, unique_id):
     try:
         game = get_object_or_404(GameInstance, uid=unique_id)
     except Http404:
         return HttpResponseRedirect('/')
-    context = dict(request)
+    #context = dict(request)
+    context = dict()
 
     has_contact_info = get_contact_info(game)
     if 'no' is has_contact_info:
@@ -133,6 +147,10 @@ def play(request, unique_id):
 
     portfolio = PortfolioForm()
 
+    skillForm = SkillSetForm(elements=game.vacancy.skill_sets)
+
+    context.update({'skill': skillForm})
+
     form = UploadFileForm(initial={'title': 'cv'})
     context.update({
         'instance_id': game.uid,
@@ -143,6 +161,32 @@ def play(request, unique_id):
         'has_cv': game.has_cv})
 
     return render_to_response("index.html", context)
+
+
+@csrf_exempt
+def process_skills(request, unique_id):
+
+    game = get_object_or_404(GameInstance, uid=unique_id)
+
+    if request.method == "POST":
+        skillForm = SkillSetForm(request.POST, elements=game.vacancy.skill_sets)
+        print skillForm
+        if skillForm.is_valid():
+            for data in skillForm.cleaned_data:
+                print "DATA"
+                print skillForm.cleaned_data[data]
+                print "DATA2"
+                print skillForm.cleaned_data
+
+                _skill = SkillSet.objects.get(title=data)
+                skill_set = get_skill(game, _skill)
+                skill_set.score = skillForm.cleaned_data[data]
+                skill_set.game_instance = game
+                skill_set.skill = _skill
+                skill_set.save()
+        else:
+           print(skillForm.errors)
+    return HttpResponse('All went well')
 
 
 def show_uploaded_file(request, filename):
@@ -192,7 +236,7 @@ def process_links(request, unique_id):
             _link = 'http://' + _link
             print _link
 
-        port = PortfolioLinks()
+        port = PortfolioLink()
         port.links = _link
         port.game = game
         port.save()

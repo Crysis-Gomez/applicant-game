@@ -173,6 +173,16 @@ function checkURL(str) {
   }
 }
 
+function submitSkills() 
+{   
+    //$.post('/uploadskills/{{game.uid}}/', $('#skill_form').serialize());
+    $("#skill_form").ajaxSubmit({url:'/uploadskills/{{game.uid}}/', type: 'post',
+        success:function(res){
+        console.log("Yes");
+        }
+    })
+}
+
 function addLink() 
 {
     if(checkURL(document.getElementById('id_links').value))
@@ -328,9 +338,7 @@ function sendQuest(id)
 {
       formdata = new FormData();
       formdata.append('quest_id',id.toString());
-      console.log("sendQuest");
-      console.log(id)
-     
+
         $.ajax({
             url: "/uploadQuest/{{game.uid}}/",
             type: "POST",

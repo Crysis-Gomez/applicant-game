@@ -1,9 +1,13 @@
 from django import forms
+from django.db import models
 from django.forms import Textarea
 from django.forms import ModelForm
 from application.models import MotivationLetter
 from application.models import Meeting
-from application.models import PortfolioLinks
+from application.models import PortfolioLink
+from application.models import SkillSet
+from application.models import Vacancy
+from application.models import PlayerSkill
 
 
 class UploadFileForm(forms.Form):
@@ -20,13 +24,31 @@ class ContactInformationForm(forms.Form):
 
 class PortfolioForm(ModelForm):
     class Meta:
-        model = PortfolioLinks
+        model = PortfolioLink
         widgets = {
             'content': Textarea(
                 attrs={
                     'cols': 40,
                     'rows': 20}),
         }
+
+
+class SkillSetForm(forms.Form):
+
+    def __init__(self, *args, **kwargs):
+        elements = kwargs.pop('elements')
+        print 'These are the elements for our new form'
+        print elements.all()
+
+        super(SkillSetForm, self).__init__(*args, **kwargs)
+        for el in elements.all():
+            self.add_separate_fields(el)
+
+    def add_separate_fields(self, field):
+
+        CHOICES = [(i, i) for i in range(11)]
+        name = field.title
+        self.fields[name] = forms.TypedChoiceField(choices=CHOICES, initial='FIXED')
 
 
 class MeetingForm(forms.ModelForm):

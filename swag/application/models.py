@@ -8,8 +8,6 @@ from django.utils.html import format_html
 
 class SkillSet(models.Model):
     title = models.CharField(max_length=200)
-    score = models.IntegerField(default=0)
-    #vacancy = models.ForeignKey(Vacancy)
 
     def __unicode__(self):
             return self.title
@@ -32,7 +30,6 @@ class Vacancy(models.Model):
         verbose_name_plural = "Vacancies"
 
 
-
 class GameInstance(models.Model):
     uid = models.CharField(max_length=200)
     progress = models.IntegerField(default=0)
@@ -43,6 +40,7 @@ class GameInstance(models.Model):
     player_defeated_boss = models.BooleanField(default=False)
     player_name = models.CharField(max_length=50)
     player_email = models.CharField(max_length=100)
+    #skills = models.ManyToManyField(SkillSet, blank=True, through='PlayerSkills')
 
     vacancy = models.ForeignKey(Vacancy)
 
@@ -60,7 +58,7 @@ class GameInstance(models.Model):
 
     def has_links(self):
         try:
-            get_object_or_404(PortfolioLinks, game_instance=self.id)
+            get_object_or_404(PortfolioLink, game_instance=self.id)
         except Http404:
             return False
 
@@ -87,6 +85,17 @@ class GameInstance(models.Model):
     has_motivation.boolean = True
 
 
+class PlayerSkill(models.Model):
+    id = models.AutoField(primary_key=True)
+    skill = models.ForeignKey(SkillSet)
+    game_instance = models.ForeignKey(GameInstance)
+
+    score = models.IntegerField(default=0)
+
+    class Meta:
+        unique_together = (("skill", "game_instance"),)
+
+
 class Meeting(models.Model):
     player_name = models.CharField(max_length=50, default="unknown")
     pub_date = models.DateField()
@@ -106,7 +115,7 @@ class GameData(models.Model):
     motivation_unlocked = models.BooleanField(default=False)
 
 
-class PortfolioLinks(models.Model):
+class PortfolioLink(models.Model):
     links = models.URLField(max_length=200)
     #entry = models.TextField(null=True, blank=True)
     game_instance = models.ForeignKey(GameInstance, editable=False)
