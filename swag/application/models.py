@@ -39,13 +39,16 @@ class GameInstance(models.Model):
     player_motivation_uplockedQuest = models.BooleanField(default=False)
     player_defeated_boss = models.BooleanField(default=False)
     player_name = models.CharField(max_length=50)
-    player_email = models.CharField(max_length=100)
+    player_email = models.EmailField(max_length=100)
     #skills = models.ManyToManyField(SkillSet, blank=True, through='PlayerSkills')
 
     vacancy = models.ForeignKey(Vacancy)
 
     def __unicode__(self):
         return self.name()
+
+    def has_skills():
+        return False
 
     def name(self):
         if not self.player_name:

@@ -1,16 +1,17 @@
 body {background-color:#c0c0c0;
 }
 
-.form
+#contact_form
 {
 	 z-index:3;
      display: none;
 }
-.form2
+#cv_form
 {
-	display: none;
-
+     z-index:3;
+     display: none;
 }
+
 
 .form3
 {
@@ -21,6 +22,12 @@ body {background-color:#c0c0c0;
 }
 
 .form4
+{
+  z-index:3;
+  xdisplay: none;
+}
+
+.skillSet
 {
   z-index:3;
   display: none;
@@ -43,13 +50,16 @@ body {background-color:#c0c0c0;
 
 }
 
-.letter
+#letter_form
 {
   display: none;
 }
 #choice
 {
-
+    display: none;
+}
+#meetingForm
+{
     display: none;
 }
 
@@ -120,6 +130,11 @@ body {background-color:#c0c0c0;
 #cv
 {
 	display: none;
+}
+
+#success_div
+{
+    display: :none;
 }
 
 #container

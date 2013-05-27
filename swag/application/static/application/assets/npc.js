@@ -75,7 +75,7 @@ function uploadCV()
 function uploadContact()
 {
 
-	document.getElementById("form").style.display = 'block';
+	document.getElementById("#contact_form").style.display = 'block';
 	document.getElementById("container").style.display = 'block';
 	document.getElementById("id_name").focus();
 	
@@ -86,6 +86,8 @@ function uploadMotivation()
 {
 	document.getElementById("container").style.display = 'block';
 	document.getElementById("choice").style.display = 'block';
+	$("#success_div").show();
+	document.getElementById("success_div").innerHTML = "Pleas chose your picking";
 	return false;
 }
 

@@ -67,7 +67,6 @@ class VacancyAdmin(admin.ModelAdmin):
     inlines = [Instance, Times]
 
 
-
 class CV(admin.TabularInline):
     model = models.CvDocument
     extra = 0

@@ -229,7 +229,6 @@ def handle_uploaded_file(submitted_file, title, unique_id):
 def process_links(request, unique_id):
     link_list = str(request.POST.get('list')).split(",")
     game = GameInstance.objects.get(uid=unique_id)
-
     for _link in link_list:
         print _link
         if not 'http://' or not 'https://' in _link:
@@ -238,7 +237,7 @@ def process_links(request, unique_id):
 
         port = PortfolioLink()
         port.links = _link
-        port.game = game
+        port.game_instance = game
         port.save()
 
     return HttpResponse('All went well')
@@ -325,11 +324,12 @@ def process_contact(request, unique_id):
 
     game = GameInstance.objects.get(uid=unique_id)
     form = ContactInformationForm(request.POST)
-    upload_state = {"action": "contact", 'success': 'Thx for submitting!', 'playername': 'name'}
+    upload_state = {"action": "contact", 'success': 'Thanks for submitting', 'playername': 'name'}
 
     if form.is_valid():
         game.player_name = form.cleaned_data['name']
         game.player_email = form.cleaned_data['email']
+        print game.player_name
         game.save()
         upload_state['playername'] = json.dumps(game.player_name)
     else:
@@ -367,19 +367,14 @@ def process_motivation_upload(request, unique_id):
     if not request.method == "POST":
         return render(request, "results_template.js", upload_state, content_type="application/json")
 
-    form = UploadFileForm(request.POST, request.FILES)
-    if form.is_valid():
+    if request.FILES.get("attachment"):
+        form = UploadFileForm()
+        form.document = request.FILES['attachment']
         upload_success = True
-        upload_success = handle_uploaded_motivation(request.FILES['document'], form.cleaned_data['title'], unique_id)
+        upload_success = handle_uploaded_motivation(form.document, form.document.name, unique_id)
 
         if upload_success:
-            upload_state['success'] = 'Thanks for submitting'
-        else:
-            upload_state['success'] = 'did you try to re-upload? Thats not possible at the moment!'
-    else:
-        print(form.errors)
-        upload_state['success'] = json.dumps(form.errors)
-
+            upload_state['success'] = 'Thanks for submitting'     
     return render(request, "results_template.js", upload_state, content_type="text/html")
 
 
@@ -390,19 +385,10 @@ def process_upload(request, unique_id):
     if not request.method == "POST":
         return render(request, "results_template.js", upload_state, content_type="application/json")
 
-    #print 'cv' in request.POST['title']
-
     form = UploadFileForm(request.POST, request.FILES)
     if form.is_valid():
-        upload_success = True
-        # if x[1] == "document":
         upload_success = handle_uploaded_file(request.FILES['document'], form.cleaned_data['title'], unique_id)
-        #else:
-           # upload_success = handle_uploaded_motivation(request.FILES['document'], form.cleaned_data['title'], unique_id)
-        if upload_success:
-            upload_state['success'] = 'Thanks for submitting'
-        else:
-            upload_state['success'] = 'did you try to re-upload? Thats not possible at the moment!'
+        upload_state['success'] = 'Thanks for submitting'
     else:
         print(form.errors)
         upload_state['success'] = json.dumps(form.errors)

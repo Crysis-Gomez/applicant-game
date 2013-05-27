@@ -71,28 +71,32 @@
     {% endblock %}
 </div>
 
+
+
+
+
     {% block letters %}
 
     {% if has_motivation_letter == False %}
-    <div class="letter">
-
-        <table>
-        {% for error in letter.errors %}
-        {{error}}
-        {% endfor %}
-         
-        {{letter.as_table}}
-      
-        </table> 
-         <button id="letterbutton"  type="button" onclick="sendMotivation()">Send motivation</button>
+        <form enctype="multipart/form-data" method="post" name="letter_form" id="letter_form" >
+            <table>
+                {% for error in letter.errors %}
+                {{error}}
+                {% endfor %}
+                 
+                {{letter.as_table}}
+          
+            </table> 
+             <button id="letterbutton"  type="button" onclick="sendMotivation()">Send motivation</button>
+        </form>
+        
          <!--<div id="success_div" name="response">Response will be placed here on submit.</div>-->
-    </div>
     {%endif%}
 
     {% endblock %}
 
 
-    <div class="Choice" id="choice">
+    <div class="choice" id="choice">
         <button id="freeformbutton" type="button" onclick="freeForm()">Free From</button>
         
         <button id="uploaddocumentbutton" type="button" onclick="uploadDocument()">Upload document</button>
@@ -102,15 +106,10 @@
 
 {% block meeting %}
 
-<div class="form3" id="form3">
-
-<form enctype="multipart/form-data" method="post" name="meetingFrom" 
-    id="meetingForm" >
+<form enctype="multipart/form-data" method="post" name="meetingFrom" id="meetingForm" >
     
     <table>
-
         {{ meetingForm.as_table }}
-    
         {% for error in meetingForm.errors %}
         {{error}}
         {% endfor %}
@@ -131,18 +130,13 @@
     
     <button id="MeetButton" type="button" onclick="submitMeeting()">Submit meeting</button>
 </form>
-</div>
 
 {% endblock %}
-
-
-
 {% block contact %}
 {% if 'no' == has_contact_info %}
-<div class="form" id="form">
 
-<form enctype="multipart/form-data" method="post" name="myinfo" 
-    id="myinfo" >
+
+<form enctype="multipart/form-data" method="post" name="contact_form" id="contact_form" >
     
     <table>
     {{ contact_info.as_table }}
@@ -156,17 +150,17 @@
     <button id="contactButton" type="button" onclick="sendContactInfo()">Submit contact</button>
     <!--<div id="info_div" name="response">Response will be placed here on submit.</div>-->
 </form>
-</div>
+
 {%endif%}
 
 {% endblock %}
 
 {% block upload %}
 {% if has_cv == False %}
- <div class="form2" id="form2">
 
-<form2 enctype="multipart/form-data" method="post" name="myform" 
-    id="myform" action= "/submitfile/{{instance_id}}/">
+
+<form enctype="multipart/form-data" method="post" name="myform" 
+    id="cv_form">
     
     <table>
     {{ form.as_table }}
@@ -177,15 +171,13 @@
     
     </table> 
     
-    <button type="button" id="cvButton" onclick="sendFiles(id_document)">Send CV</button>
-</form2>
+    <button type="button" id="cvButton" onclick="sendFiles()">Send CV</button>
+</form>
 
-<div id="success_div" name="response">Response will be placed here on submit.</div>
 
 {%endif%}
 {% endblock %}
-</div>
-
+<div id="success_div" name="response">Response will be placed here on submit.</div>
 </div>
 
  <div id="questlog" class="questlog">

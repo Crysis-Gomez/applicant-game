@@ -4,8 +4,9 @@ function freeForm()
 {
     $("#container").show();
     $("#id_entry").show();
-    $(".letter").show();
-    $(".Choice").hide();
+    $("#letter_form").show();
+    $("#choice").hide();
+    $("#success_div").hide();
     document.getElementById("id_entry").focus();
     document.getElementById("freeformbutton").blur();
     isFreeFrom = true;
@@ -15,8 +16,9 @@ function uploadDocument()
 {
     $("#container").show();
     $("#id_attachment").show();
-    $(".letter").show();
-    $(".Choice").hide();
+    $("#letter_form").show();
+    $("#choice").hide();
+    $("#success_div").hide();
     document.getElementById("uploaddocumentbutton").blur();
     isFreeFrom:false;
 }
@@ -24,78 +26,28 @@ function uploadDocument()
 
 function sendMotivation()
 {
-    var img, reader, file;
-    var entry = document.getElementById("id_entry");
-    var form = document.getElementById("id_attachment");
-    document.getElementById("letterbutton").blur();
-    var formdata;
-    var uploadURL = "";
-    if (window.FormData)
-    {
-        formdata = new FormData();
+    var uploadURL = "/uploadfilemotivation/{{game.uid}}/";
 
-    }
-
-    if(isFreeFrom)
-    {
-        uploadURL = "/uploadmotivation/{{game.uid}}/";
-    }
-    else
-    {
-      uploadURL = "/uploadfilemotivation/{{game.uid}}/";
-          for ( i=0, len=form.files.length; i < len; i++)
-          {
-                file = form.files[i];
-        
-                if (window.FileReader)
-                {
-                    reader = new FileReader();
-                    reader.onloadend = function (e)
-                    { 
-                        showUploadedItem(e.target.result, file.fileName);
-                    };
-                    reader.readAsDataURL(file);
-                }
-                if (formdata)
-                {
-                    formdata.append('title', "CV");
-                    formdata.append('document', file);
-                }
-        }  
-    } 
-
+    if(isFreeFrom)uploadURL = "/uploadmotivation/{{game.uid}}/";
     
+ 
+     if(document.getElementById("id_attachment").value != "" || document.getElementById("id_entry").value != "")
+     {
+         $("#letter_form").ajaxSubmit({url:uploadURL, type: 'post',
+             success:function(res)
+             {
 
-    if(entry.value.length > 0)
-    {
-        formdata.append('entry',entry.value);
-    }
-
-
-    if (formdata)
-    {
-        $.ajax({
-            url: uploadURL,
-            type: "POST",
-            data: formdata,
-            processData: false,
-            contentType: false,
-            success: function (res)
-            {
-                response = JSON.parse(res);
-               // text = response['motivation']['result'];
-                window.state.update('has_motivation', 'True');
-                var game = window.game.crafty.pause(false);
-                window.quest_log.update();
-                $("#container").hide();
-                $("#id_attachment").hide();
-                $(".letter").hide();
-                $("#id_entry").hide();
-
-            }
+                updateGame('has_motivation','True')
+             }
         });
     }
+    else showError("Please input something");
+}
 
+function showError(string)
+{
+  document.getElementById("success_div").innerHTML = string;
+  $("#success_div").show();
 }
 
 function submitMeeting()
@@ -109,55 +61,49 @@ function submitMeeting()
                         alert("Data Loaded: " + data);
                             });
 }
+
+
+function updateGame(propertie,value)
+{
+    window.state.update(propertie, value);
+    var game = window.game.crafty.pause(false);
+    window.quest_log.update();
+    document.getElementById("success_div").innerHTML = "Response will be placed here on submit";
+    $("#contact_form").hide();
+    $("#container").hide();
+    $("#id_attachment").hide();
+    $("#letter_form").hide();
+    $("#id_entry").hide();
+    $("#cv_form").hide();
+    $(".skillSet").hide();
+}
         
 function sendContactInfo()
 {
-    var name = document.getElementById("id_name");
-    var email = document.getElementById("id_email");
-    document.getElementById("contactButton").blur();
-    if (window.FormData)
-    {
-        formdata = new FormData();
-        formdata.append('name', name.value);
-        formdata.append('email', email.value);
-        //formdata.append('email', $("#id_email").val()) 
-    }
-
-       if (formdata) 
-       {
-        $.ajax({
-            url: "/uploadcontact/{{game.uid}}/",
-            type: "POST",
-            data: formdata,
-            processData: false,
-            contentType: false,
-             success: function (res)
-             {
-                //response = JSON.parse(res)
-
-                //text = response['contact']['result'];
-                //$("#info_div").html(text);
-                //if (text.indexOf("Thx") !== -1){
-                    //window.game = crafty();
-                    //var game = window.game.crafty.init(900, 600);
-                   
-                    //$("#myinfo").hide();
-                    $(".form").hide();
-                    $("#container").hide();
-                    window.state.update('player_name', name.value);
-                    var game = window.game.crafty.pause(false);
-                    window.quest_log.update();
-                    
-                    //remo       
-                //} 
-
+    $("#contact_form").ajaxSubmit({url:'/uploadcontact/{{game.uid}}/', type: 'post',
+         success:function(res)
+         {
+            response = JSON.parse(res);
+            text = response.player['result'];
+            if(text == 'Thx for submitting')
+            {
+                name = replaceText(response.player['name']);
+                text = response.player['result'];
+                updateGame('player_name', name)
             }
-        });
-    }
-
+            else document.getElementById("success_div").innerHTML = replaceText(text);
+            
+         }
+     });
 }
 
-
+function replaceText(string)
+{
+    tempText = string.replace(/([&;.*+?^=!:${}()|[\]\/\\])/g,"");
+    tempText = tempText.replace(/quot/g,"");
+    tempText = tempText.replace(/,/g,'<br>');
+    return tempText
+}
 
 function checkURL(str) {
      var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
@@ -166,19 +112,17 @@ function checkURL(str) {
   '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
   '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
   '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
-  if(!pattern.test(str)) {
-    return false;
-  } else {
-    return true;
-  }
+  if(!pattern.test(str))return false;
+  else return true;
 }
 
 function submitSkills() 
 {   
     //$.post('/uploadskills/{{game.uid}}/', $('#skill_form').serialize());
     $("#skill_form").ajaxSubmit({url:'/uploadskills/{{game.uid}}/', type: 'post',
-        success:function(res){
-        console.log("Yes");
+        success:function(res)
+        {
+             updateGame('has_skills','True')
         }
     })
 }
@@ -189,12 +133,18 @@ function addLink()
     {
         $("#list").append("<li>" + document.getElementById('id_links').value+ "</li>");
         document.getElementById('id_links').value = "";
-    }
+    }else  showError("Please insert a link");
 }
 
 
 function submitlinks()
 {
+
+    if(document.getElementById("list").children.length == 0)
+    {
+        showError("please add, at least one link");
+        return;
+    }
     if (window.FormData)
     {
         var list = Array();
@@ -218,30 +168,11 @@ function submitlinks()
             contentType: false,
              success: function (res)
              {
-                //response = JSON.parse(res)
-
-                //text = response['contact']['result'];
-                //$("#info_div").html(text);
-                //if (text.indexOf("Thx") !== -1){
-                    //window.game = crafty();
-                    //var game = window.game.crafty.init(900, 600);
-                   
-                    //$("#myinfo").hide();
-                    //$(".form").hide();
-                    //$("#container").hide();
-                    //window.state.update('player_name', name.value);
-                    //var game = window.game.crafty.pause(false);
-                    //window.quest_log.update();
-                    
-                    //remo       
-                //} 
-
+                
+                updateGame('has_links','True')
             }
         });
     }
-
-
-
 }
 
 function showUploadedItem (source)
@@ -257,51 +188,23 @@ function restartCrafty()
 
 function sendFiles()
 {
-    document.getElementById("cvButton").blur();
-    form = document.getElementById("id_document");
-  //document.getElementById("success_div").innerHTML = "Uploading . . ."
-        var img, reader, file;
-        formdata = new FormData();
-      
-        for ( i=0, len=form.files.length; i < len; i++) 
-        {
-            file = form.files[i];
-    
-            if (window.FileReader)
+
+    $("#cv_form").ajaxSubmit({url:'/submitfile/{{game.uid}}/', type: 'post',
+         success:function(res)
+         {
+            response = JSON.parse(res);
+            text = response.player['result'];
+            if(text == 'Thanks for submitting')
             {
-                reader = new FileReader();
-                reader.onloadend = function (e)
-                { 
-                    showUploadedItem(e.target.result, file.fileName);
-                };
-                reader.readAsDataURL(file);
+                name = replaceText(response.player['name']);
+                text = response.player['result'];
+                updateGame('has_cv', 'True')
             }
-            if (formdata)
-            {
-                formdata.append('title', "CV");
-                formdata.append('document', file);
-            }
-        }
-    
-        if (formdata)
-        {
-            $.ajax({
-                url: "/submitfile/{{game.uid}}/",
-                type: "POST",
-                data: formdata,
-                processData: false,
-                contentType: false,
-                success: function (res)
-                {
-                    response = JSON.parse(res);
-                    $("#container").hide();
-                    $(".form2").hide();
-                    window.state.update('has_cv', 'True');
-                    var game = window.game.crafty.pause(false);
-                    window.quest_log.update()
-                }
-            });
-        }
+            else document.getElementById("success_div").innerHTML = replaceText(text);
+            
+         }
+     });
+
 }
 
 $(document).ready(function()
