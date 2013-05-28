@@ -106,22 +106,11 @@ Crafty.c('Player',
 		else this.stopMovement();
 	},
 
-	enterCollisionMachine2:function(e)
-	{
-		this.stopMovement();
-		Crafty.scene("RotateGame");	
-	},
-
-	exitCollisionMachine2:function(e)
-	{
-		
-		
-	},
 
 	enterCollisionMachine:function(e)
 	{
 		this.stopMovement();
-		Crafty.scene("BlockGame");
+		Crafty.scene(e[0].obj.startGame);
 		
 	},
 
@@ -238,7 +227,8 @@ Crafty.c('Player',
 			if (e.key == 76 && !Crafty.isPaused())
 			{
 				if(quest_log.x  <= -150)quest_log.Up();
-				else if(quest_log.x >=  10)quest_log.Out(); 
+				else if(quest_log.x >=  10)quest_log.Out();
+
 			}
 			return true;
 		})

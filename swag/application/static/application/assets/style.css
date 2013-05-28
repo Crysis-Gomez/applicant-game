@@ -12,19 +12,16 @@ body {background-color:#c0c0c0;
      display: none;
 }
 
-
 .form3
 {
-
   z-index:3;
   display: none;
-  
 }
 
 .form4
 {
   z-index:3;
-  xdisplay: none;
+  display: none;
 }
 
 .skillSet
@@ -41,12 +38,10 @@ body {background-color:#c0c0c0;
     height: 100px;
     width: 200px; 
     overflow-y: scroll; 
-
 }
 
 .list
 {
-
 
 }
 
@@ -65,10 +60,8 @@ body {background-color:#c0c0c0;
 
 #quest_row
 {
-
     background-color: #eee;
 }
-
 
 #quest_row:hover
 {
@@ -86,10 +79,8 @@ body {background-color:#c0c0c0;
 
 #quest_container
 {
-
     float: left;
     width:200px;
-
 }
 
 #quest_info
@@ -97,7 +88,6 @@ body {background-color:#c0c0c0;
     width:150px;
     float: left;
     margin-left:50px;
-
 }
 
 #questlog
@@ -125,8 +115,6 @@ body {background-color:#c0c0c0;
     display: none;
 }
 
-
-
 #cv
 {
 	display: none;
@@ -149,13 +137,10 @@ body {background-color:#c0c0c0;
     padding:15px;
     margin:-100px 0 0 -150px;
     z-index:4;
-    xdisplay: none;
+    display: none;
 }
-
 
 #cr-stage
 {
 	margin: auto;
-
-	
 }

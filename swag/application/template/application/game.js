@@ -4,18 +4,79 @@ var state = function()
 	this.email = '{{ game.player_email }}';
 	this.has_cv = '{{ game.has_cv }}';
 	this.has_motivation = '{{game.has_motivation}}';
-	
+	this.has_links = '{{game.has_links}}';
+	this.has_skills = '{{game.has_skills}}'
+
 	this.unLockedCVQuest = '{{cv_unlock}}';
 	this.mayUploadCV = false;
-
-	this.id = '{{game.uid}}';
 
 	this.unLockedMotivationQuest = '{{motivation_unlock}}';
 	this.MayUploadMotivation = false;
 
+	this.unLockedLinkQuest = '{{link_unlock}}';
+	this.MayUploadLink = false;
+
+	this.unLockedSkillsQuest = '{{skills_unlock}}';
+	this.MayUploadSkills = false;
+
+	this.id = '{{game.uid}}';
+
 	this.playerPositionx = 300;
 	this.playerPositiony = 300;///django shit doen.
 	this.has_quest_log = false;
+
+	var check_UnlockedSkillsQuest = function()
+	{
+		var my_val = false;
+		if(unLockedSkillsQuest == 'True')
+		{
+			my_val = true;
+		}
+		return my_val;
+	}
+
+	var skills_Unlocked = function()
+	{
+		 unLockedSkillsQuest = 'True';
+	}
+
+	var skills_MayUpload = function()
+	{
+		MayUploadSkills = true;
+	}
+
+	var check_MayUploadSkills = function()
+	{
+		return MayUploadSkills;
+	}
+
+	///////////////////////////////////////////////
+
+	var check_UnlockedLinkQuest = function()
+	{
+		var my_val = false;
+		if(unLockedLinkQuest == 'True')
+		{
+			my_val = true;
+		}
+		return my_val;
+	}
+
+	var link_Unlocked = function()
+	{
+		 unLockedLinkQuest = 'True';
+	}
+
+	var link_MayUpload = function()
+	{
+		MayUploadLink = true;
+	}
+
+	var check_MayUploadLink = function()
+	{
+		return MayUploadLink;
+	}
+//////////////////////////////////////////
 
 	var check_UnlockedMotivationQuest = function()
 	{
@@ -41,7 +102,7 @@ var state = function()
 	{
 		return MayUploadMotivation;
 	}
-
+/////////////////////////////////////////////
 	var check_UnlockedCVQuest = function()
 	{
 		var my_val = false;
@@ -131,6 +192,30 @@ var state = function()
 		return my_val;
 	}
 
+
+	var get_link = function()
+	{
+		var my_val = false;
+		if (has_links == 'True') 
+		{
+			my_val = true;
+		}
+
+		return my_val;
+	}
+
+
+	var get_skills = function()
+	{
+		var my_val = false;
+		if (has_skills == 'True') 
+		{
+			my_val = true;
+		}
+
+		return my_val;
+	}
+
 	return {
 		getState: function() { init() },
 		my_name: function()
@@ -140,6 +225,8 @@ var state = function()
 		check_cv: get_cv,
 		check_name:get_name,
 		check_motivation:get_motivation,
+		check_link:get_link,
+		check_skills:get_skills,
 		checkPosition:checkPosition,
 		setPosition:setPosition,
 		checklog:check_log,
@@ -154,6 +241,18 @@ var state = function()
 		motivationUnlocked:motivation_Unlocked,
 		motivationMayUpload:motivation_MayUpload,
 		checkMayUploadMotivation:check_MayUploadMotivation,
+
+		checkUnlockedLinkQuest:check_UnlockedLinkQuest,
+		linkUnlocked:link_Unlocked,
+		linkMayUpload:link_MayUpload,
+		checkMayUploadLink:check_MayUploadLink,
+
+
+		checkUnlockedSkillsQuest:check_UnlockedSkillsQuest,
+		skillsUnlocked:skills_Unlocked,
+		skillsMayUpload:skills_MayUpload,
+		checkMayUploadSkills:check_MayUploadSkills,
+
 		get_id: function() { return id },
 		
 		update_key: function (value)
@@ -176,7 +275,10 @@ var state = function()
 
 
 var quest_log;
-var TILE_SIZE = 32; 
+var TILE_SIZE = 32;
+var HOUSE_WIDTH = 20;
+var HOUSE_HEIGHT = 10;
+var OFFSET = 120; 
 	
 
 var crafty = function() {
@@ -195,7 +297,8 @@ var crafty = function() {
     {
 		 tiles:[0,0],
 		 wall:[1,0],
-		 machine:[2,0]
+		 machine:[2,0],
+		 door:[5,0]
     });
 
 	var dialog;
@@ -225,82 +328,83 @@ var crafty = function() {
 	}
 
 
-	function generateIndoors()
+	function createHouse()
 	{
-		for (i = 0; i < 31; i++)
+		currentIndoor = new Array;
+		if(typeof window.indoor[0] == "string")
 		{
-			for (j = 0; j < 21; j++)
-			{
-				if(j < 2)
-				{
-					Crafty.e("2D, Canvas, wall,Collision,Wall")
-					.collision(new Crafty.polygon([0,0],[32,0],[32,16],[0,16]))
-                 	.attr({ x: i * TILE_SIZE, y: j * TILE_SIZE, z:-1 });
-
-				}
-				else
-				{
-					Crafty.e("2D, Canvas, tiles")
-                 	.attr({ x: i * TILE_SIZE, y: j * TILE_SIZE, z:-1 });
-             	}
-    		}
+			indoorString = window.indoor[0];
+			indoorString = indoorString.replace(/\r?\n|\r/g,'');
 		}
-		
-	}
+	
+		for (var x = 0; x < HOUSE_WIDTH; x++)
+      	{
+            currentIndoor[x] = new Array();
+      	}
+      	index = 0;
+        for (var x = 0; x < HOUSE_HEIGHT; x++)
+        {
+          for (var y = 0; y < HOUSE_WIDTH; y++)
+          {
+              currentIndoor[x][y] = indoorString[index];
+              index++;
+          }
+       }
 
-	function generateIndoorObjects(){
-		for (i = 0; i < 31; i++)
-		{
-			for (j = 0; j < 21; j++)
-			{
-				if(i  == 5 && j == 0)
-				{
-					var house  = Crafty.e("2D, Canvas,Image,Collision,Door")
-					.collision(new Crafty.polygon([0,32],[32,32],[32,48],[0,48]));
-					house.image("/static/Door.png");
-					house.x = TILE_SIZE*i;
-					house.y = TILE_SIZE*j;
-				}
-
-
-				if(i == 10  && j == 11)
-				{
-
-					var machine  = Crafty.e("2D, Canvas,Image,Collision,machine,Machine")
-					.collision(new Crafty.polygon([0,0],[32,0],[32,32],[0,32]));
-					machine.x = TILE_SIZE*i;
-					machine.y = TILE_SIZE*j;
-				}
-    		}
-		}
+       return currentIndoor;
 	}
 
 
-	function generateIndoorObjects2(){
-		for (i = 0; i < 31; i++)
+	function generateIndoors(game)
+	{
+		indoor = createHouse();
+		for (x = 0; x < HOUSE_WIDTH; x++)
 		{
-			for (j = 0; j < 21; j++)
+			for (y = 0; y < HOUSE_HEIGHT; y++)
 			{
-				if(i  == 5 && j == 0)
+				var count = indoor[y][x];
+
+				switch(count)
 				{
-					var house  = Crafty.e("2D, Canvas,Image,Collision,Door")
-					.collision(new Crafty.polygon([0,32],[32,32],[32,48],[0,48]));
-					house.image("/static/Door.png");
-					house.x = TILE_SIZE*i;
-					house.y = TILE_SIZE*j;
-				}
+					case "0":
+							Crafty.e("2D, Canvas, tiles")
+	                  		.attr({ x: x * TILE_SIZE +OFFSET, y: y * TILE_SIZE, z:-1 });
+					 break;
+
+					 case "1":
+							Crafty.e("2D, Canvas, wall,Collision,Wall")
+					 		.collision(new Crafty.polygon([0,0],[32,0],[32,16],[0,16]))
+	                  		.attr({ x: x * TILE_SIZE+OFFSET, y: y * TILE_SIZE, z:-1 });
+					 break;
 
 
-				if(i == 10  && j == 11)
-				{
+					 case "2":
+					 		Crafty.e("2D, Canvas,Image,Collision,Door,door")
+							.collision(new Crafty.polygon([0,0],[32,0],[32,16],[0,16]))
+							.attr({ x: x * TILE_SIZE+OFFSET, y: y * TILE_SIZE, z:-1 });
+					 break;
 
-					var machine  = Crafty.e("2D, Canvas,Image,Collision,machine,Machine2")
-					.collision(new Crafty.polygon([0,0],[32,0],[32,32],[0,32]));
-					machine.x = TILE_SIZE*i;
-					machine.y = TILE_SIZE*j;
+
+					 case "3":
+					 		Crafty.e("2D, Canvas,Image,Collision,machine,Machine")
+							.collision(new Crafty.polygon([0,0],[32,0],[32,32],[0,32]))
+							.attr({ x: x * TILE_SIZE+OFFSET, y: y * TILE_SIZE, z:-1 })
+							.startGame = game;
+					 break;
+
+					 case "4":
+						  	Crafty.e("2D, Canvas, tiles")
+	                  		.attr({ x: x * TILE_SIZE+OFFSET, y: y * TILE_SIZE, z:-1 });
+
+					 		Crafty.e("2D,  Canvas, player,Player,RightControls,Collision,Keyboard")
+							.attr({ x: TILE_SIZE*x+OFFSET, y: TILE_SIZE*y, z: 1})
+							.rightControls(2)
+							.Player();
+					 break;
 				}
     		}
 		}
+		Crafty.background('rgb(0, 0, 0)');
 	}
 
 	function generateObjects(){
@@ -323,6 +427,19 @@ var crafty = function() {
 					houses.push(house);
 				}
 
+				if(i  == 14 && j == 2)
+				{
+					poly1 = new Crafty.polygon([5,0],[110,0],[110,180],[5,180])
+					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard")
+					.collision(poly1);
+					
+					house.image("/static/house.png");
+					house.setScene("BuildingLink",state.checkUnlockedLinkQuest,state.check_link());
+					house.x = TILE_SIZE*i;
+					house.y = TILE_SIZE*j;
+					houses.push(house);
+				}
+
 
 				if(i  == 15 && j == 10)
 				{
@@ -332,6 +449,21 @@ var crafty = function() {
 					
 					house.image("/static/house.png");
 					house.setScene("BuildingMotivation",state.checkUnlockedMotivationQuest,state.check_motivation());
+					house.x = TILE_SIZE*i;
+					house.y = TILE_SIZE*j;
+					houses.push(house);
+				}
+
+
+
+				if(i  == 2 && j == 10)
+				{
+					poly1 = new Crafty.polygon([5,0],[110,0],[110,180],[5,180])
+					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard")
+					.collision(poly1);
+					
+					house.image("/static/house.png");
+					house.setScene("BuildingSkills",state.checkUnlockedSkillsQuest,state.check_skills());
 					house.x = TILE_SIZE*i;
 					house.y = TILE_SIZE*j;
 					houses.push(house);
@@ -589,10 +721,13 @@ var crafty = function() {
 	Crafty.scene("loading", function () 
 	{
         //load takes an array of assets and a callback when complete
-        Crafty.load(["/static/Sprite.png","/static/house.png","/static/Sprite2.png","/static/Door.png"], function ()
+        Crafty.load(["/static/Sprite.png","/static/house.png","/static/Sprite2.png"], function ()
         {
             Crafty.scene("main"); //when everything is loaded, run the main scene
+            Crafty.background('rgb(0, 0, 0)');
         });
+
+
     });
 
     //automatically play the loading scene
@@ -616,10 +751,13 @@ var crafty = function() {
 
 			quest2 = Crafty.e("Quest,Persist");
 			quest3 = Crafty.e("Quest,Persist");
+			quest4 = Crafty.e("Quest,Persist");
+			quest5 = Crafty.e("Quest,Persist");
 
 			quest2.addQuestInfo(1,"Cv","Need to upload your cv",state.check_cv,state.cvUnlocked);
 			quest3.addQuestInfo(2,"Motivation","Need to upload your motivationLetter",state.check_motivation,state.motivationUnlocked);
-			
+			quest4.addQuestInfo(3,"Links","Need to upload your links",state.check_link,state.linkUnlocked);
+			quest5.addQuestInfo(4,"Skills","Need to upload your Skills",state.check_skills,state.skillsUnlocked);
 
 			if(state.checkUnlockedCVQuest())
 			{
@@ -630,11 +768,20 @@ var crafty = function() {
 			{
 				quest_log.addQuest(quest3,false);
 			}
+
+			if(state.checkUnlockedLinkQuest())
+			{
+				quest_log.addQuest(quest4,false);
+			}
+
+			if(state.checkUnlockedSkillsQuest())
+			{
+				console.log("paodpakdpaksdpkaspd");
+				quest_log.addQuest(quest5,false);
+			}
 		}
 
 		var canvas = document.getElementById('mycanvas');
-		console.log();
-
 		player1 = Crafty.e("2D,  Canvas, player,Player,RightControls,Collision,Keyboard,Respawn,StatePosition")
 			.rightControls(2)
 			.Player();
@@ -649,6 +796,14 @@ var crafty = function() {
 		var player3 = Crafty.e("2D,  Canvas, player,Collision,npc,NPC")
 			.attr({ x: 700, y: 300, z: 1})
 			.setNpcData(quest3,getDialogData2);
+
+		var player4 = Crafty.e("2D,  Canvas, player,Collision,npc,NPC")
+			.attr({ x: 700, y: 200, z: 1})
+			.setNpcData(quest4,getDialogData3);
+
+		var player5 = Crafty.e("2D,  Canvas, player,Collision,npc,NPC")
+			.attr({ x: 200, y: 500, z: 1})
+			.setNpcData(quest5,getDialogData4);
     });
 
 	Crafty.scene("Game2",function()
@@ -657,11 +812,36 @@ var crafty = function() {
 		.startGame("BuildingMotivation");
 	});
 
+
+
+	Crafty.scene("BuildingSkills", function()
+	{
+		generateIndoors("TestGame2");
+		if(state.checkMayUploadSkills() && !state.check_skills())
+		{
+			craftyTriggers(SKILL,null);
+			Crafty.pause(true);
+		}
+
+		$("#mycanvas").hide();
+	});
+
+
+	Crafty.scene("BuildingLink", function()
+	{
+		generateIndoors("TestGame");
+		if(state.checkMayUploadLink() && !state.check_link())
+		{
+			craftyTriggers(LINK,null);
+			Crafty.pause(true);
+		}
+
+		$("#mycanvas").hide();
+	});
+
 	Crafty.scene("BuildingMotivation", function()
 	{
-		generateIndoors();
-		generateIndoorObjects2();
-
+		generateIndoors("RotateGame");
 		if(state.checkMayUploadMotivation() && !state.check_motivation())
 		{
 			craftyTriggers(MOTIVATION,null);
@@ -669,30 +849,17 @@ var crafty = function() {
 
 		}
 
-		var player1 = Crafty.e("2D,  Canvas, player,Player,RightControls,Collision,Keyboard")
-			.attr({ x: 80, y: 80, z: 1})
-			.rightControls(2)
-			.Player();
-
 		$("#mycanvas").hide();
 	});
 
 	Crafty.scene("BuildingCV", function()
 	{
-		generateIndoors();
-		generateIndoorObjects();
-
+		generateIndoors("BlockGame");
 		if(state.checkMayUploadCV() && !state.check_cv())
 		{
 			craftyTriggers(UPLOAD,null);
 			Crafty.pause(true);
 		}
-
-		var player1 = Crafty.e("2D,  Canvas, player,Player,RightControls,Collision,Keyboard")
-			.attr({ x: 80, y: 80, z: 1})
-			.rightControls(2)
-			.Player();
-
 		$("#mycanvas").hide();
 	});
 

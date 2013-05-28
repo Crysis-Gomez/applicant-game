@@ -41,6 +41,14 @@ def get_motivation_questUnlock(game):
     return game.player_motivation_uplockedQuest
 
 
+def get_link_questUnlock(game):
+    return game.player_link_unlockedQuest
+
+
+def get_skills_questUnlock(game):
+    return game.player_skill_unlockedQuest
+
+
 def index(request):
     vacancies = Vacancy.objects.all().order_by('title')
     return render_to_response('list_vacancies.html', {
@@ -62,12 +70,15 @@ def start_game(request, slug):
 
 def gamejs(request, unique_id):
     game = GameInstance.objects.get(uid=unique_id)
-    cv_unlock = get_cv_questUnlocked(game)
-    motivation_unlock = get_motivation_questUnlock(game)
+
     context = {'game': game}
-    context.update({
-        'cv_unlock': cv_unlock,
-        'motivation_unlock': motivation_unlock})
+    context.update(
+        {
+            'cv_unlock': get_cv_questUnlocked(game),
+            'motivation_unlock': get_motivation_questUnlock(game),
+            'link_unlock': get_link_questUnlock(game),
+            'skills_unlock': get_skills_questUnlock(game),
+        })
 
     return render(request, "game.js", context, content_type="application/javascript")
 
@@ -95,18 +106,20 @@ def sendQuestData(request, unique_id):
     upload_state = {"action": "contact", 'success': 'Thx for submitting!', 'playername': 'name'}
     getQuest(data, game)
     game.save()
-
     return render(request, "results_template.js", upload_state, content_type=RequestContext(request))
 
 
 def getQuest(id_quest, game):
+    print id_quest
 
     if id_quest == "1":
         game.player_cv_unlockedQuest = True
     elif id_quest == "2":
         game.player_motivation_uplockedQuest = True
-
-    game.save()
+    elif id_quest == "3":
+        game.player_link_unlockedQuest = True
+    elif id_quest == "4":
+        game.player_skill_unlockedQuest = True
 
 # def getQuestData(request, unique_id):
 #     game = GameInstance.objects.get(uid=unique_id)
@@ -158,6 +171,7 @@ def play(request, unique_id):
         'form': form,
         'has_contact_info': has_contact_info,
         'has_motivation_letter': game.has_motivation,
+        'has_link': game.has_links,
         'has_cv': game.has_cv})
 
     return render_to_response("index.html", context)

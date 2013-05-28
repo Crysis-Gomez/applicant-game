@@ -4,6 +4,8 @@
      <script src="http://malsup.github.com/jquery.form.js"></script> 
     <link rel="stylesheet" type="text/css" href="/static/style.css">
     <script type="text/javascript" src="/static/crafty.js"></script>
+    <script type="text/javascript" src="/static/TestGame.js"></script>
+    <script type="text/javascript" src="/static/TestGame2.js"></script>
     <script type="text/javascript" src="/static/BlockGame.js"></script>
     <script type="text/javascript" src="/static/RotateGame.js"></script>
     <script type="text/javascript" src="/static/player.js"></script>
@@ -21,7 +23,7 @@
 
 <div class="container" id="container">
 
-<div class="skillSet">
+<div class="skillSet"  id="skillSet">
     <form method="post" name="skill_form" id="skill_form" >
     {%block skills %}
      <div class="skillList" id="skillSet">
@@ -70,10 +72,6 @@
 
     {% endblock %}
 </div>
-
-
-
-
 
     {% block letters %}
 

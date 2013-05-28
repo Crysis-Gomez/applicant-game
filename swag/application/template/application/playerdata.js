@@ -85,7 +85,7 @@ function sendContactInfo()
          {
             response = JSON.parse(res);
             text = response.player['result'];
-            if(text == 'Thx for submitting')
+            if(text == 'Thanks for submitting')
             {
                 name = replaceText(response.player['name']);
                 text = response.player['result'];

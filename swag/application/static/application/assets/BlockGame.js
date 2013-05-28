@@ -1,119 +1,126 @@
-
 Crafty.scene("BlockGame", function ()
 {
-
-Game = {
+  Game = {
   // This defines our grid's size and the size of each of its tiles
-  map_grid:
-  {
-    width:  20,
-    height: 10,
-    offSetX:120,
-    offSetY:120,
-    tile: 
+    map_grid:
     {
-      width:  32,
-      height: 32
-    }
-  },
-
-  player:null,
-  blockArray:[],
-  myArray:Array,
-  levelNumber: 0,
- 
-  width: function()
-  {
-    return this.map_grid.width * this.map_grid.tile.width;
-  },
- 
-  height: function()
-  {
-    return this.map_grid.height * this.map_grid.tile.height;
-  },
-
-  restart:function()
-  {
-    Crafty.trigger("Destroy");
-    this.loadLevel();
-  },
-
-  getLevel:function(levelNumber)
-  {
-    currentLevel = new Array;
-    levelString = window.block_levels[levelNumber];
-    levelString = levelString.replace(/\r?\n|\r/g,'');
-    for (var x = 0; x < Game.map_grid.width; x++)
-    {
-          currentLevel[x] = new Array();
-    }
-    index = 0;
-     for (var x = 0; x < Game.map_grid.height; x++)
-     {
-        for (var y = 0; y < Game.map_grid.width; y++)
-        {
-            currentLevel[x][y] = levelString[index];
-            index++;
-        }
-    }
-    return currentLevel;
-  },
-
-  loadLevel:function()
-  {
-    currentLevel = this.getLevel(this.levelNumber);
-    Game.myArray = new Array(Game.map_grid.width);
-    for (var x = 0; x < Game.map_grid.width; x++)
-    {
-      Game.myArray[x] = new Array();
-      for (var y = 0; y < Game.map_grid.height; y++)
+      width:  20,
+      height: 10,
+      offSetX:120,
+      offSetY:120,
+      tile: 
       {
-          Game.myArray[x][y] = Crafty.e('Tile,Destroy').at(x, y); 
-          var count = currentLevel[y][x];
-           switch(count)
-           {
-              case "1":
-                Crafty.e('GameWall,putOnTile,Destroy').at(x, y,0).putOnTile();
-              break;
+        width:  32,
+        height: 32
+      }
+    },
 
-              case "2":
-                Game.player =  Crafty.e('PlayerCharacter,putOnTile,Destroy').at(x, y,0);
-              break;
+    player:null,
+    blockArray:[],
+    myArray:Array,
+    levelNumber: 0,
+    mayStart:false,
+   
+    width: function()
+    {
+      return this.map_grid.width * this.map_grid.tile.width;
+    },
+   
+    height: function()
+    {
+      return this.map_grid.height * this.map_grid.tile.height;
+    },
 
-              case "3":
-                Crafty.e('Key,putOnTile,key,Destroy').at(x, y,0);
-              break;
+    restart:function()
+    {
+      Crafty.trigger("Destroy");
+      this.loadLevel();
+    },
 
-              case "4":
-                Crafty.e('Block,putOnTile,block,Destroy').at(x, y,1).putOnTile();
-              break;
-
-              case "5":
-                Crafty.e('GameDoor,putOnTile,Destroy').at(x, y,1).putOnTile();
-              break;
-
-              default:
+    getLevel:function(levelNumber)
+    {
+      currentLevel = new Array;
+      //levelString = window.block_levels[levelNumber];
+      console.log(levelNumber);
+      if(typeof window.block_levels[levelNumber] == "string")
+      {
+        levelString = window.block_levels[levelNumber];
+        levelString = levelString.replace(/\r?\n|\r/g,'');
+      }
+      //if(levelString !== undefined)levelString = levelString.replace(/\r?\n|\r/g,'');
+      for (var x = 0; x < Game.map_grid.width; x++)
+      {
+            currentLevel[x] = new Array();
+      }
+      index = 0;
+       for (var x = 0; x < Game.map_grid.height; x++)
+       {
+          for (var y = 0; y < Game.map_grid.width; y++)
+          {
+              currentLevel[x][y] = levelString[index];
+              index++;
           }
       }
-    } 
-  },
+      return currentLevel;
+    },
+
+    loadLevel:function()
+    {
+      currentLevel = this.getLevel(this.levelNumber);
+      Game.myArray = new Array(Game.map_grid.width);
+      for (var x = 0; x < Game.map_grid.width; x++)
+      {
+        Game.myArray[x] = new Array();
+        for (var y = 0; y < Game.map_grid.height; y++)
+        {
+            Game.myArray[x][y] = Crafty.e('Tile,Destroy').at(x, y); 
+            var count = currentLevel[y][x];
+             switch(count)
+             {
+                case "1":
+                  Crafty.e('GameWall,putOnTile,Destroy').at(x, y,0).putOnTile();
+                break;
+
+                case "2":
+                  Game.player =  Crafty.e('PlayerCharacter,putOnTile,Destroy').at(x, y,0);
+                break;
+
+                case "3":
+                  Crafty.e('Key,putOnTile,key,Destroy').at(x, y,0);
+                break;
+
+                case "4":
+                  Crafty.e('Block,putOnTile,block,Destroy').at(x, y,1).putOnTile();
+                break;
+
+                case "5":
+                  Crafty.e('GameDoor,putOnTile,Destroy').at(x, y,1).putOnTile();
+                break;
+
+                default:
+            }
+        }
+      }
+
+      this.mayStart = true; 
+    },
 
 
-  nextLevel:function()
-  {
-    this.levelNumber +=1;
-    this.loadLevel();
-  },
+    nextLevel:function()
+    {
+      this.levelNumber +=1;
+      this.loadLevel();
+    },
 
 
-  start: function() 
-  {
-    Crafty.background('rgb(249, 223, 125)');
-    this.loadLevel();  
+    start: function() 
+    {
+      Crafty.background('rgb(249, 223, 125)');
+      this.loadLevel();  
+    }
   }
-}
 
-Game.start();
+  Game.start();
 });
 
 
@@ -335,6 +342,7 @@ Crafty.c('PlayerCharacter',
   lastDirectionX:0,
   lastDirectionY:0,
   isMoving:false,
+  gameEnded:false,
 
   init: function()
   {
@@ -350,6 +358,8 @@ Crafty.c('PlayerCharacter',
 
       this.lastDirectionX = 0;
       this.lastDirectionY = 0;
+
+      if(!Game.mayStart)return;
 
       if(e.key == 82)
       {
@@ -406,7 +416,6 @@ Crafty.c('PlayerCharacter',
 
   },
 
-
   timeMovement:function(){
 
     if(this.lastDirectionX != 0 || this.lastDirectionY != 0)
@@ -438,29 +447,36 @@ Crafty.c('PlayerCharacter',
       state.cvMayUpload();
       Crafty.e("Win").setBuildingName("BuildingCV");
     }
+  },
 
+  endGame:function()
+  {
+    console.log("Destroy Level");
+    this.checkGameComplete();
+    Crafty.trigger("Destroy");
+    Game.nextLevel();
+    this.mayStart = false;
+    this.gameEnded = true;
   },
 
   checkMovement:function()
   {
+
+    if(this.gameEnded)return;
 
     onGridX = (this.x-Game.map_grid.offSetX) / Game.map_grid.tile.width;
     onGridY = (this.y-Game.map_grid.offSetY) / Game.map_grid.tile.height;
 
     if(tile = Game.myArray[onGridX+this.lastDirectionX] === undefined)
     {
-      this.checkGameComplete();
-      Crafty.trigger("Destroy");
-      Game.nextLevel();
+      this.endGame();
       return;
     }
     tile =  Game.myArray[onGridX+this.lastDirectionX][onGridY+this.lastDirectionY];
     
     if(tile === undefined)
     {
-      this.checkGameComplete()
-      Crafty.trigger("Destroy");
-      Game.nextLevel();
+      this.endGame();
       return;
     }
 

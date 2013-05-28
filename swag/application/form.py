@@ -46,10 +46,34 @@ class SkillSetForm(forms.Form):
 
     def add_separate_fields(self, field):
 
-        CHOICES = [(i, i) for i in range(11)]
+        CHOICES = [(i, self.getName(i)) for i in range(11)]
         name = field.title
         self.fields[name] = forms.TypedChoiceField(choices=CHOICES, initial='FIXED')
 
+    def getName(self, index):
+        skillString = ""
+        if(index == 9):
+            skillString = "I wrote a book about it"
+        elif(index == 8):
+            skillString = "I can write a book about it"
+        elif(index == 7):
+            skillString = "I know almost every functions"
+        elif(index == 6):
+            skillString = "I can write complex components"
+        elif(index == 5):
+            skillString = "I can write basic components"
+        elif(index == 4):
+            skillString = "I can program classes  "
+        elif(index == 3):
+            skillString = "I can program little scripts"
+        elif(index == 2):
+            skillString = "Read a book about"
+        elif(index == 1):
+            skillString = "Have heard about"
+        elif(index == 0):
+            skillString = "Never heard about it"
+
+        return skillString
 
 class MeetingForm(forms.ModelForm):
 

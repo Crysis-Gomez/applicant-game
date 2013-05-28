@@ -88,7 +88,7 @@ class PortfolioLinksAdmin(admin.ModelAdmin):
 
 class GameInstanceAdmin(admin.ModelAdmin):
     list_filter = ['vacancy', 'player_defeated_boss']
-    list_display = ('name', 'has_cv', 'has_motivation', 'player_defeated_boss', 'has_links')
+    list_display = ('name', 'has_cv', 'has_motivation', 'player_defeated_boss', 'has_links', 'has_rated_skills')
     inlines = [CV, Motivation, Link, Skill]
 
 

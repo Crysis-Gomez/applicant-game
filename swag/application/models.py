@@ -2,6 +2,7 @@ from django.db import models
 from database_storage import DatabaseStorage
 from django.conf import settings
 from django.shortcuts import get_object_or_404
+from django.core.exceptions import MultipleObjectsReturned
 from django.http import Http404
 from django.utils.html import format_html
 
@@ -37,10 +38,11 @@ class GameInstance(models.Model):
     player_position_x = models.IntegerField(default=5)
     player_cv_unlockedQuest = models.BooleanField(default=False)
     player_motivation_uplockedQuest = models.BooleanField(default=False)
+    player_link_unlockedQuest = models.BooleanField(default=False)
+    player_skill_unlockedQuest = models.BooleanField(default=False)
     player_defeated_boss = models.BooleanField(default=False)
     player_name = models.CharField(max_length=50)
     player_email = models.EmailField(max_length=100)
-    #skills = models.ManyToManyField(SkillSet, blank=True, through='PlayerSkills')
 
     vacancy = models.ForeignKey(Vacancy)
 
@@ -60,14 +62,17 @@ class GameInstance(models.Model):
         return self.player_name
 
     def has_links(self):
-        try:
-            get_object_or_404(PortfolioLink, game_instance=self.id)
-        except Http404:
-            return False
-
-        return True
-
+        if len(PortfolioLink.objects.filter(game_instance=self.id)) > 0:
+            return True
+        return False
     has_links.boolean = True
+
+    def has_rated_skills(self):
+        if len(PlayerSkill.objects.filter(game_instance=self.id)) > 0:
+            return True
+        return False
+
+    has_rated_skills.boolean = True
 
     def has_cv(self):
         try:

@@ -51,7 +51,7 @@ Crafty.c("Questlog",{
 
             this.bind('KeyUp', function (e) {
 
-            	if(!this.maySelected || Crafty.isPaused)return;
+            	if(!this.maySelected || Crafty.isPaused())return;
 
 				if(e.key == 40)
 				{
