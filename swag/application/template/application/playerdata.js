@@ -75,7 +75,7 @@ function updateGame(propertie,value)
     $("#letter_form").hide();
     $("#id_entry").hide();
     $("#cv_form").hide();
-    $(".skillSet").hide();
+    $("#skill_form").hide();
 }
         
 function sendContactInfo()

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>My Profile</h1>
+
+
+{% block letters %}
+
+
+{% if game.player_name != "" %}
+    <p> Name : {{ game.player_name }}</p>
+    <p> Email : {{ game.player_email}}</p>
+{%else%}
+	<p> Name : unknown</p>
+{%endif%}
+
+
+<p>Current vacancy :{{ game.get_vacancy }}</p>
+
+
+
+{% if game.has_cv == True %}
+    <p id="link"> CVlink : <a href={{ game.get_cv_link}}>cv</a></p>
+{%else%}
+	<li> CVlink : unknown</p>
+{%endif%}
+
+
+{% if game.has_motivation == True %}
+	{% if game.get_motivation_link != False %}
+    <p> Motivationlink : <a href={{ game.get_motivation_link}}>motivation</a></p>
+	{%else%}
+	<p> MotivationEntry :{{ game.get_motivation_entry}}</p>
+	{%endif%}
+{%else%}
+	<p> MotivationLink : unknown</p>
+{%endif%}
+
+{% if game.has_rated_skills == True %}
+
+	<p>Your skills</p>
+	<script type="text/javascript">
+	var names = '{{game.get_all_skills}}';
+	names = names.replace(/&#39;/g,'').replace(/[\[\]']+/g,'').replace(/\s+/g,'','').split(',');
+	var scores = '{{game.get_all_scores}}';
+	scores = scores.replace(/[\[\]']+/g,'').replace(/\s+/g,'').split(',');
+	for(var i = 0;i<names.length;i++)
+	{
+		document.write("<p>"+names[i] +" score: "+ scores[i]+"</p>")
+	}
+
+	</script>
+{%else%}
+	<p> Skills : unknown</p>
+{%endif%}
+
+
+{% if game.has_links == True %}
+	<p> Your links</p>
+	<script type="text/javascript">
+	var links = '{{game.get_all_links}}';
+	console.log(links)
+	links = links.replace(/&#39;/g,'').replace(/[\[\]']+/g,'').replace(/\s+/g,'','').split(',');
+
+	 for(var i = 0;i<links.length;i++)
+	 {
+	 	document.write("<p>" +"<a href=" +links[i] +">"+links[i]+"</a>"+"</p>")
+	 }
+
+	</script>
+{%else%}
+	<p> Links : unknown</p>
+{%endif%}
+
+
+{% endblock %}
+</body>
+</html>

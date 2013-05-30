@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.core.exceptions import MultipleObjectsReturned
 from django.http import Http404
 from django.utils.html import format_html
+import json
 
 
 class SkillSet(models.Model):
@@ -12,7 +13,6 @@ class SkillSet(models.Model):
 
     def __unicode__(self):
             return self.title
-
 
 class Vacancy(models.Model):
     title = models.CharField(max_length=200)
@@ -49,8 +49,11 @@ class GameInstance(models.Model):
     def __unicode__(self):
         return self.name()
 
-    def has_skills():
-        return False
+    def get_contact(self):
+        if self.player_name and self.player_email:
+            return True
+        else:
+            return False
 
     def name(self):
         if not self.player_name:
@@ -83,9 +86,67 @@ class GameInstance(models.Model):
         return True
     has_cv.boolean = True
 
+    def get_all_links(self):
+        try:
+            port = PortfolioLink.objects.filter(game_instance=self.id)
+            links = [str(link) for link in port]
+            return links
+        except Http404:
+            return False
+
+    def get_skill_names(self, skill):
+        return str(skill.skill.title)
+
+    def get_skill_ratings(self, skill):
+        return int(skill.score)
+
+    def get_all_skills(self):
+        try:
+            skills = PlayerSkill.objects.filter(game_instance=self.id)
+            names = [self.get_skill_names(skill) for skill in skills]
+            return names
+        except Http404:
+            return False
+
+    def get_all_scores(self):
+        try:
+            skills = PlayerSkill.objects.filter(game_instance=self.id)
+            skill_ratings = [self.get_skill_ratings(skill) for skill in skills]
+            return skill_ratings
+        except Http404:
+            return False
+
+    def get_cv_link(self):
+        try:
+            document = get_object_or_404(CvDocument, game_instance=self.id)
+            return document.attachment
+        except Http404:
+            return False
+
+    def get_motivation_link(self):
+        try:
+            motivation = get_object_or_404(MotivationLetter, game_instance=self.id)
+            if motivation.attachment:
+                return motivation.attachment
+            return False
+        except Http404:
+            return False
+
+    def get_motivation_entry(self):
+        try:
+            motivation = get_object_or_404(MotivationLetter, game_instance=self.id)
+            if motivation.entry:
+                return motivation.entry
+        except Http404:
+            return False
+
+    def get_vacancy(self):
+        return self.vacancy
+
     def has_motivation(self):
         try:
             get_object_or_404(MotivationLetter, game_instance=self.id)
+
         except Http404:
             return False
 

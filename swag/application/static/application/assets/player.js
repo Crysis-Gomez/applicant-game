@@ -238,7 +238,6 @@ Crafty.c('Player',
 		.onHit("Wall",this.enterCollisionWall)
 		.onHit("Block",this.enterCollisionBlock)
 		.onHit("Machine",this.enterCollisionMachine,this.exitCollisionMachine)
-		.onHit("Machine2",this.enterCollisionMachine2,this.exitCollisionMachine2)
 		.onHit("boss",this.enterCollisionBoss);	
 	}
 

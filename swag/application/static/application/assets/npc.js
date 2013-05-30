@@ -3,7 +3,7 @@ var CONTACT = "CONTACT";
 var MOTIVATION = "MOTIVATION";
 var UPLOAD = "UPLOAD";
 var LINK = "LINK";
-var SKILL = "LINK";
+var SKILL = "SKILL";
 var QUEST = "QUEST";
 
 
@@ -154,7 +154,7 @@ function uploadMotivation()
 function uploadLink()
 {
 	document.getElementById("container").style.display = 'block';
-	document.getElementById("form4").style.display = 'block';
+	document.getElementById("links_form").style.display = 'block';
 	$("#success_div").show();
 	return !(Crafty.pause(true));
 }
@@ -163,7 +163,7 @@ function uploadLink()
 function uploadSkills()
 {
 	document.getElementById("container").style.display = 'block';
-	document.getElementById("skillSet").style.display = 'block';
+	document.getElementById("skill_form").style.display = 'block';
 	$("#success_div").show();
 	return !(Crafty.pause(true));
 }
@@ -178,7 +178,7 @@ function addQuest(npc)
 
 function craftyTriggers(str,npc)
 {
-
+	console.log(str);
 	switch(str)
 	{
 		case UPLOAD:

@@ -5,18 +5,18 @@ var state = function()
 	this.has_cv = '{{ game.has_cv }}';
 	this.has_motivation = '{{game.has_motivation}}';
 	this.has_links = '{{game.has_links}}';
-	this.has_skills = '{{game.has_skills}}'
+	this.has_skills = '{{game.has_rated_skills}}'
 
-	this.unLockedCVQuest = '{{cv_unlock}}';
+	this.unLockedCVQuest = '{{game.player_cv_unlockedQuest}}';
 	this.mayUploadCV = false;
 
-	this.unLockedMotivationQuest = '{{motivation_unlock}}';
+	this.unLockedMotivationQuest = '{{game.player_motivation_uplockedQuest}}';
 	this.MayUploadMotivation = false;
 
-	this.unLockedLinkQuest = '{{link_unlock}}';
+	this.unLockedLinkQuest = '{{game.player_link_unlockedQuest}}';
 	this.MayUploadLink = false;
 
-	this.unLockedSkillsQuest = '{{skills_unlock}}';
+	this.unLockedSkillsQuest = '{{game.player_skill_unlockedQuest}}';
 	this.MayUploadSkills = false;
 
 	this.id = '{{game.uid}}';
@@ -216,11 +216,18 @@ var state = function()
 		return my_val;
 	}
 
+
+
 	return {
 		getState: function() { init() },
 		my_name: function()
 		{
-			return name;
+			return player_name;
+		},
+
+		my_email:function()
+		{
+			return email;
 		}, 
 		check_cv: get_cv,
 		check_name:get_name,
@@ -278,12 +285,14 @@ var quest_log;
 var TILE_SIZE = 32;
 var HOUSE_WIDTH = 20;
 var HOUSE_HEIGHT = 10;
-var OFFSET = 120; 
+var OFFSET = 120;
+var SCREEN_WIDTH = 900;
+var SCREEN_HEIGTH = 600; 
 	
 
 var crafty = function() {
 
-    Crafty.init(990, 600);
+    Crafty.init(SCREEN_WIDTH, SCREEN_HEIGTH);
 
     Crafty.sprite(TILE_SIZE, "/static/Sprite.png",
     {
@@ -454,6 +463,18 @@ var crafty = function() {
 					houses.push(house);
 				}
 
+				if(i  == 15 && j == 15)
+				{
+					poly1 = new Crafty.polygon([5,0],[110,0],[110,180],[5,180])
+					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard")
+					.collision(poly1);
+					
+					house.image("/static/house.png");
+					house.setScene("Hometown",null,null);
+					house.x = TILE_SIZE*i;
+					house.y = TILE_SIZE*j;
+				}
+
 
 
 				if(i  == 2 && j == 10)
@@ -489,6 +510,11 @@ var crafty = function() {
 
 		enterBuilding:function()
 		{
+			if(this.check === null)
+			{
+				Crafty.scene(this.sceneString);
+				return;
+			}			
 			if(this.check())
 			{
 				Crafty.scene(this.sceneString);
@@ -724,7 +750,7 @@ var crafty = function() {
         Crafty.load(["/static/Sprite.png","/static/house.png","/static/Sprite2.png"], function ()
         {
             Crafty.scene("main"); //when everything is loaded, run the main scene
-            Crafty.background('rgb(0, 0, 0)');
+            //Crafty.background('rgb(0, 0, 0)');
         });
 
 
@@ -735,9 +761,7 @@ var crafty = function() {
 
     Crafty.scene("main", function ()
     {
-
 		generateWorld();
-
 		dialog = Crafty.e("Dialog")
 			.attr({ x: 0, y: 500, z: 1});
 
@@ -776,7 +800,6 @@ var crafty = function() {
 
 			if(state.checkUnlockedSkillsQuest())
 			{
-				console.log("paodpakdpaksdpkaspd");
 				quest_log.addQuest(quest5,false);
 			}
 		}
@@ -813,10 +836,9 @@ var crafty = function() {
 	});
 
 
-
 	Crafty.scene("BuildingSkills", function()
 	{
-		generateIndoors("TestGame2");
+		generateIndoors("Test");
 		if(state.checkMayUploadSkills() && !state.check_skills())
 		{
 			craftyTriggers(SKILL,null);
@@ -863,8 +885,85 @@ var crafty = function() {
 		$("#mycanvas").hide();
 	});
 
+
+	Crafty.scene("Hometown", function()
+	{
+		profile = Crafty.e("Profile");
+		$("#mycanvas").hide();
+	});
+
+
+	Crafty.c("Profiletext",
+	{
+		init:function()
+		{
+			this.addComponent("2D,DOM,Text");
+		},
+
+		showText:function(str)
+		{
+			this.text('<div style="margin-top:12px;" color:blue; >' + str + '<div style="margin-left:400px;">');
+		}
+
+	})
+
+	Crafty.c("Profile",
+	{
+		attributePositionY:0,
+
+		init:function()
+		{
+			this.addComponent("2D, DOM,Color");
+			this.z = 1;
+			this.w = 300;  
+			this.h = 400;
+			this.x = SCREEN_WIDTH *0.5-this.w*0.5;
+			this.y = SCREEN_HEIGTH *0.5-this.h *0.5;
+			this.color("#eee");
+			this.showProfile();
+		},
+
+		addAttribute:function(str)
+		{
+			e = Crafty.e("Profiletext");
+			e.showText(str);
+			e.x = this.x;
+			e.y = this.y+this.attributePositionY;
+			e.z = 1;
+			this.attributePositionY +=20;
+		},
+
+		showProfile:function()
+		{
+			this.addAttribute("Your Profile")
+			this.addAttribute("Current vacancy :"+'{{game.vacancy}}');
+			this.addAttribute("Name  :"+state.my_name());	
+			this.addAttribute("Email :"+state.my_email());
+			if(state.checkUnlockedCVQuest())
+			{
+				this.addAttribute("Uploaded CV:"+ state.check_cv());
+			}
+
+			if(state.checkUnlockedMotivationQuest())
+			{
+				this.addAttribute("Uploaded Motivation:"+ state.check_cv());
+			}
+
+			if(state.checkUnlockedLinkQuest())
+			{
+				this.addAttribute("Uploaded Links:"+ state.check_cv());
+			}
+
+			if(state.checkUnlockedSkillsQuest())
+			{
+				this.addAttribute("Uploaded Skills:"+ state.check_cv());
+			}
+			
+		}
+	});
+
     return {
     	"crafty": Crafty,
-    	"init_game": Crafty.init(900,600)
+    	"init_game": Crafty.init(SCREEN_WIDTH,SCREEN_HEIGTH)
     }
 };

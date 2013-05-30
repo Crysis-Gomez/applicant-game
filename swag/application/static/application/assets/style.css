@@ -12,19 +12,19 @@ body {background-color:#c0c0c0;
      display: none;
 }
 
-.form3
+#form3
 {
   z-index:3;
   display: none;
 }
 
-.form4
+.links_form
 {
   z-index:3;
   display: none;
 }
 
-.skillSet
+#skill_form
 {
   z-index:3;
   display: none;

@@ -29,24 +29,11 @@ from django.forms.models import inlineformset_factory
 from django.db import IntegrityError
 
 
-def get_contact_info(game):
-    return 'no' if not game.player_name and not game.player_email else 'yes'
-
-
-def get_cv_questUnlocked(game):
-    return game.player_cv_unlockedQuest
-
-
-def get_motivation_questUnlock(game):
-    return game.player_motivation_uplockedQuest
-
-
-def get_link_questUnlock(game):
-    return game.player_link_unlockedQuest
-
-
-def get_skills_questUnlock(game):
-    return game.player_skill_unlockedQuest
+# def get_contact_info(game):
+#     if not game.player_name and not game.player_email:
+#         return False
+#     else:
+#         return True
 
 
 def index(request):
@@ -70,32 +57,13 @@ def start_game(request, slug):
 
 def gamejs(request, unique_id):
     game = GameInstance.objects.get(uid=unique_id)
-
     context = {'game': game}
-    context.update(
-        {
-            'cv_unlock': get_cv_questUnlocked(game),
-            'motivation_unlock': get_motivation_questUnlock(game),
-            'link_unlock': get_link_questUnlock(game),
-            'skills_unlock': get_skills_questUnlock(game),
-        })
-
     return render(request, "game.js", context, content_type="application/javascript")
 
 
 def playerdatajs(request, unique_id):
     game = GameInstance.objects.get(uid=unique_id)
     context = {'game': game}
-
-    contact_info = get_contact_info(game)
-    # print game.player_email, game.player_name
-    context.update({
-        'contact_info': contact_info,
-        'has_motivation_letter': game.has_motivation,
-        'has_cv': game.has_cv})
-
-    # print 'Contact info: %s' % contact_info
-
     return render(request, "playerdata.js", context, content_type="application/javascript")
 
 
@@ -138,6 +106,13 @@ def get_skill(game, skill):
     return obj
 
 
+def process_profile(request, unique_id):
+    context = dict()
+    game = get_object_or_404(GameInstance, uid=unique_id)
+    context.update({'game': game})
+    return render_to_response("profile.html", context)
+
+
 @csrf_exempt
 def play(request, unique_id):
     try:
@@ -147,8 +122,10 @@ def play(request, unique_id):
     #context = dict(request)
     context = dict()
 
-    has_contact_info = get_contact_info(game)
-    if 'no' is has_contact_info:
+    ##has_contact_info = get_contact_info(game)
+    print "TESTTTTTTTTTTTTTTTTTTTTTTTTTT"
+    print game.get_contact()
+    if game.get_contact() == False:
         contact_info = ContactInformationForm()
         context.update({'contact_info': contact_info})
 
@@ -166,14 +143,9 @@ def play(request, unique_id):
 
     form = UploadFileForm(initial={'title': 'cv'})
     context.update({
-        'instance_id': game.uid,
+        'game': game,
         'portfolio': portfolio,
-        'form': form,
-        'has_contact_info': has_contact_info,
-        'has_motivation_letter': game.has_motivation,
-        'has_link': game.has_links,
-        'has_cv': game.has_cv})
-
+        'form': form})
     return render_to_response("index.html", context)
 
 

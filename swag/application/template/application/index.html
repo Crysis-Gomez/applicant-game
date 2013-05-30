@@ -14,8 +14,8 @@
 
     <script type="text/javascript" src="/static/level.js"></script>
     <script type="text/javascript" src="/static/Rotatelevel.js"></script>
-    <script type="text/javascript" src="/{{instance_id}}/game.js"></script>
-    <script type="text/javascript" src="/{{instance_id}}/playerdata.js">
+    <script type="text/javascript" src="/{{game.uid}}/game.js"></script>
+    <script type="text/javascript" src="/{{game.uid}}/playerdata.js">
     </script>
 
 </head>
@@ -23,7 +23,6 @@
 
 <div class="container" id="container">
 
-<div class="skillSet"  id="skillSet">
     <form method="post" name="skill_form" id="skill_form" >
     {%block skills %}
      <div class="skillList" id="skillSet">
@@ -41,12 +40,12 @@
     </form>
 
     {% endblock %}
-</div>
 
 
 
 
-<div class="form4" id="form4">
+
+<div class="links_form" id="links_form">
     {% block links %}
     <div class="links">
 
@@ -75,7 +74,7 @@
 
     {% block letters %}
 
-    {% if has_motivation_letter == False %}
+    {% if game.has_motivation == False %}
         <form enctype="multipart/form-data" method="post" name="letter_form" id="letter_form" >
             <table>
                 {% for error in letter.errors %}
@@ -131,9 +130,8 @@
 
 {% endblock %}
 {% block contact %}
-{% if 'no' == has_contact_info %}
 
-
+{% if game.get_contact == False %}
 <form enctype="multipart/form-data" method="post" name="contact_form" id="contact_form" >
     
     <table>
@@ -154,7 +152,7 @@
 {% endblock %}
 
 {% block upload %}
-{% if has_cv == False %}
+{% if game.has_cv == False %}
 
 
 <form enctype="multipart/form-data" method="post" name="myform" 
