@@ -18,7 +18,7 @@ body {background-color:#c0c0c0;
   display: none;
 }
 
-.links_form
+#links_form
 {
   z-index:3;
   display: none;

@@ -178,7 +178,6 @@ function addQuest(npc)
 
 function craftyTriggers(str,npc)
 {
-	console.log(str);
 	switch(str)
 	{
 		case UPLOAD:

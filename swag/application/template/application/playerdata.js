@@ -23,6 +23,21 @@ function uploadDocument()
     isFreeFrom:false;
 }
 
+function unlockBoss()
+{
+  $.ajax(
+  {
+        url: "/boss/" + state.get_id() + "/",
+        type: "POST",
+        data: formdata,
+        processData: false,
+        contentType: false,
+        success: function (res)
+        {
+
+        }
+  });
+}
 
 function sendMotivation()
 {
@@ -42,6 +57,9 @@ function sendMotivation()
         });
     }
     else showError("Please input something");
+
+
+    document.getElementById("letterbutton").blur();
 }
 
 function showError(string)
@@ -60,12 +78,13 @@ function submitMeeting()
 
                         alert("Data Loaded: " + data);
                             });
+    document.getElementById("MeetButton").blur();
 }
 
 
-function updateGame(propertie,value)
+function updateGame(property,value)
 {
-    window.state.update(propertie, value);
+    window.state.update(property, value);
     var game = window.game.crafty.pause(false);
     window.quest_log.update();
     document.getElementById("success_div").innerHTML = "Response will be placed here on submit";
@@ -76,6 +95,7 @@ function updateGame(propertie,value)
     $("#id_entry").hide();
     $("#cv_form").hide();
     $("#skill_form").hide();
+    $("#links_form").hide();
 }
         
 function sendContactInfo()
@@ -95,6 +115,8 @@ function sendContactInfo()
             
          }
      });
+
+    document.getElementById("contactButton").blur();
 }
 
 function replaceText(string)
@@ -122,10 +144,16 @@ function submitSkills()
     $("#skill_form").ajaxSubmit({url:'/uploadskills/{{game.uid}}/', type: 'post',
         success:function(res)
         {
-             updateGame('has_skills','True')
+          response = JSON.parse(res);
+          skills = response.player['skills'];
+          window.state.skills = skills;
+          updateGame('has_skills','True');
         }
     })
+  
+  document.getElementById("submit_skills").blur();
 }
+
 
 function addLink() 
 {
@@ -139,7 +167,6 @@ function addLink()
 
 function submitlinks()
 {
-
     if(document.getElementById("list").children.length == 0)
     {
         showError("please add, at least one link");
@@ -173,6 +200,8 @@ function submitlinks()
             }
         });
     }
+
+    document.getElementById("linksbutton").blur();
 }
 
 function showUploadedItem (source)
@@ -201,10 +230,10 @@ function sendFiles()
                 updateGame('has_cv', 'True')
             }
             else document.getElementById("success_div").innerHTML = replaceText(text);
-            
          }
      });
 
+    document.getElementById("cvButton").blur();
 }
 
 $(document).ready(function()
@@ -237,20 +266,32 @@ $(document).ready(function()
 });
 
 
+
+
+function getUrl(value)
+{
+
+  console.log(value);
+  switch(value)
+  {
+    case 1:
+    return "/cvquest/{{game.uid}}/";
+    
+    case 2:
+    return "/motivationquest/{{game.uid}}/";
+    
+    case 3:
+    return "/linkquest/{{game.uid}}/";
+    
+    case 4:
+    return "/skillquest/{{game.uid}}/";
+  }
+
+}
+
 function sendQuest(id)
 {
-      formdata = new FormData();
-      formdata.append('quest_id',id.toString());
-
-        $.ajax({
-            url: "/uploadQuest/{{game.uid}}/",
-            type: "POST",
-            data: formdata,
-            processData: false,
-            contentType: false,
-             success: function (res)
-             {
-                
-            }
-        });
+    var urlString = getUrl(id);
+   
+   jQuery.post(urlString, {'csrftoken': '{{ csrf_token }}'});
 }

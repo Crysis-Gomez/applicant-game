@@ -37,8 +37,6 @@ class SkillSetForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         elements = kwargs.pop('elements')
-        print 'These are the elements for our new form'
-        print elements.all()
 
         super(SkillSetForm, self).__init__(*args, **kwargs)
         for el in elements.all():
@@ -46,7 +44,7 @@ class SkillSetForm(forms.Form):
 
     def add_separate_fields(self, field):
 
-        CHOICES = [(i, self.getName(i)) for i in range(11)]
+        CHOICES = [(i, self.getName(i)) for i in range(10)]
         name = field.title
         self.fields[name] = forms.TypedChoiceField(choices=CHOICES, initial='FIXED')
 

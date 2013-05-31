@@ -79,7 +79,7 @@ Crafty.c('Player',
 
 	enterCollisionBoss:function(e)
 	{
-		if(!e[0].obj.locked)
+		/*if(!e[0].obj.locked)
 		{
 			e[0].obj.destroy();
 			$.ajax(
@@ -94,7 +94,7 @@ Crafty.c('Player',
 
 	            }
         	});
-		}
+		}*/
 	},
 
 	enterCollisionBlock:function(e)

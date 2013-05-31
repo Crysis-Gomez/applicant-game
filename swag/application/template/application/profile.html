@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
+<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
 <body>
 <h1>My Profile</h1>
 
 
 {% block letters %}
-
 
 {% if game.player_name != "" %}
     <p> Name : {{ game.player_name }}</p>
@@ -22,7 +22,7 @@
 {% if game.has_cv == True %}
     <p id="link"> CVlink : <a href={{ game.get_cv_link}}>cv</a></p>
 {%else%}
-	<li> CVlink : unknown</p>
+	<p> CVlink : <span class="label label-important">Unknown</span> </p>
 {%endif%}
 
 
@@ -33,23 +33,26 @@
 	<p> MotivationEntry :{{ game.get_motivation_entry}}</p>
 	{%endif%}
 {%else%}
-	<p> MotivationLink : unknown</p>
+	<p> MotivationLink : <span class="label label-important">Unknown</p>
 {%endif%}
 
 {% if game.has_rated_skills == True %}
 
 	<p>Your skills</p>
-	<script type="text/javascript">
-	var names = '{{game.get_all_skills}}';
-	names = names.replace(/&#39;/g,'').replace(/[\[\]']+/g,'').replace(/\s+/g,'','').split(',');
-	var scores = '{{game.get_all_scores}}';
-	scores = scores.replace(/[\[\]']+/g,'').replace(/\s+/g,'').split(',');
-	for(var i = 0;i<names.length;i++)
-	{
-		document.write("<p>"+names[i] +" score: "+ scores[i]+"</p>")
-	}
+	 <script type="text/javascript">
+	// var names = '{{game.get_all_skills}}';
+	// names = names.replace(/&#39;/g,'').replace(/[\[\]']+/g,'').replace(/\s+/g,'','').split(',');
+	// var scores = '{{game.get_all_scores}}';
+	// scores = scores.replace(/[\[\]']+/g,'').replace(/\s+/g,'').split(',');
+	// for(var i = 0;i<names.length;i++)
+	// {
+	// 	document.write("<p>"+names[i] +" score: "+ scores[i]+"</p>")
+	// }
 
-	</script>
+	// </script>
+	{% for skill, rating in skills %}
+		<p>{{skill}} score: <span class="badge badge-success">{{ rating }}</span></p>
+	{% endfor %}
 {%else%}
 	<p> Skills : unknown</p>
 {%endif%}
@@ -57,17 +60,11 @@
 
 {% if game.has_links == True %}
 	<p> Your links</p>
-	<script type="text/javascript">
-	var links = '{{game.get_all_links}}';
-	console.log(links)
-	links = links.replace(/&#39;/g,'').replace(/[\[\]']+/g,'').replace(/\s+/g,'','').split(',');
+{% for link  in links %}
+	<p><a href= {{link}}>{{link}}</a></p>
 
-	 for(var i = 0;i<links.length;i++)
-	 {
-	 	document.write("<p>" +"<a href=" +links[i] +">"+links[i]+"</a>"+"</p>")
-	 }
+{% endfor %}
 
-	</script>
 {%else%}
 	<p> Links : unknown</p>
 {%endif%}

@@ -154,6 +154,7 @@ Crafty.c("Questlog",{
 			quest.questlog = this;
 			quest.unlock();
 			this.show();
+			quest.isSelected = false;
 			if(condition) sendQuest(quest.questID);
 		}
 	});
@@ -216,6 +217,7 @@ Crafty.c("Questlog",{
 			this.checkFunction = checkFunction;
 			this.completed = checkFunction();
 			this.unlock = unlock;
+			this.isSelected = false;
 		},
 		showText:function()
 		{

@@ -20,15 +20,15 @@ class GameFinishedFilter(admin.SimpleListFilter):
 
     def queryset(self, request, queryset):
         if self.value() == 'finished':
-            return queryset.filter(gameinstance__player_defeated_boss=True)
+            return queryset.filter(gameinstance__player_unlocked_boss=True)
         else:
-            print queryset.filter(gameinstance__player_defeated_boss=False)
+            print queryset.filter(gameinstance__player_unlocked_boss=False)
 
 
 class MyFormSet(BaseInlineFormSet):
     def get_queryset(self):
         if not hasattr(self, 'player_defeated_boss'):
-            qs = super(MyFormSet, self).get_queryset().filter(player_defeated_boss=True)
+            qs = super(MyFormSet, self).get_queryset().filter(player_unlocked_boss=True)
             self._queryset = qs
         return self._queryset
 
@@ -54,10 +54,10 @@ class VacancyAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
 
     def unfinished_games(self, obj):
-        return str(len([x.name() for x in models.GameInstance.objects.filter(vacancy=obj, player_defeated_boss=False)]))
+        return str(len([x.name() for x in models.GameInstance.objects.filter(vacancy=obj, player_unlocked_boss=False)]))
 
     def finished_games(self, obj):
-        return str(len([x.name() for x in models.GameInstance.objects.filter(vacancy=obj, player_defeated_boss=True)]))
+        return str(len([x.name() for x in models.GameInstance.objects.filter(vacancy=obj, player_unlocked_boss=True)]))
 
     def skill_set_list(self, obj):
         return str(",".join([x.title for x in obj.skill_sets.all()]))
@@ -87,8 +87,8 @@ class PortfolioLinksAdmin(admin.ModelAdmin):
 
 
 class GameInstanceAdmin(admin.ModelAdmin):
-    list_filter = ['vacancy', 'player_defeated_boss']
-    list_display = ('name', 'has_cv', 'has_motivation', 'player_defeated_boss', 'has_links', 'has_rated_skills')
+    list_filter = ['vacancy', 'player_unlocked_boss']
+    list_display = ('name', 'has_cv', 'has_motivation', 'player_unlocked_boss', 'has_links', 'has_rated_skills')
     inlines = [CV, Motivation, Link, Skill]
 
 

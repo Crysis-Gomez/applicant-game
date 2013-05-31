@@ -51,8 +51,27 @@ def start_game(request, slug):
     game_instance.uid = instance_id
     game_instance.vacancy = _vacancy
     game_instance.save()
-
     return HttpResponseRedirect(reverse('play', args=(instance_id,)))
+
+
+def statejs(request, unique_id):
+    game = GameInstance.objects.get(uid=unique_id)
+    skills = json.dumps(dict(game.get_all_skills()))
+    print game.get_all_links()
+    links = json.dumps(game.get_all_links())
+    context = {
+        'game': game,
+        'skills': skills,
+        'links': links
+    }
+    return render(request, "state.js", context, content_type="application/javascript")
+
+@csrf_exempt
+def process_boss(request, unique_id):
+    game = GameInstance.objects.get(uid=unique_id)
+    game.player_unlocked_boss = True
+    game.save()
+    return HttpResponse('All went well')
 
 
 def gamejs(request, unique_id):
@@ -68,26 +87,35 @@ def playerdatajs(request, unique_id):
 
 
 @csrf_exempt
-def sendQuestData(request, unique_id):
+def unlock_cv_quest(request, unique_id):
     game = GameInstance.objects.get(uid=unique_id)
-    data = request.POST['quest_id']
-    upload_state = {"action": "contact", 'success': 'Thx for submitting!', 'playername': 'name'}
-    getQuest(data, game)
+    game.player_cv_unlockedQuest = True
     game.save()
-    return render(request, "results_template.js", upload_state, content_type=RequestContext(request))
+    return HttpResponse('All went well')
 
 
-def getQuest(id_quest, game):
-    print id_quest
+@csrf_exempt
+def unlock_motivation_quest(request, unique_id):
+    game = GameInstance.objects.get(uid=unique_id)
+    game.player_motivation_unlockedQuest = True
+    game.save()
+    return HttpResponse('All went well')
 
-    if id_quest == "1":
-        game.player_cv_unlockedQuest = True
-    elif id_quest == "2":
-        game.player_motivation_uplockedQuest = True
-    elif id_quest == "3":
-        game.player_link_unlockedQuest = True
-    elif id_quest == "4":
-        game.player_skill_unlockedQuest = True
+
+@csrf_exempt
+def unlock_link_quest(request, unique_id):
+    game = GameInstance.objects.get(uid=unique_id)
+    game.player_link_unlockedQuest = True
+    game.save()
+    return HttpResponse('All went well')
+
+
+@csrf_exempt
+def unlock_skill_quest(request, unique_id):
+    game = GameInstance.objects.get(uid=unique_id)
+    game.player_skill_unlockedQuest = True
+    game.save()
+    return HttpResponse('All went well')
 
 # def getQuestData(request, unique_id):
 #     game = GameInstance.objects.get(uid=unique_id)
@@ -109,7 +137,12 @@ def get_skill(game, skill):
 def process_profile(request, unique_id):
     context = dict()
     game = get_object_or_404(GameInstance, uid=unique_id)
-    context.update({'game': game})
+    skills = game.get_all_skills()
+    links = game.get_all_links()
+    context.update({
+        'game': game,
+        'skills': skills,
+        'links': links})
     return render_to_response("profile.html", context)
 
 
@@ -119,12 +152,8 @@ def play(request, unique_id):
         game = get_object_or_404(GameInstance, uid=unique_id)
     except Http404:
         return HttpResponseRedirect('/')
-    #context = dict(request)
-    context = dict()
 
-    ##has_contact_info = get_contact_info(game)
-    print "TESTTTTTTTTTTTTTTTTTTTTTTTTTT"
-    print game.get_contact()
+    context = dict()
     if game.get_contact() == False:
         contact_info = ContactInformationForm()
         context.update({'contact_info': contact_info})
@@ -156,23 +185,27 @@ def process_skills(request, unique_id):
 
     if request.method == "POST":
         skillForm = SkillSetForm(request.POST, elements=game.vacancy.skill_sets)
-        print skillForm
         if skillForm.is_valid():
             for data in skillForm.cleaned_data:
-                print "DATA"
-                print skillForm.cleaned_data[data]
-                print "DATA2"
-                print skillForm.cleaned_data
-
                 _skill = SkillSet.objects.get(title=data)
                 skill_set = get_skill(game, _skill)
                 skill_set.score = skillForm.cleaned_data[data]
                 skill_set.game_instance = game
                 skill_set.skill = _skill
                 skill_set.save()
+            skills = json.dumps(dict(game.get_all_skills()))
+            #links = json.dumps(dict(game.get_all_links()))
         else:
-           print(skillForm.errors)
-    return HttpResponse('All went well')
+            print(skillForm.errors)
+
+    upload_state = {'skills': skills}
+    return render(request, "update_skill.js", upload_state, content_type=RequestContext(request))
+
+
+def update_state(request, game):
+    context = dict()
+    context.update({'game': game})
+    return render(request, "state.js", context, content_type="application/javascript")
 
 
 def show_uploaded_file(request, filename):
@@ -216,10 +249,9 @@ def process_links(request, unique_id):
     link_list = str(request.POST.get('list')).split(",")
     game = GameInstance.objects.get(uid=unique_id)
     for _link in link_list:
-        print _link
         if not 'http://' or not 'https://' in _link:
             _link = 'http://' + _link
-            print _link
+
 
         port = PortfolioLink()
         port.links = _link
@@ -315,13 +347,13 @@ def process_contact(request, unique_id):
     if form.is_valid():
         game.player_name = form.cleaned_data['name']
         game.player_email = form.cleaned_data['email']
-        print game.player_name
         game.save()
         upload_state['playername'] = json.dumps(game.player_name)
     else:
         print(form.errors)
         upload_state['success'] = json.dumps(form.errors)
 
+    #update_state(request, game)
     return render(request, "results_template.js", upload_state, content_type=RequestContext(request))
 
 

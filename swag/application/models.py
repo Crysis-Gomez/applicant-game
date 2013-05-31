@@ -37,10 +37,10 @@ class GameInstance(models.Model):
     player_position_y = models.IntegerField(default=5)
     player_position_x = models.IntegerField(default=5)
     player_cv_unlockedQuest = models.BooleanField(default=False)
-    player_motivation_uplockedQuest = models.BooleanField(default=False)
+    player_motivation_unlockedQuest = models.BooleanField(default=False)
     player_link_unlockedQuest = models.BooleanField(default=False)
     player_skill_unlockedQuest = models.BooleanField(default=False)
-    player_defeated_boss = models.BooleanField(default=False)
+    player_unlocked_boss = models.BooleanField(default=False)
     player_name = models.CharField(max_length=50)
     player_email = models.EmailField(max_length=100)
 
@@ -94,16 +94,16 @@ class GameInstance(models.Model):
         except Http404:
             return False
 
-    def get_skill_names(self, skill):
+    def get_skill_name(self, skill):
         return str(skill.skill.title)
 
-    def get_skill_ratings(self, skill):
+    def get_skill_rating(self, skill):
         return int(skill.score)
 
     def get_all_skills(self):
         try:
             skills = PlayerSkill.objects.filter(game_instance=self.id)
-            names = [self.get_skill_names(skill) for skill in skills]
+            names = [(self.get_skill_name(skill), self.get_skill_rating(skill)) for skill in skills]
             return names
         except Http404:
             return False
@@ -111,7 +111,7 @@ class GameInstance(models.Model):
     def get_all_scores(self):
         try:
             skills = PlayerSkill.objects.filter(game_instance=self.id)
-            skill_ratings = [self.get_skill_ratings(skill) for skill in skills]
+            skill_ratings = [self.get_skill_rating(skill) for skill in skills]
             return skill_ratings
         except Http404:
             return False

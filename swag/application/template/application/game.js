@@ -1,286 +1,3 @@
-var state = function() 
-{
-	this.player_name = '{{ game.player_name }}';
-	this.email = '{{ game.player_email }}';
-	this.has_cv = '{{ game.has_cv }}';
-	this.has_motivation = '{{game.has_motivation}}';
-	this.has_links = '{{game.has_links}}';
-	this.has_skills = '{{game.has_rated_skills}}'
-
-	this.unLockedCVQuest = '{{game.player_cv_unlockedQuest}}';
-	this.mayUploadCV = false;
-
-	this.unLockedMotivationQuest = '{{game.player_motivation_uplockedQuest}}';
-	this.MayUploadMotivation = false;
-
-	this.unLockedLinkQuest = '{{game.player_link_unlockedQuest}}';
-	this.MayUploadLink = false;
-
-	this.unLockedSkillsQuest = '{{game.player_skill_unlockedQuest}}';
-	this.MayUploadSkills = false;
-
-	this.id = '{{game.uid}}';
-
-	this.playerPositionx = 300;
-	this.playerPositiony = 300;///django shit doen.
-	this.has_quest_log = false;
-
-	var check_UnlockedSkillsQuest = function()
-	{
-		var my_val = false;
-		if(unLockedSkillsQuest == 'True')
-		{
-			my_val = true;
-		}
-		return my_val;
-	}
-
-	var skills_Unlocked = function()
-	{
-		 unLockedSkillsQuest = 'True';
-	}
-
-	var skills_MayUpload = function()
-	{
-		MayUploadSkills = true;
-	}
-
-	var check_MayUploadSkills = function()
-	{
-		return MayUploadSkills;
-	}
-
-	///////////////////////////////////////////////
-
-	var check_UnlockedLinkQuest = function()
-	{
-		var my_val = false;
-		if(unLockedLinkQuest == 'True')
-		{
-			my_val = true;
-		}
-		return my_val;
-	}
-
-	var link_Unlocked = function()
-	{
-		 unLockedLinkQuest = 'True';
-	}
-
-	var link_MayUpload = function()
-	{
-		MayUploadLink = true;
-	}
-
-	var check_MayUploadLink = function()
-	{
-		return MayUploadLink;
-	}
-//////////////////////////////////////////
-
-	var check_UnlockedMotivationQuest = function()
-	{
-		var my_val = false;
-		if(unLockedMotivationQuest == 'True')
-		{
-			my_val = true;
-		}
-		return my_val;
-	}
-
-	var motivation_Unlocked = function()
-	{
-		 unLockedMotivationQuest = 'True';
-	}
-
-	var motivation_MayUpload = function()
-	{
-		MayUploadMotivation = true;
-	}
-
-	var check_MayUploadMotivation = function()
-	{
-		return MayUploadMotivation;
-	}
-/////////////////////////////////////////////
-	var check_UnlockedCVQuest = function()
-	{
-		var my_val = false;
-		if(unLockedCVQuest == 'True')
-		{
-			my_val = true;
-		}
-		return my_val;
-	}
-
-	var cv_Unlocked = function()
-	{
-		 unLockedCVQuest = 'True';
-	}
-
-	var cv_MayUpload = function()
-	{
-		mayUploadCV = true;
-	}
-
-	var check_MayUploadCV = function()
-	{
-		return mayUploadCV;
-	}
-
-	that = this;
-
-	var checkPosition = function()
-	{
-		return[playerPositionx,playerPositiony];
-	}
-
-	var check_log = function()
-	{
-		return has_quest_log;
-	}
-
-	var set_log = function(bool){
-		has_quest_log = true;
-	}
-
-	var setPosition = function(x,y)
-	{
-		playerPositionx = x;
-		playerPositiony = y;
-	}
-
-	var init = function()
-	{
-
-	}
-
-	var setName = function(name)
-	{
-		this.player_name = name
-	}
-
-	var get_name = function()
-	{
-		var my_val = false;
-		if (player_name.length > 0)
-		{
-			my_val = true;
-		}
-		return my_val;
-	}
-
-	var get_motivation = function()
-	{
-		var my_val = false;
-		if (has_motivation == 'True')
-		{
-			my_val = true;
-		}
-
-		return my_val;
-	}
-
-	var get_cv = function()
-	{
-		var my_val = false;
-		if (has_cv == 'True') 
-		{
-			my_val = true;
-		}
-
-		return my_val;
-	}
-
-
-	var get_link = function()
-	{
-		var my_val = false;
-		if (has_links == 'True') 
-		{
-			my_val = true;
-		}
-
-		return my_val;
-	}
-
-
-	var get_skills = function()
-	{
-		var my_val = false;
-		if (has_skills == 'True') 
-		{
-			my_val = true;
-		}
-
-		return my_val;
-	}
-
-
-
-	return {
-		getState: function() { init() },
-		my_name: function()
-		{
-			return player_name;
-		},
-
-		my_email:function()
-		{
-			return email;
-		}, 
-		check_cv: get_cv,
-		check_name:get_name,
-		check_motivation:get_motivation,
-		check_link:get_link,
-		check_skills:get_skills,
-		checkPosition:checkPosition,
-		setPosition:setPosition,
-		checklog:check_log,
-		setlog:set_log,
-		
-		checkUnlockedCVQuest:check_UnlockedCVQuest,
-		cvUnlocked:cv_Unlocked,
-		cvMayUpload:cv_MayUpload,
-		checkMayUploadCV:check_MayUploadCV,
-
-		checkUnlockedMotivationQuest:check_UnlockedMotivationQuest,
-		motivationUnlocked:motivation_Unlocked,
-		motivationMayUpload:motivation_MayUpload,
-		checkMayUploadMotivation:check_MayUploadMotivation,
-
-		checkUnlockedLinkQuest:check_UnlockedLinkQuest,
-		linkUnlocked:link_Unlocked,
-		linkMayUpload:link_MayUpload,
-		checkMayUploadLink:check_MayUploadLink,
-
-
-		checkUnlockedSkillsQuest:check_UnlockedSkillsQuest,
-		skillsUnlocked:skills_Unlocked,
-		skillsMayUpload:skills_MayUpload,
-		checkMayUploadSkills:check_MayUploadSkills,
-
-		get_id: function() { return id },
-		
-		update_key: function (value)
-		{
-			has_cv = value;
-			return true;
-		},
-		update: function(key, value)
-		{
-			that[key] = value;
-			return true;
-		},
-
-		name: function()
-		{ 
-			return player_name; 
-		}
-	}
-}();
-
-
 var quest_log;
 var TILE_SIZE = 32;
 var HOUSE_WIDTH = 20;
@@ -289,7 +6,6 @@ var OFFSET = 120;
 var SCREEN_WIDTH = 900;
 var SCREEN_HEIGTH = 600; 
 	
-
 var crafty = function() {
 
     Crafty.init(SCREEN_WIDTH, SCREEN_HEIGTH);
@@ -316,7 +32,6 @@ var crafty = function() {
 	
 	function generateWorld()
 	{
-	
 		for (i = 0; i < 31; i++)
 		{
 			for (j = 0; j < 21; j++)
@@ -423,7 +138,7 @@ var crafty = function() {
 
 			for (j = 0; j < 21; j++)
 			{
-				if(i  == 4 && j == 2)
+				if(i  == 1 && j == 0)
 				{
 					poly1 = new Crafty.polygon([5,0],[110,0],[110,180],[5,180])
 					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard")
@@ -436,7 +151,7 @@ var crafty = function() {
 					houses.push(house);
 				}
 
-				if(i  == 14 && j == 2)
+				if(i  == 15 && j == 0)
 				{
 					poly1 = new Crafty.polygon([5,0],[110,0],[110,180],[5,180])
 					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard")
@@ -463,7 +178,7 @@ var crafty = function() {
 					houses.push(house);
 				}
 
-				if(i  == 15 && j == 15)
+				if(i  == 24 && j == 13)
 				{
 					poly1 = new Crafty.polygon([5,0],[110,0],[110,180],[5,180])
 					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard")
@@ -477,7 +192,7 @@ var crafty = function() {
 
 
 
-				if(i  == 2 && j == 10)
+				if(i  == 1 && j == 10)
 				{
 					poly1 = new Crafty.polygon([5,0],[110,0],[110,180],[5,180])
 					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard")
@@ -493,7 +208,6 @@ var crafty = function() {
 			}
 		}
 	}
-
 
 	Crafty.c('Building',
 	{
@@ -607,7 +321,7 @@ var crafty = function() {
 				if(houses[i].questDone == false)
 				{
 					ctx.beginPath();
-		        	ctx.moveTo(this.x+TILE_SIZE*0.5, this.y+TILE_SIZE*0.5);
+		        	ctx.moveTo(this.x+this.w*0.5, this.y+this.h*0.5);
 		        	ctx.lineTo(houses[i].x+houses[i]._w*0.5, houses[i].y+houses[i]._h*0.5);
 		        	ctx.closePath();
 		        	ctx.stroke();
@@ -618,9 +332,11 @@ var crafty = function() {
 		        }
 			};
 
-			if(count == houses.length)
+			if(count == houses.length && this.locked)
 			{
 				this.locked = false;
+				unlockBoss();
+				state.boss_unlocked = true;
 			}
 		},
 
@@ -767,66 +483,75 @@ var crafty = function() {
 
 		if(!state.checklog())
 		{
-
+	
 			info = Crafty.e("Infolog,Persist");
 
-			quest_log = Crafty.e("Questlog,Persist")
-			.attr({ x: -150, y: 100, z: 1});
 
-			quest2 = Crafty.e("Quest,Persist");
-			quest3 = Crafty.e("Quest,Persist");
-			quest4 = Crafty.e("Quest,Persist");
-			quest5 = Crafty.e("Quest,Persist");
+			if (typeof quest_log  === 'undefined') {
+				
+				quest_log = Crafty.e("Questlog,Persist")
+				.attr({ x: -150, y: 100, z: 1});
+				quest1 = Crafty.e("Quest,Persist");
+				quest2 = Crafty.e("Quest,Persist");
+				quest3 = Crafty.e("Quest,Persist");
+				quest4 = Crafty.e("Quest,Persist");
 
-			quest2.addQuestInfo(1,"Cv","Need to upload your cv",state.check_cv,state.cvUnlocked);
-			quest3.addQuestInfo(2,"Motivation","Need to upload your motivationLetter",state.check_motivation,state.motivationUnlocked);
-			quest4.addQuestInfo(3,"Links","Need to upload your links",state.check_link,state.linkUnlocked);
-			quest5.addQuestInfo(4,"Skills","Need to upload your Skills",state.check_skills,state.skillsUnlocked);
+				quest1.addQuestInfo(1,"Cv","Need to upload your cv",state.check_cv,state.cvUnlocked);
+				quest2.addQuestInfo(2,"Motivation","Need to upload your motivationLetter",state.check_motivation,state.motivationUnlocked);
+				quest3.addQuestInfo(3,"Links","Need to upload your links",state.check_link,state.linkUnlocked);
+				quest4.addQuestInfo(4,"Skills","Need to upload your Skills",state.check_skills,state.skillsUnlocked);
 
-			if(state.checkUnlockedCVQuest())
-			{
-				quest_log.addQuest(quest2,false);
-			}
+				if(state.checkUnlockedCVQuest())
+				{
+					quest_log.addQuest(quest1,false);
+				}
 
-			if(state.checkUnlockedMotivationQuest())
-			{
-				quest_log.addQuest(quest3,false);
-			}
+				if(state.checkUnlockedMotivationQuest())
+				{
+					quest_log.addQuest(quest2,false);
+				}
 
-			if(state.checkUnlockedLinkQuest())
-			{
-				quest_log.addQuest(quest4,false);
-			}
+				if(state.checkUnlockedLinkQuest())
+				{
+					quest_log.addQuest(quest3,false);
+				}
 
-			if(state.checkUnlockedSkillsQuest())
-			{
-				quest_log.addQuest(quest5,false);
+				if(state.checkUnlockedSkillsQuest())
+				{
+					quest_log.addQuest(quest4,false);
+				}
 			}
 		}
+
+
+		poly1 = new Crafty.polygon([5,0],[110,0],[110,180],[5,180])
+		var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard,BOSS").collision(poly1).attr({ x: 250, y: 164, z: 1});;	
+		house.image("/static/house.png");
+		house.setScene("Castle",state.check_boss_unlocked,null);
 
 		var canvas = document.getElementById('mycanvas');
 		player1 = Crafty.e("2D,  Canvas, player,Player,RightControls,Collision,Keyboard,Respawn,StatePosition")
 			.rightControls(2)
 			.Player();
 
-		var boss = Crafty.e("2D,  Canvas, player,Collision,boss,BOSS")
-			.attr({ x: 400, y: 264, z: 1})
+
 		
+
 		var player2 = Crafty.e("2D,  Canvas, player,Collision,npc,NPC")
 			.attr({ x: 400, y: 364, z: 1})
-			.setNpcData(quest2,getDialogData1);
+			.setNpcData(quest1,getDialogData1);
 
 		var player3 = Crafty.e("2D,  Canvas, player,Collision,npc,NPC")
 			.attr({ x: 700, y: 300, z: 1})
-			.setNpcData(quest3,getDialogData2);
+			.setNpcData(quest2,getDialogData2);
 
 		var player4 = Crafty.e("2D,  Canvas, player,Collision,npc,NPC")
 			.attr({ x: 700, y: 200, z: 1})
-			.setNpcData(quest4,getDialogData3);
+			.setNpcData(quest3,getDialogData3);
 
 		var player5 = Crafty.e("2D,  Canvas, player,Collision,npc,NPC")
 			.attr({ x: 200, y: 500, z: 1})
-			.setNpcData(quest5,getDialogData4);
+			.setNpcData(quest4,getDialogData4);
     });
 
 	Crafty.scene("Game2",function()
@@ -893,6 +618,13 @@ var crafty = function() {
 	});
 
 
+	Crafty.scene("Castle", function()
+	{
+		generateIndoors("Castle");
+		$("#mycanvas").hide();
+	});
+
+
 	Crafty.c("Profiletext",
 	{
 		init:function()
@@ -902,7 +634,7 @@ var crafty = function() {
 
 		showText:function(str)
 		{
-			this.text('<div style="margin-top:12px;" color:blue; >' + str + '<div style="margin-left:400px;">');
+			this.text('<div style="margin-top:12px;" color:blue;  >' + str + '<div style="margin-left:400px;">' );
 		}
 
 	})
@@ -923,22 +655,33 @@ var crafty = function() {
 			this.showProfile();
 		},
 
-		addAttribute:function(str)
+		addAttribute:function(str,bool)
 		{
 			e = Crafty.e("Profiletext");
+			//if(bool)e.addComponent("Mouse").bind("Click",function(e){console.log("hit");}).areaMap([0,0], [200,0], [200,50], [0,50]);
 			e.showText(str);
 			e.x = this.x;
 			e.y = this.y+this.attributePositionY;
 			e.z = 1;
-			this.attributePositionY +=20;
+			this.attributePositionY +=25;
 		},
 
 		showProfile:function()
 		{
+
+			$.ajax({
+			  url: "/getprofile/{{game.uid}}/",
+			  dataType: 'jsonp',
+			  success: function(data){
+			  }
+			});
+
+
 			this.addAttribute("Your Profile")
-			this.addAttribute("Current vacancy :"+'{{game.vacancy}}');
+			
 			this.addAttribute("Name  :"+state.my_name());	
 			this.addAttribute("Email :"+state.my_email());
+			this.addAttribute("Current vacancy :"+'{{game.vacancy}}');
 			if(state.checkUnlockedCVQuest())
 			{
 				this.addAttribute("Uploaded CV:"+ state.check_cv());
@@ -951,13 +694,24 @@ var crafty = function() {
 
 			if(state.checkUnlockedLinkQuest())
 			{
-				this.addAttribute("Uploaded Links:"+ state.check_cv());
+				this.addAttribute("Uploaded Links:"+ state.check_link());
 			}
 
 			if(state.checkUnlockedSkillsQuest())
 			{
-				this.addAttribute("Uploaded Skills:"+ state.check_cv());
+				this.addAttribute("Uploaded Skills:"+ state.check_skills());
+			}	
+
+			for (var key in state.get_skills())
+			{
+				this.addAttribute(key+" score:"+state.get_skills()[key]);
 			}
+
+			for (var key in state.get_links())
+			{
+				this.addAttribute(state.get_links()[key],true);
+			}
+			
 			
 		}
 	});

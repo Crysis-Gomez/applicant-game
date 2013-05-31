@@ -1,5 +1,4 @@
-
 {"player": {
 	"result": "{{ success }}",
-	"name": "{{ playername }}"
+	"skills":{{skills|safe}}
 }}

@@ -4,5 +4,3 @@
 	"name": "{{ playername }}"
 }}
 
-
-
