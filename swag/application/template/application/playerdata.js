@@ -39,6 +39,9 @@ function unlockBoss()
   });
 }
 
+
+
+
 function sendMotivation()
 {
     var uploadURL = "/uploadfilemotivation/{{game.uid}}/";
@@ -136,6 +139,21 @@ function checkURL(str) {
   '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
   if(!pattern.test(str))return false;
   else return true;
+}
+
+
+
+function submitAnswer()
+{
+   $("#question_form").ajaxSubmit({url:'/answer/{{game.uid}}/', type: 'post',
+        success:function(res)
+        {
+          // response = JSON.parse(res);
+          // skills = response.player['skills'];
+          // window.state.skills = skills;
+          // updateGame('has_skills','True');
+        }
+    })
 }
 
 function submitSkills() 

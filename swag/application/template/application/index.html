@@ -48,6 +48,23 @@
     {% endblock %}
 
 
+ <form method="post" name="question_form" id="question_form" class='question-inline'>
+    {%block question %}
+     <div class="anwser" id="anwser">
+        <table>
+        {% for error in answer.errors %}
+        {{error}}
+        {% endfor %}
+         
+        {{answer}}
+      
+        </table> 
+
+        <button id="submit_answer" type="button" onclick="submitAnswer()">Submit</button>
+     </div>
+    </form>
+
+    {% endblock %}
 
 
 

@@ -50,6 +50,11 @@ class Skill(admin.TabularInline):
     extra = 1
 
 
+# class Quest(admin.TabularInline):
+#     model = models.Question
+#     extra = 0
+
+
 class VacancyAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
 
@@ -106,6 +111,7 @@ class PlayerSkillAdmin(admin.ModelAdmin):
 
 admin.site.register(models.GameInstance, GameInstanceAdmin)
 admin.site.register(models.CvDocument)
+admin.site.register(models.Question)
 admin.site.register(models.Vacancy, VacancyAdmin)
 admin.site.register(models.MotivationLetter)
 admin.site.register(models.Meeting, MeetingAdmin)

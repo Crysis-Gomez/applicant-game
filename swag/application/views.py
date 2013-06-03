@@ -11,11 +11,13 @@ from application.models import Meeting
 from application.models import PortfolioLink
 from application.models import SkillSet
 from application.models import PlayerSkill
+from application.models import Question
 from form import ContactInformationForm
 from form import UploadFileForm
 from form import MeetingForm
 from form import PortfolioForm
 from form import SkillSetForm
+from form import Answer
 from django.conf import settings
 import uuid
 import json
@@ -57,14 +59,17 @@ def start_game(request, slug):
 def statejs(request, unique_id):
     game = GameInstance.objects.get(uid=unique_id)
     skills = json.dumps(dict(game.get_all_skills()))
-    print game.get_all_links()
     links = json.dumps(game.get_all_links())
+    question = json.dumps(game.vacancy.questions.question)
+
     context = {
         'game': game,
         'skills': skills,
-        'links': links
+        'links': links,
+        'question': question
     }
     return render(request, "state.js", context, content_type="application/javascript")
+
 
 @csrf_exempt
 def process_boss(request, unique_id):
@@ -168,14 +173,33 @@ def play(request, unique_id):
 
     skillForm = SkillSetForm(elements=game.vacancy.skill_sets)
 
+    answer = Answer()
+
+
     context.update({'skill': skillForm})
 
     form = UploadFileForm(initial={'title': 'cv'})
     context.update({
         'game': game,
         'portfolio': portfolio,
+        'answer':answer,
         'form': form})
     return render_to_response("index.html", context)
+
+
+@csrf_exempt
+def process_answer(request, unique_id):
+
+
+    game = get_object_or_404(GameInstance, uid=unique_id)
+    if request.method == "POST":
+        ans = Answer(request.POST)
+        if ans.is_valid():
+            game.vacancy.questions.answer = ans.cleaned_data['answer']
+            game.vacancy.questions.save()
+
+    return HttpResponse('All went well')
+
 
 
 @csrf_exempt
@@ -193,13 +217,14 @@ def process_skills(request, unique_id):
                 skill_set.game_instance = game
                 skill_set.skill = _skill
                 skill_set.save()
+
             skills = json.dumps(dict(game.get_all_skills()))
-            #links = json.dumps(dict(game.get_all_links()))
+            links = json.dumps(game.get_all_links())
         else:
             print(skillForm.errors)
 
-    upload_state = {'skills': skills}
-    return render(request, "update_skill.js", upload_state, content_type=RequestContext(request))
+    upload_state = {'skills': skills, 'links': links}
+    return render(request, "update_player.js", upload_state, content_type=RequestContext(request))
 
 
 def update_state(request, game):
@@ -252,13 +277,17 @@ def process_links(request, unique_id):
         if not 'http://' or not 'https://' in _link:
             _link = 'http://' + _link
 
-
         port = PortfolioLink()
         port.links = _link
         port.game_instance = game
         port.save()
 
-    return HttpResponse('All went well')
+    skills = json.dumps(dict(game.get_all_skills()))
+    links = json.dumps(game.get_all_links())
+
+    upload_state = {'skills': skills, 'links': links}
+    return render(request, "update_player.js", upload_state, content_type=RequestContext(request))
+
 
 
 @csrf_exempt

@@ -14,12 +14,23 @@ class SkillSet(models.Model):
     def __unicode__(self):
             return self.title
 
+
+class Question(models.Model):
+    title = models.CharField(max_length=200)
+    question = models.TextField(null=True, blank=False)
+    answer = models.TextField(null=True, blank=True)
+
+    def __unicode__(self):
+        return self.title
+
+
 class Vacancy(models.Model):
     title = models.CharField(max_length=200)
     department = models.CharField(max_length=20)
     slug = models.SlugField(max_length=50, unique=True)
     mail_text = models.CharField(max_length=500)
     skill_sets = models.ManyToManyField(SkillSet)
+    questions = models.ForeignKey(Question, null=True, blank=False)
 
     def __unicode__(self):
         return str(self.title)
@@ -206,7 +217,6 @@ class CvDocument(models.Model):
 
     def __unicode__(self):
         return str(self.title)
-
 
 class MotivationLetter(models.Model):
 

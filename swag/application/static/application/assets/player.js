@@ -28,6 +28,7 @@ Crafty.c('Player',
 	dirY:0,
 	count:0,
 	mayStop:false,
+	mayMove:true,
 
 	
 	convert:function(obj)
@@ -152,13 +153,14 @@ Crafty.c('Player',
 		 .animate("walk_down",2,0,4)
 		 .bind('EnterFrame', function()
 		 {
-
+		 	if(!this.mayMove)this.stopMovement();
 		 })
 		
-
+		
 		.bind("NewDirection",
 			function (direction)
 			{
+				if(!this.mayMove)return;
 				this.dirX = direction.x;
 				this.dirY = direction.y;
 				if (direction.x < 0)

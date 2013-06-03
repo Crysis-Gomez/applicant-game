@@ -253,12 +253,14 @@ var crafty = function() {
 		dialogFunction:null,
 		dialogText:"",
 		quest:null,
+		player:null,
 
 		init: function()
 		{
 			this.onHit('player',function(hit)
 			{
 				this.isCollidingWithPlayer = true;
+				this.player = hit[0].obj;
 				if(!dialog.inConversation)
 				{
 					//show dialog
@@ -274,8 +276,17 @@ var crafty = function() {
 			{ 
 				if (this.isDown('ENTER') && !Crafty.isPaused() && this.isCollidingWithPlayer)
 				{
-					if(!dialog.inConversation)dialog.startDialog(this);
-					if(dialog.finished)	dialog.nextDialog();
+					if(!dialog.inConversation)
+					{
+						dialog.startDialog(this);
+						this.player.mayMove = false;
+					}
+					if(dialog.finished)
+					{
+						dialog.nextDialog();
+						
+
+					}	
 				}
 			})
 	     },
@@ -376,13 +387,12 @@ var crafty = function() {
 
 		init:function()
 		{
-			this.addComponent("2D, DOM,Color,Text");
+			this.addComponent("2D,Color2");
 			this.x = 0;
 			this.y = 0;
-			this.w = 990;  
-			this.h = 0;   
-			this.color("#FFFFFF");
-			this.textColor('#FF0000');
+			this.w = 900;  
+			this.h = 0;
+			this.color('#FFF')
 			this.bind('EnterFrame', function()
 			{
 
@@ -391,7 +401,8 @@ var crafty = function() {
 					if(this.DialogText.length != this.DataText.length)
 					{
 						this.DialogText += this.DataText[this.TextIndex];
-						this.text('<div style="margin-top:12px;">' + this.DialogText  + '<div style="margin-top:50px;">'  +"Enter to continue");
+						if(this.DialogText.length == this.DataText.length)this.text('<div style="margin-top:12px;">' + this.DialogText  + '<div style="margin-top:10px;">'  +"Enter to continue");
+						else this.text('<div style="margin-top:12px;">' + this.DialogText  + '<div style="margin-top:10px;">');
 						this.TextIndex++;
 					}
 					else this.finished = true;
@@ -447,6 +458,7 @@ var crafty = function() {
 			this.inConversation = false;
 			this.dialogIndex = 0;
 			this.h =  this.minHeight;
+			this.npc.player.mayMove = true;
 		},
 		
 		startDialog:function(npc)
@@ -457,6 +469,7 @@ var crafty = function() {
 			this.hasStarted = true;
 			this.h = this.maxHeight;
 			this.inConversation = true;
+
 		}
 	}); 
 
@@ -465,7 +478,7 @@ var crafty = function() {
         //load takes an array of assets and a callback when complete
         Crafty.load(["/static/Sprite.png","/static/house.png","/static/Sprite2.png"], function ()
         {
-            Crafty.scene("main"); //when everything is loaded, run the main scene
+            Crafty.scene("Castle"); //when everything is loaded, run the main scene
             //Crafty.background('rgb(0, 0, 0)');
         });
 
@@ -478,17 +491,19 @@ var crafty = function() {
     Crafty.scene("main", function ()
     {
 		generateWorld();
-		dialog = Crafty.e("Dialog")
-			.attr({ x: 0, y: 500, z: 1});
+	
 
 		if(!state.checklog())
 		{
-	
-			info = Crafty.e("Infolog,Persist");
+			
+			dialog = Crafty.e("Dialog, 2D, DOM,Text")
+			.attr({x:0, y:500, w:900, h:0}).css({"font": "10pt Arial", "color": "#000", "text-align": "left"});
 
-
+		
 			if (typeof quest_log  === 'undefined') {
+
 				
+				info = Crafty.e("Infolog,Persist");
 				quest_log = Crafty.e("Questlog,Persist")
 				.attr({ x: -150, y: 100, z: 1});
 				quest1 = Crafty.e("Quest,Persist");
@@ -613,13 +628,44 @@ var crafty = function() {
 
 	Crafty.scene("Hometown", function()
 	{
+
+
 		profile = Crafty.e("Profile");
+		profile.bind("SHOW",function(){
+			this.showProfile();
+
+		});
+
+		profile.bind("HIDE",function(){
+			this.hideProfile();
+			
+		});
+		
+		dialog = Crafty.e("Dialog, 2D, DOM,Text")
+		.attr({x:0, y:500, w:900, h:0}).css({"font": "10pt Arial", "color": "#000", "text-align": "left"});
+
+		var player2 = Crafty.e("2D,  Canvas, player,Collision,npc,NPC")
+		.attr({ x: 400, y: 244, z: 1})
+		.setNpcData(null,getDialogData5);
+		
+		generateIndoors("Hometown");
 		$("#mycanvas").hide();
+
 	});
 
 
 	Crafty.scene("Castle", function()
 	{
+
+
+		dialog = Crafty.e("Dialog, 2D, DOM,Text")
+		.attr({x:0, y:500, w:900, h:0}).css({"font": "10pt Arial", "color": "#000", "text-align": "left"});
+
+		var player2 = Crafty.e("2D,  Canvas, player,Collision,npc,NPC")
+		.attr({ x: 400, y: 244, z: 1})
+		.setNpcData(null,getDialogData6);
+
+
 		generateIndoors("Castle");
 		$("#mycanvas").hide();
 	});
@@ -627,14 +673,21 @@ var crafty = function() {
 
 	Crafty.c("Profiletext",
 	{
+		str:"",
+
 		init:function()
 		{
 			this.addComponent("2D,DOM,Text");
 		},
 
-		showText:function(str)
+
+		getText:function(str){
+			this.str = str;
+		},
+
+		showText:function()
 		{
-			this.text('<div style="margin-top:12px;" color:blue;  >' + str + '<div style="margin-left:400px;">' );
+			this.text('<div style="margin-top:12px;">' + this.str + '<div style="margin-left:400px;">');
 		}
 
 	})
@@ -642,6 +695,8 @@ var crafty = function() {
 	Crafty.c("Profile",
 	{
 		attributePositionY:0,
+		totalAttributes:Array,
+
 
 		init:function()
 		{
@@ -652,21 +707,45 @@ var crafty = function() {
 			this.x = SCREEN_WIDTH *0.5-this.w*0.5;
 			this.y = SCREEN_HEIGTH *0.5-this.h *0.5;
 			this.color("#eee");
-			this.showProfile();
+			this.totalAttributes = new Array();
+			this.getProfile();
+			this.hideProfile();
 		},
 
 		addAttribute:function(str,bool)
 		{
-			e = Crafty.e("Profiletext");
+			e = Crafty.e("Profiletext");//.attr({x: 50, y: 50, w: 100, h: 20, z: 2, alpha: .5}) ;
+			e.alpha = 0;
 			//if(bool)e.addComponent("Mouse").bind("Click",function(e){console.log("hit");}).areaMap([0,0], [200,0], [200,50], [0,50]);
-			e.showText(str);
+			e.getText(str);
 			e.x = this.x;
 			e.y = this.y+this.attributePositionY;
 			e.z = 1;
 			this.attributePositionY +=25;
+			this.totalAttributes.push(e);
+		},
+
+		hideProfile:function()
+		{
+			for (var i = 0; i < this.totalAttributes.length; i++)
+			{
+				this.totalAttributes[i].text(""); 
+			};
+
+			this.h = 0;
+
 		},
 
 		showProfile:function()
+		{
+			for (var i = 0; i < this.totalAttributes.length; i++)
+			{
+				this.totalAttributes[i].showText(); 
+			};
+			this.h = 400;
+		},
+
+		getProfile:function()
 		{
 
 			$.ajax({

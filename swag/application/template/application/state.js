@@ -22,6 +22,7 @@ var state = function()
 	this.id = '{{game.uid}}';
 	this.skills = {{skills|safe}};
 	this.playerLinks = {{links|safe}};
+	this.question = {{question|safe}};
 		
 	this.playerPositionx = 100;
 	this.playerPositiony = 200;///django shit doen.
@@ -216,6 +217,12 @@ var state = function()
 		my_name: function()
 		{
 			return player_name;
+		},
+
+		getQuestion:function()
+		{
+			console.log(question)
+			return question;
 		},
 
 		my_email:function()

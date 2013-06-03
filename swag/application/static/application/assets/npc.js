@@ -5,6 +5,8 @@ var UPLOAD = "UPLOAD";
 var LINK = "LINK";
 var SKILL = "SKILL";
 var QUEST = "QUEST";
+var PROFILE = "PROFILE";
+var EXIT = "EXIT";
 
 
 function getDialogData1(state)
@@ -25,7 +27,7 @@ function getDialogData1(state)
 	else if(!state.check_cv())
 	{
 		data = ["Bob: Welcome back " + state.name(),
-				"Bob: Next thing you need to do is to upload your C.V."];
+				"Bob: Time to upload your C.V man!"];
 	}
 	else
 	{ 
@@ -124,6 +126,36 @@ function getDialogData4(state)
 	return data;
 }
 
+
+function getDialogData5(state)
+{
+ 	data ="";
+
+ 	if(!state.check_name())
+ 	{
+ 		data = ["Richard: pls sumbit your name and e-mail at Bob and your first task"];
+ 	}
+	else 
+	{
+		data = ["Here you can see your profile",
+				PROFILE,EXIT,"Bye"];
+	}
+
+	return data;
+}
+
+function getDialogData6(state)
+{
+ 	data ="";
+
+
+ 	data = ["Wouter: You have made it this far,impressive!... Whahahaha","Before you can continue anwser this question",state.getQuestion(),EXIT];
+ 	
+	return data;
+}
+
+
+
 function uploadCV()
 {
 
@@ -205,6 +237,15 @@ function craftyTriggers(str,npc)
 		 case QUEST:
 		 		
 		 return [true,addQuest(npc)];
+
+		 case PROFILE:
+		 		Crafty.trigger("SHOW");
+		 return [true,false];
+
+
+		 case EXIT:
+		 		Crafty.trigger("HIDE");
+		 return [true,false];
 
 	}
 

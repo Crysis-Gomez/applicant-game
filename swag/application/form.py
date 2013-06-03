@@ -8,12 +8,18 @@ from application.models import PortfolioLink
 from application.models import SkillSet
 from application.models import Vacancy
 from application.models import PlayerSkill
+from application.models import Question
 
 
 class UploadFileForm(forms.Form):
 
     title = forms.CharField(max_length=50, widget=forms.HiddenInput())
     document = forms.FileField()
+
+
+class Answer(forms.Form):
+    answer = forms.CharField(widget=forms.Textarea(attrs={'cols':20,'rows': 10,})
+)
 
 
 class ContactInformationForm(forms.Form):
