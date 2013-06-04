@@ -125,10 +125,11 @@ body {background-color:#c0c0c0;
     display: :none;
 }
 
-#id_anwser
+#id_answer
 {
-    width: 300px;
-    xdisplay: none;
+    width: 350px;
+    height: 150px;
+    display: none;
 }
 
 #container
@@ -143,7 +144,7 @@ body {background-color:#c0c0c0;
     padding:15px;
     margin:-100px 0 0 -150px;
     z-index:4;
-    xdisplay: none;
+    display: none;
 }
 
 #cr-stage

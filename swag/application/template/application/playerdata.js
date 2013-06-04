@@ -99,6 +99,7 @@ function updateGame(property,value)
     $("#cv_form").hide();
     $("#skill_form").hide();
     $("#links_form").hide();
+    $("#id_answer").hide();
 }
         
 function sendContactInfo()
@@ -148,12 +149,18 @@ function submitAnswer()
    $("#question_form").ajaxSubmit({url:'/answer/{{game.uid}}/', type: 'post',
         success:function(res)
         {
-          // response = JSON.parse(res);
-          // skills = response.player['skills'];
-          // window.state.skills = skills;
-          // updateGame('has_skills','True');
+
+          response = JSON.parse(res);
+          text = response.player['result'];
+          if(text == 'Thanks for submitting')
+          {
+            updateGame('answered', 'True')
+          }
+          else document.getElementById("success_div").innerHTML = replaceText(text);
         }
     })
+
+   document.getElementById("submit_answer").blur();
 }
 
 function submitSkills() 

@@ -28,6 +28,7 @@ var state = function()
 	this.playerPositiony = 200;///django shit doen.
 	this.has_quest_log = false;
 	this.boss_unlocked = '{{game.player_unlocked_boss}}';
+	this.answered = '{{game.get_answer}}';
 
 	var check_UnlockedSkillsQuest = function()
 	{
@@ -85,7 +86,7 @@ var state = function()
 //////////////////////////////////////////
 
 	var check_UnlockedMotivationQuest = function()
-	{
+	{this.answered
 		var my_val = false;
 		if(unLockedMotivationQuest == 'True')
 		{
@@ -211,6 +212,12 @@ var state = function()
 		return boolChecker(boss_unlocked);
 	}
 
+	var check_answered = function()
+	{
+		console.log(answered)
+		return boolChecker(answered);
+	}
+
 
 	return {
 		getState: function() { init() },
@@ -231,6 +238,7 @@ var state = function()
 		}, 
 		check_cv: get_cv,
 		check_name:get_name,
+		check_answered:check_answered,
 		check_motivation:get_motivation,
 		check_link:get_link,
 		check_skills:get_skills,

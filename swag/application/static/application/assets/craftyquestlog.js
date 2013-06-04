@@ -207,7 +207,7 @@ Crafty.c("Questlog",{
 		update:function()
 		{
 			this.completed = this.checkFunction();
-			this.text('<div style="margin-top:12px;">' + this.name + '<div style="margin-left:50px;">' + this.completed);
+			this.text('<div style="margin-top:12px;">' + this.name + '<div style="margin-left:100px;">' + this.completed);
 		},
 
 		addQuestInfo:function(id,name,info,checkFunction,unlock)

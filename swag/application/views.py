@@ -12,6 +12,7 @@ from application.models import PortfolioLink
 from application.models import SkillSet
 from application.models import PlayerSkill
 from application.models import Question
+from application.models import PlayerQuestion
 from form import ContactInformationForm
 from form import UploadFileForm
 from form import MeetingForm
@@ -60,7 +61,7 @@ def statejs(request, unique_id):
     game = GameInstance.objects.get(uid=unique_id)
     skills = json.dumps(dict(game.get_all_skills()))
     links = json.dumps(game.get_all_links())
-    question = json.dumps(game.vacancy.questions.question)
+    question = json.dumps(game.vacancy.question.question)
 
     context = {
         'game': game,
@@ -190,15 +191,18 @@ def play(request, unique_id):
 @csrf_exempt
 def process_answer(request, unique_id):
 
-
     game = get_object_or_404(GameInstance, uid=unique_id)
+    upload_state = {"action": "answer", 'success': 'Thanks for submitting'}
     if request.method == "POST":
         ans = Answer(request.POST)
         if ans.is_valid():
-            game.vacancy.questions.answer = ans.cleaned_data['answer']
-            game.vacancy.questions.save()
+            player_question, created = PlayerQuestion.objects.get_or_create(game_instance=game, question=game.vacancy.question)
+            player_question.answer = ans.cleaned_data['answer']
+            player_question.save()
+        else:
+            upload_state['success'] = json.dumps(ans.errors)
 
-    return HttpResponse('All went well')
+    return render(request, "results_template.js", upload_state, content_type=RequestContext(request))
 
 
 
@@ -324,7 +328,7 @@ def process_mail(request, unique_id):
 def process_meeting(request, unique_id):
     game = GameInstance.objects.get(uid=unique_id)
     meeting = Meeting()
-    upload_state = {"action": "meeting", 'success': 'Thx for submitting!'}
+    upload_state = {"action": "meeting", 'success': 'Thanks for submitting'}
 
     if request.method == 'POST':
         date_id = request.POST.get('value1')
@@ -348,7 +352,7 @@ def process_motivation_letter(request, unique_id):
     form = LetterForm(request.POST)
     motivation_letter = MotivationLetter()
 
-    upload_state = {"action": "motivation", 'success': 'Thx for submitting!'}
+    upload_state = {"action": "motivation", 'success': 'Thanks for submitting'}
 
     if not form.is_valid():
         error = form.errors

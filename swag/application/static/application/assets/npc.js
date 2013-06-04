@@ -7,6 +7,7 @@ var SKILL = "SKILL";
 var QUEST = "QUEST";
 var PROFILE = "PROFILE";
 var EXIT = "EXIT";
+var QUESTION  = "QUESTION";
 
 
 function getDialogData1(state)
@@ -137,7 +138,7 @@ function getDialogData5(state)
  	}
 	else 
 	{
-		data = ["Here you can see your profile",
+		data = ["Richard: Here you can see your profile",
 				PROFILE,EXIT,"Bye"];
 	}
 
@@ -148,9 +149,21 @@ function getDialogData6(state)
 {
  	data ="";
 
+ 	if(!state.check_answered())
+ 	{
+	 	data = ["Wouter: You have made it this far,impressive!... Whahahaha",
+	 			"Wouter: Before you can continue anwser this question"
+	 			,"Wouter: "+state.getQuestion(),
+	 			 QUESTION,
+	 			"Wouter: Thx for submitting"];
+ 	}
+ 	else
+ 	{
+ 		data = ["Wouter: see you soon ",
+				"Bye"];
+ 	}
 
- 	data = ["Wouter: You have made it this far,impressive!... Whahahaha","Before you can continue anwser this question",state.getQuestion(),EXIT];
- 	
+
 	return data;
 }
 
@@ -201,6 +214,15 @@ function uploadSkills()
 }
 
 
+function uploadAnswer()
+{
+	document.getElementById("container").style.display = 'block';
+	document.getElementById("id_answer").style.display = 'block';
+	$("#success_div").show();
+	return !(Crafty.pause(true));
+}
+
+
 function addQuest(npc)
 {
 	quest_log.addQuest(npc.quest,true);
@@ -241,6 +263,12 @@ function craftyTriggers(str,npc)
 		 case PROFILE:
 		 		Crafty.trigger("SHOW");
 		 return [true,false];
+
+
+
+		 case QUESTION:
+		 		
+		 return [true,uploadAnswer()];
 
 
 		 case EXIT:

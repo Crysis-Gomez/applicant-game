@@ -140,11 +140,8 @@ var crafty = function() {
 			{
 				if(i  == 1 && j == 0)
 				{
-					poly1 = new Crafty.polygon([5,0],[110,0],[110,180],[5,180])
 					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard")
-					.collision(poly1);
-					
-					house.image("/static/house.png");
+					house.setImage("/static/house2.png");
 					house.setScene("BuildingCV",state.checkUnlockedCVQuest,state.check_cv());
 					house.x = TILE_SIZE*i;
 					house.y = TILE_SIZE*j;
@@ -153,11 +150,8 @@ var crafty = function() {
 
 				if(i  == 15 && j == 0)
 				{
-					poly1 = new Crafty.polygon([5,0],[110,0],[110,180],[5,180])
-					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard")
-					.collision(poly1);
-					
-					house.image("/static/house.png");
+					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard");
+					house.setImage("/static/house.png");
 					house.setScene("BuildingLink",state.checkUnlockedLinkQuest,state.check_link());
 					house.x = TILE_SIZE*i;
 					house.y = TILE_SIZE*j;
@@ -167,11 +161,8 @@ var crafty = function() {
 
 				if(i  == 15 && j == 10)
 				{
-					poly1 = new Crafty.polygon([5,0],[110,0],[110,180],[5,180])
 					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard")
-					.collision(poly1);
-					
-					house.image("/static/house.png");
+					house.setImage("/static/house.png");
 					house.setScene("BuildingMotivation",state.checkUnlockedMotivationQuest,state.check_motivation());
 					house.x = TILE_SIZE*i;
 					house.y = TILE_SIZE*j;
@@ -180,11 +171,8 @@ var crafty = function() {
 
 				if(i  == 24 && j == 13)
 				{
-					poly1 = new Crafty.polygon([5,0],[110,0],[110,180],[5,180])
-					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard")
-					.collision(poly1);
-					
-					house.image("/static/house.png");
+					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard");
+					house.setImage("/static/house2.png");
 					house.setScene("Hometown",null,null);
 					house.x = TILE_SIZE*i;
 					house.y = TILE_SIZE*j;
@@ -194,11 +182,8 @@ var crafty = function() {
 
 				if(i  == 1 && j == 10)
 				{
-					poly1 = new Crafty.polygon([5,0],[110,0],[110,180],[5,180])
-					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard")
-					.collision(poly1);
-					
-					house.image("/static/house.png");
+					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard");
+					house.setImage("/static/house.png");
 					house.setScene("BuildingSkills",state.checkUnlockedSkillsQuest,state.check_skills());
 					house.x = TILE_SIZE*i;
 					house.y = TILE_SIZE*j;
@@ -214,13 +199,27 @@ var crafty = function() {
 		sceneString:"",
 		check:null,
 		questDone:null,
+		offsetX:20,
+		offsetY:10,
+
 
 		setScene:function(str,check,quest)
 		{
 			this.sceneString = str;
 			this.check = check;
 			this.questDone = quest;
+	
 		},
+
+
+		setImage:function(str)
+		{
+
+			im = this.image(str);
+			poly1 = new Crafty.polygon([0+this.offsetX,0+this.offsetY],[im._w-this.offsetX,0+this.offsetY],[im._w-this.offsetX,im._h-this.offsetY],[0+this.offsetX,im._h-this.offsetY]);
+			this.collision(poly1);
+		},
+
 
 		enterBuilding:function()
 		{
@@ -228,7 +227,8 @@ var crafty = function() {
 			{
 				Crafty.scene(this.sceneString);
 				return;
-			}			
+			}
+
 			if(this.check())
 			{
 				Crafty.scene(this.sceneString);
@@ -346,8 +346,9 @@ var crafty = function() {
 			if(count == houses.length && this.locked)
 			{
 				this.locked = false;
+				state.update('boss_unlocked','True')
 				unlockBoss();
-				state.boss_unlocked = true;
+				
 			}
 		},
 
@@ -476,9 +477,9 @@ var crafty = function() {
 	Crafty.scene("loading", function () 
 	{
         //load takes an array of assets and a callback when complete
-        Crafty.load(["/static/Sprite.png","/static/house.png","/static/Sprite2.png"], function ()
+        Crafty.load(["/static/Sprite.png","/static/house.png","/static/Sprite2.png","/static/house2.png"], function ()
         {
-            Crafty.scene("Castle"); //when everything is loaded, run the main scene
+            Crafty.scene("main"); //when everything is loaded, run the main scene
             //Crafty.background('rgb(0, 0, 0)');
         });
 
@@ -538,10 +539,8 @@ var crafty = function() {
 			}
 		}
 
-
-		poly1 = new Crafty.polygon([5,0],[110,0],[110,180],[5,180])
-		var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard,BOSS").collision(poly1).attr({ x: 250, y: 164, z: 1});;	
-		house.image("/static/house.png");
+		var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard,BOSS").attr({ x: 620, y: -10, z: 1});
+		house.setImage("/static/castle.png");
 		house.setScene("Castle",state.check_boss_unlocked,null);
 
 		var canvas = document.getElementById('mycanvas');

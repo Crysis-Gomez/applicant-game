@@ -65,17 +65,19 @@ Crafty.c('Player',
 	enterCollisionHouse:function(e)
 	{
 		this.house = e[0].obj;
-		if(this.y <= this.house.y+80)
+		if(this.y <= this.house.y+10)
 		{
 			this.convert(this.house);
 			this.house.sort(0.5,2);
 		}
 		else
 		{
-			if(this.dirY > 0 && this.y <= this.house.y+80)this.house.sort(0.5,2);
+			if(this.dirY > 0 && this.y <= this.house.y+10)this.house.sort(0.5,2);
 			this.stopMovement();
 			this.isCollidingWithHouse = true;
 		}
+		//this.stopMovement();
+		//this.isCollidingWithHouse = true
 	},
 
 	enterCollisionBoss:function(e)

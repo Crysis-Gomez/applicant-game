@@ -9,6 +9,7 @@ from application.models import SkillSet
 from application.models import Vacancy
 from application.models import PlayerSkill
 from application.models import Question
+from application.models import PlayerQuestion
 
 
 class UploadFileForm(forms.Form):
@@ -17,9 +18,10 @@ class UploadFileForm(forms.Form):
     document = forms.FileField()
 
 
-class Answer(forms.Form):
-    answer = forms.CharField(widget=forms.Textarea(attrs={'cols':20,'rows': 10,})
-)
+class Answer(ModelForm):
+    class Meta:
+        model = PlayerQuestion
+        fields = ['answer']
 
 
 class ContactInformationForm(forms.Form):
@@ -71,11 +73,11 @@ class SkillSetForm(forms.Form):
         elif(index == 3):
             skillString = "I can program little scripts"
         elif(index == 2):
-            skillString = "Read a book about"
+            skillString = "I read a book about"
         elif(index == 1):
-            skillString = "Have heard about"
+            skillString = "I have heard about"
         elif(index == 0):
-            skillString = "Never heard about it"
+            skillString = "I have never heard about it"
 
         return skillString
 

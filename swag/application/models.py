@@ -18,7 +18,7 @@ class SkillSet(models.Model):
 class Question(models.Model):
     title = models.CharField(max_length=200)
     question = models.TextField(null=True, blank=False)
-    answer = models.TextField(null=True, blank=True)
+
 
     def __unicode__(self):
         return self.title
@@ -30,7 +30,7 @@ class Vacancy(models.Model):
     slug = models.SlugField(max_length=50, unique=True)
     mail_text = models.CharField(max_length=500)
     skill_sets = models.ManyToManyField(SkillSet)
-    questions = models.ForeignKey(Question, null=True, blank=False)
+    question = models.ForeignKey(Question, null=True, blank=False)
 
     def __unicode__(self):
         return str(self.title)
@@ -52,13 +52,22 @@ class GameInstance(models.Model):
     player_link_unlockedQuest = models.BooleanField(default=False)
     player_skill_unlockedQuest = models.BooleanField(default=False)
     player_unlocked_boss = models.BooleanField(default=False)
-    player_name = models.CharField(max_length=50)
-    player_email = models.EmailField(max_length=100)
+    player_name = models.CharField(max_length=50, null=True, blank=True)
+    player_email = models.EmailField(max_length=100, null=True, blank=True)
 
     vacancy = models.ForeignKey(Vacancy)
 
     def __unicode__(self):
         return self.name()
+
+    def get_answer(self):
+        try:
+             get_object_or_404(PlayerQuestion, game_instance=self.id)
+        except Http404:
+            print "Heerer"
+            return False
+
+        return True
 
     def get_contact(self):
         if self.player_name and self.player_email:
@@ -165,11 +174,20 @@ class GameInstance(models.Model):
     has_motivation.boolean = True
 
 
+class PlayerQuestion(models.Model):
+    question = models.ForeignKey(Question)
+    game_instance = models.ForeignKey(GameInstance)
+    answer = models.TextField(null=True, blank=False)
+
+    class Meta:
+        unique_together = (("question", "game_instance"),)
+
+
+
 class PlayerSkill(models.Model):
     id = models.AutoField(primary_key=True)
     skill = models.ForeignKey(SkillSet)
     game_instance = models.ForeignKey(GameInstance)
-
     score = models.IntegerField(default=0)
 
     class Meta:
