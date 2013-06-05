@@ -100,6 +100,7 @@ function updateGame(property,value)
     $("#skill_form").hide();
     $("#links_form").hide();
     $("#id_answer").hide();
+    $("#question_form").hide();
 }
         
 function sendContactInfo()
