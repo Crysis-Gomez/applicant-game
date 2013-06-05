@@ -1,41 +1,73 @@
 body {background-color:#c0c0c0;
 }
 
-.form
+#contact_form
 {
 	 z-index:3;
      display: none;
 }
-.form2
+#cv_form
 {
-	display: none;
+     z-index:3;
+     display: none;
+}
+
+#form3
+{
+  z-index:3;
+  display: none;
+}
+
+#links_form
+{
+  z-index:3;
+  display: none;
+}
+
+#skill_form
+{
+  z-index:3;
+  display: none;
+}
+
+.linkList
+{
+    float: right;
+    margin-top: -50px;
+    overflow: auto;
+    height: 100px;
+    width: 200px; 
+    overflow-y: scroll; 
+}
+
+.list
+{
 
 }
 
-.letter
+#letter_form
 {
-
-	display: none;
+  display: none;
 }
 #choice
 {
-
+    display: none;
+}
+#meetingForm
+{
     display: none;
 }
 
 #quest_row
 {
-
     background-color: #eee;
 }
-
 
 #quest_row:hover
 {
     background-color: #ccc;
     cursor:pointer;
 }
-
 
 
 #quest_title
@@ -47,10 +79,8 @@ body {background-color:#c0c0c0;
 
 #quest_container
 {
-
     float: left;
     width:200px;
-
 }
 
 #quest_info
@@ -58,7 +88,6 @@ body {background-color:#c0c0c0;
     width:150px;
     float: left;
     margin-left:50px;
-
 }
 
 #questlog
@@ -91,6 +120,18 @@ body {background-color:#c0c0c0;
 	display: none;
 }
 
+#success_div
+{
+    display: :none;
+}
+
+#id_answer
+{
+    width: 350px;
+    height: 150px;
+    display: none;
+}
+
 #container
 {
 	width:450px;
@@ -106,10 +147,7 @@ body {background-color:#c0c0c0;
     display: none;
 }
 
-
 #cr-stage
 {
 	margin: auto;
-
-	
 }

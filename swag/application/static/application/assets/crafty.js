@@ -7241,13 +7241,40 @@ function tweenEnterFrame(e) {
 * @category Graphics
 * Draw a solid color for the entity
 */
+Crafty.c("Color2", {
+    _color: "",
+    ready: true,
+    init: function () {
+        this.bind("Draw", function (e) {
+           
+            if (e.type === "DOM") {
+                this.styleobject = e;
+                e.style.background = this._color;
+            } else if (e.type === "canvas") {
+                if (this._color) e.ctx.fillStyle = this._color;
+                e.ctx.fillRect(e.pos._x, e.pos._y, e.pos._w, e.pos._h);
+            }
+        });
+    },
+  
+    color: function (color) {
+        if (!color) return this._color;
+        this._color = color;
+        this.trigger("Change");
+        return this;
+    }
+});
+
+
+
 Crafty.c("Color", {
 	_color: "",
 	ready: true,
-
 	init: function () {
 		this.bind("Draw", function (e) {
+           
 			if (e.type === "DOM") {
+                this.styleobject = e;
 				e.style.background = this._color;
 				e.style.lineHeight = 0;
 			} else if (e.type === "canvas") {
@@ -7256,7 +7283,6 @@ Crafty.c("Color", {
 			}
 		});
 	},
-
 	/**@
 	* #.color
 	* @comp Color

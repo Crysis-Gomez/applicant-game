@@ -10,8 +10,7 @@ Crafty.c("Infolog",{
 		}
 	});
 
-
-	Crafty.c("Questlog",{
+Crafty.c("Questlog",{
 
 		init:function(){
 			var that = this;
@@ -52,9 +51,10 @@ Crafty.c("Infolog",{
 
             this.bind('KeyUp', function (e) {
 
-            	if(!this.maySelected)return;
+            	if(!this.maySelected || Crafty.isPaused())return;
 
-				if(e.key == 40){
+				if(e.key == 40)
+				{
 					this.deselect();
 					
 					if(this.arrayIndex < this.array.length-1)this.arrayIndex+=1; 
@@ -74,50 +74,53 @@ Crafty.c("Infolog",{
 			this.attach(info);	
 		},
 
-		deselect:function(){
-
+		deselect:function()
+		{
 			this.array[this.arrayIndex].isSelected = false;
 			this.array[this.arrayIndex].selectQuest();
 		},
 
-		goselect:function(){
+		goselect:function()
+		{
 			this.array[this.arrayIndex].isSelected = true;
 			this.array[this.arrayIndex].selectQuest();
 		},
 
-		Up:function(){
+		Up:function()
+		{
 			this.popUp = true;
 			this.popDown = false;
-
 		},
 
-		Out:function(){
+		Out:function()
+		{
 			this.popUp = false;
 			this.popDown = true;
 			this.infolog.h = 0;
 			this.infolog.text("");
 		},
 
-		show:function(){
+		show:function()
+		{
 			this.infolog.x = this.x+this.w;
 			this.infolog.y = this.y;
 			this.attachAllQuests();
 			for (var i = 0; i < this.array.length; i++) 
-			{
+			{	
 				this.array[i].showText();
 			}
 		},
 
-		update:function(){
+		update:function()
+		{
 			for (var i = 0; i < this.array.length; i++)
 			{
 				this.array[i].update();
 			}
 		},
 
-		attachAllQuests:function(){
-
-
+		attachAllQuests:function()
+		{
 			for (var i = 0; i < this.array.length; i++)
 			{
 				 this.attach(this.array[i]);
@@ -126,10 +129,9 @@ Crafty.c("Infolog",{
 
 		},
 
-		detachAllQuests:function(){
-			
+		detachAllQuests:function()
+		{
 			this.detach(info)
-
 			for (var i = 0; i < this.array.length; i++)
 			{
 				 this.detach(this.array[i]);
@@ -140,7 +142,8 @@ Crafty.c("Infolog",{
 			this.attachAllQuests();
 		},
 
-		addQuest:function(quest,condition){
+		addQuest:function(quest,condition)
+		{
 			this.detachAllQuests();
 			this.array.push(quest);
 			quest.x = this.x + this.marginX;
@@ -148,21 +151,19 @@ Crafty.c("Infolog",{
 			quest.h = 30;
 			quest.z =1;
 			quest.infolog = this.infolog;
+
 			quest.questlog = this;
 			quest.unlock();
 			this.show();
+			quest.isSelected = false;
 			if(condition) sendQuest(quest.questID);
 		}
-
-
 	});
 
 
 	
-
-
-
-	Crafty.c("Quest",{
+	Crafty.c("Quest",
+	{
 
 		init:function(){
 			this.addComponent("2D, DOM,Color,Text,Mouse");
@@ -170,7 +171,6 @@ Crafty.c("Infolog",{
 			this.y = 0;
 			this.w = 100;  
 			this.h = 30;   
-			this.textColor('#000');
 			this.name = "";
 			this.infolog = null;
 			this.checkFunction = null;
@@ -178,43 +178,51 @@ Crafty.c("Infolog",{
 			this.isSelected = false;
 			this.questlog = null;
 			this.questID = 0;
-			this.bind("MouseOver", function(){ 
+
+			this.bind("MouseOver", function()
+			{ 
                 //this.css({"cursor": "pointer"});
                 //this.isSelected = true;
            		//this.selectQuest();
            		
              });
 			
-			this.bind("MouseOut", function(){ 
+			this.bind("MouseOut", function()
+			{ 
            		//this.isSelected = false;
            		//this.selectQuest();
              });
 		},
 
-		selectQuest:function(){
-
+		selectQuest:function()
+		{
 			if(this.questlog.popDown) return;
-
+			
 			if(this.isSelected) this.color("#ccc");
 			else this.color("#eee");
            	
            	this.infolog.text('<div style="margin-top:12px;">' + this.info);
 		},
 
-		update:function(){
+		update:function()
+		{
 			this.completed = this.checkFunction();
 			this.text('<div style="margin-top:12px;">' + this.name + '<div style="margin-left:100px;">' + this.completed);
 		},
 
-		addQuestInfo:function(id,name,info,checkFunction,unlock){
+		addQuestInfo:function(id,name,info,checkFunction,unlock)
+		{
 			this.name = name;
 			this.info = info;
 			this.questID = id;
 			this.checkFunction = checkFunction;
 			this.completed = checkFunction();
 			this.unlock = unlock;
+			this.isSelected = false;
 		},
-		showText:function(){
+		showText:function()
+		{
+
 			this.text('<div style="margin-top:12px;">' + this.name + '<div style="margin-left:100px;">' + this.completed);
 		}
 	});

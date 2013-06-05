@@ -1,13 +1,27 @@
 <!DOCTYPE html>
 <head>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    
     <link rel="stylesheet" type="text/css" href="/static/style.css">
+    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+    <!-- <link href="//netdna.bootstrapcdn.com/bootswatch/2.3.1/superhero/bootstrap.min.css" rel="stylesheet"> -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+     <script src="http://malsup.github.com/jquery.form.js"></script> 
+    <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="/static/crafty.js"></script>
+    <script type="text/javascript" src="/static/TestGame.js"></script>
+    <script type="text/javascript" src="/static/TestGame2.js"></script>
+    <script type="text/javascript" src="/static/BlockGame.js"></script>
+    <script type="text/javascript" src="/static/RotateGame.js"></script>
     <script type="text/javascript" src="/static/player.js"></script>
     <script type="text/javascript" src="/static/craftyquestlog.js"></script>
     <script type="text/javascript" src="/static/npc.js"></script>
-    <script type="text/javascript" src="/{{instance_id}}/game.js"></script>
-    <script type="text/javascript" src="/{{instance_id}}/playerdata.js">
+
+    <script type="text/javascript" src="/static/level.js"></script>
+    <script type="text/javascript" src="/static/Rotatelevel.js"></script>
+    <script type="text/javascript" src="/{{game.uid}}/game.js"></script>
+    <script type="text/javascript" src="/{{game.uid}}/playerdata.js">
+    </script>
+    <script type="text/javascript" src="/{{game.uid}}/state.js">
     </script>
 
 </head>
@@ -15,28 +29,94 @@
 
 <div class="container" id="container">
 
-    {% block letters %}
-
-    {% if has_motivation_letter == False %}
-    <div class="letter">
-
+    <form method="post" name="skill_form" id="skill_form" class='form-inline'>
+    {%block skills %}
+     <div class="skillList" id="skillSet">
         <table>
-        {% for error in letter.errors %}
+        {% for error in skill.errors %}
         {{error}}
         {% endfor %}
          
-        {{letter.as_table}}
+        {{skill.as_table}}
       
         </table> 
-         <button id="letterbutton"  type="button" onclick="sendMotivation()">Send motivation</button>
+
+        <button id="submit_skills" type="button" onclick="submitSkills()">Submit</button>
+     </div>
+    </form>
+
+    {% endblock %}
+
+
+ <form method="post" name="question_form" id="question_form" class='question-inline'>
+    {%block question %}
+     <div class="anwser" id="anwser">
+        <table>
+        {% for error in answer.errors %}
+        {{error}}
+        {% endfor %}
+         
+        {{answer}}
+      
+        </table> 
+
+        <button id="submit_answer" type="button" onclick="submitAnswer()">Submit</button>
+     </div>
+    </form>
+
+    {% endblock %}
+
+
+
+<div class="links_form" id="links_form">
+    {% block links %}
+    <div class="links">
+
+        <table>
+        {% for error in portfolio.errors %}
+        {{error}}
+        {% endfor %}
+         
+        {{portfolio.as_table}}
+      
+        </table> 
+         <button id="addLink"      type="button" onclick="addLink()">add Links</button>
+         <button id="linksbutton"  type="button" onclick="submitlinks()">Submit</button>
          <!--<div id="success_div" name="response">Response will be placed here on submit.</div>-->
     </div>
+
+    <div class="linkList" id="linkList">
+        <ul id="list" >
+
+        </ul>
+
+    </div>
+
+    {% endblock %}
+</div>
+
+    {% block letters %}
+
+    {% if game.has_motivation == False %}
+        <form enctype="multipart/form-data" method="post" name="letter_form" id="letter_form" >
+            <table>
+                {% for error in letter.errors %}
+                {{error}}
+                {% endfor %}
+                 
+                {{letter.as_table}}
+          
+            </table> 
+             <button id="letterbutton"  type="button" onclick="sendMotivation()">Send motivation</button>
+        </form>
+        
+         <!--<div id="success_div" name="response">Response will be placed here on submit.</div>-->
     {%endif%}
 
     {% endblock %}
 
 
-    <div class="Choice" id="choice">
+    <div class="choice" id="choice">
         <button id="freeformbutton" type="button" onclick="freeForm()">Free From</button>
         
         <button id="uploaddocumentbutton" type="button" onclick="uploadDocument()">Upload document</button>
@@ -44,13 +124,38 @@
     </div>
 
 
+{% block meeting %}
 
+<form enctype="multipart/form-data" method="post" name="meetingFrom" id="meetingForm" >
+    
+    <table>
+        {{ meetingForm.as_table }}
+        {% for error in meetingForm.errors %}
+        {{error}}
+        {% endfor %}
+
+        <select name="meeting" id="meeting">
+        {% for date in meeting %}
+            
+                {% ifequal date.id selected_date.id %}
+                <option value="{{date.dateID}}" selected="selected">{{date.pub_date}}: {{date.pub_time}}</option>
+                {% else %}
+                <option value="{{date.dateID}}"> {{date.pub_date}}: {{date.pub_time}}</option>
+                {% endifequal %}
+           
+        {% endfor %}
+    </select>
+
+    </table>
+    
+    <button id="MeetButton" type="button" onclick="submitMeeting()">Submit meeting</button>
+</form>
+
+{% endblock %}
 {% block contact %}
-{% if 'no' == has_contact_info %}
-<div class="form" id="form">
 
-<form enctype="multipart/form-data" method="post" name="myinfo" 
-    id="myinfo" >
+{% if game.get_contact == False %}
+<form enctype="multipart/form-data" method="post" name="contact_form" id="contact_form" >
     
     <table>
     {{ contact_info.as_table }}
@@ -64,36 +169,61 @@
     <button id="contactButton" type="button" onclick="sendContactInfo()">Submit contact</button>
     <!--<div id="info_div" name="response">Response will be placed here on submit.</div>-->
 </form>
-</div>
+
 {%endif%}
 
 {% endblock %}
 
 {% block upload %}
-{% if has_cv == False %}
- <div class="form2" id="form2">
+{% if game.has_cv == False %}
 
-<form2 enctype="multipart/form-data" method="post" name="myform" 
-    id="myform" action= "/submitfile/{{instance_id}}/">
+
+<form enctype="multipart/form-data" method="post" name="myform" class='form-horizontal'
+    id="cv_form">
+
+    <!-- <fieldset>
+        <legend> Upload your cv </legend>
+    <div class="control-group">
+        
+        <label for="id_document" class="control-label">Document:</label>
+        <div class="controls">
+            <input id="id_document" name="document" type="file">    
+        </div>
+    </div>
     
-    <table>
-    {{ form.as_table }}
+    <div class='form-actions'>
+    <button type="button" id="cvButton" class="btn btn-primary" onclick="sendFiles()">Send CV</button>
+
+    </div>
+    </fieldset>
+    <input id="id_title" name="title" type="hidden" value="cv"> -->
+    
+    {{form}}
     
     {% for error in form.errors %}
     {{error}}!
     {% endfor %}
+    <button type="button" id="cvButton" onclick="sendFiles()">Send CV</button>
     
-    </table> 
     
-    <button type="button" id="cvButton" onclick="sendFiles(id_document)">Send CV</button>
-</form2>
+</form>
 
-<div id="success_div" name="response">Response will be placed here on submit.</div>
 
-{%endif%}
-{% endblock %}
+{%endif%}<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Modal header</h3>
+  </div>
+  <div class="modal-body">
+    <p>One fine body…</p>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+    <button class="btn btn-primary">Save changes</button>
+  </div>
 </div>
-
+{% endblock %}
+<div id="success_div" name="response">Response will be placed here on submit.</div>
 </div>
 
  <div id="questlog" class="questlog">
@@ -112,10 +242,27 @@
     </div>
 
     </div>
-
+<canvas id="mycanvas" style="position: absolute; left: 0; top: 0; z-index: 0;"></canvas>
 <div id="cr-stage">
 
 </div>
+
+<!-- <a href='#myModal' data-toggle='modal'>Open my damn modal</a>
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Modal header</h3>
+  </div>
+  <div class="modal-body">
+    <p>One fine body…</p>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+    <button class="btn btn-primary">Save changes</button>
+  </div>
+</div>
+ -->
+
 
 </body>
 </html>

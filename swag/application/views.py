@@ -7,9 +7,18 @@ from application.models import Vacancy
 from application.models import CvDocument
 from application.models import MotivationLetter
 from application.form import LetterForm
-
+from application.models import Meeting
+from application.models import PortfolioLink
+from application.models import SkillSet
+from application.models import PlayerSkill
+from application.models import Question
+from application.models import PlayerQuestion
 from form import ContactInformationForm
 from form import UploadFileForm
+from form import MeetingForm
+from form import PortfolioForm
+from form import SkillSetForm
+from form import Answer
 from django.conf import settings
 import uuid
 import json
@@ -17,18 +26,17 @@ import mimetypes
 from django.views.decorators.csrf import csrf_exempt
 from database_storage import DatabaseStorage
 from django.template import RequestContext
+from django.core.mail import BadHeaderError
+from django.core.mail import send_mail
+from django.forms.models import inlineformset_factory
+from django.db import IntegrityError
 
 
-def get_contact_info(game):
-    return 'no' if not game.player_name and not game.player_email else 'yes'
-
-
-def get_cv_questUnlocked(game):
-    return game.player_cv_unlockedQuest
-
-
-def get_motivation_questUnlock(game):
-    return game.player_motivation_uplockedQuest
+# def get_contact_info(game):
+#     if not game.player_name and not game.player_email:
+#         return False
+#     else:
+#         return True
 
 
 def index(request):
@@ -46,57 +54,74 @@ def start_game(request, slug):
     game_instance.uid = instance_id
     game_instance.vacancy = _vacancy
     game_instance.save()
-
     return HttpResponseRedirect(reverse('play', args=(instance_id,)))
+
+
+def statejs(request, unique_id):
+    game = GameInstance.objects.get(uid=unique_id)
+    skills = json.dumps(dict(game.get_all_skills()))
+    links = json.dumps(game.get_all_links())
+    question = json.dumps(game.vacancy.question.question)
+
+    context = {
+        'game': game,
+        'skills': skills,
+        'links': links,
+        'question': question
+    }
+    return render(request, "state.js", context, content_type="application/javascript")
+
+
+@csrf_exempt
+def process_boss(request, unique_id):
+    game = GameInstance.objects.get(uid=unique_id)
+    game.player_unlocked_boss = True
+    game.save()
+    return HttpResponse('All went well')
 
 
 def gamejs(request, unique_id):
     game = GameInstance.objects.get(uid=unique_id)
-    cv_unlock = get_cv_questUnlocked(game)
-    motivation_unlock = get_motivation_questUnlock(game)
     context = {'game': game}
-    context.update({
-        'cv_unlock': cv_unlock,
-        'motivation_unlock': motivation_unlock})
-
     return render(request, "game.js", context, content_type="application/javascript")
 
 
 def playerdatajs(request, unique_id):
     game = GameInstance.objects.get(uid=unique_id)
     context = {'game': game}
-
-    contact_info = get_contact_info(game)
-    # print game.player_email, game.player_name
-    context.update({
-        'contact_info': contact_info,
-        'has_motivation_letter': game.has_motivation,
-        'has_cv': game.has_cv})
-
-    # print 'Contact info: %s' % contact_info
-
     return render(request, "playerdata.js", context, content_type="application/javascript")
 
 
 @csrf_exempt
-def sendQuestData(request, unique_id):
+def unlock_cv_quest(request, unique_id):
     game = GameInstance.objects.get(uid=unique_id)
-    data = request.POST['quest_id']
-    upload_state = {"action": "contact", 'success': 'Thx for submitting!', 'playername': 'name'}
-    getQuest(data, game)
+    game.player_cv_unlockedQuest = True
     game.save()
+    return HttpResponse('All went well')
 
-    return render(request, "results_template.js", upload_state, content_type=RequestContext(request))
 
-
-def getQuest(id_quest, game):
-
-    if id_quest == "1":
-        game.player_cv_unlockedQuest = True
-    elif id_quest == "2":
-        game.player_motivation_uplockedQuest = True
-
+@csrf_exempt
+def unlock_motivation_quest(request, unique_id):
+    game = GameInstance.objects.get(uid=unique_id)
+    game.player_motivation_unlockedQuest = True
     game.save()
+    return HttpResponse('All went well')
+
+
+@csrf_exempt
+def unlock_link_quest(request, unique_id):
+    game = GameInstance.objects.get(uid=unique_id)
+    game.player_link_unlockedQuest = True
+    game.save()
+    return HttpResponse('All went well')
+
+
+@csrf_exempt
+def unlock_skill_quest(request, unique_id):
+    game = GameInstance.objects.get(uid=unique_id)
+    game.player_skill_unlockedQuest = True
+    game.save()
+    return HttpResponse('All went well')
 
 # def getQuestData(request, unique_id):
 #     game = GameInstance.objects.get(uid=unique_id)
@@ -107,30 +132,109 @@ def getQuest(id_quest, game):
 #     return render(request, "playerdatajs", context, content_type="application/javascript")
 
 
+def get_skill(game, skill):
+    try:
+        obj = PlayerSkill.objects.get(game_instance=game, skill=skill)
+    except PlayerSkill.DoesNotExist:
+        obj = PlayerSkill()
+    return obj
+
+
+def process_profile(request, unique_id):
+    context = dict()
+    game = get_object_or_404(GameInstance, uid=unique_id)
+    skills = game.get_all_skills()
+    links = game.get_all_links()
+    context.update({
+        'game': game,
+        'skills': skills,
+        'links': links})
+    return render_to_response("profile.html", context)
+
+
+@csrf_exempt
 def play(request, unique_id):
     try:
         game = get_object_or_404(GameInstance, uid=unique_id)
     except Http404:
         return HttpResponseRedirect('/')
-    context = dict(request)
 
-    has_contact_info = get_contact_info(game)
-    if 'no' is has_contact_info:
+    context = dict()
+    if game.get_contact() == False:
         contact_info = ContactInformationForm()
         context.update({'contact_info': contact_info})
 
     letter = LetterForm(initial={'title': 'motivation'})
     context.update({'letter': letter})
 
+    meetingList = Meeting.objects.filter(vacancy=game.vacancy)
+    context.update({'meeting': meetingList})
+
+    portfolio = PortfolioForm()
+
+    skillForm = SkillSetForm(elements=game.vacancy.skill_sets)
+
+    answer = Answer()
+
+
+    context.update({'skill': skillForm})
+
     form = UploadFileForm(initial={'title': 'cv'})
     context.update({
-        'instance_id': game.uid,
-        'form': form,
-        'has_contact_info': has_contact_info,
-        'has_motivation_letter': game.has_motivation,
-        'has_cv': game.has_cv})
-
+        'game': game,
+        'portfolio': portfolio,
+        'answer':answer,
+        'form': form})
     return render_to_response("index.html", context)
+
+
+@csrf_exempt
+def process_answer(request, unique_id):
+
+    game = get_object_or_404(GameInstance, uid=unique_id)
+    upload_state = {"action": "answer", 'success': 'Thanks for submitting'}
+    if request.method == "POST":
+        ans = Answer(request.POST)
+        if ans.is_valid():
+            player_question, created = PlayerQuestion.objects.get_or_create(game_instance=game, question=game.vacancy.question)
+            player_question.answer = ans.cleaned_data['answer']
+            player_question.save()
+        else:
+            upload_state['success'] = json.dumps(ans.errors)
+
+    return render(request, "results_template.js", upload_state, content_type=RequestContext(request))
+
+
+
+@csrf_exempt
+def process_skills(request, unique_id):
+
+    game = get_object_or_404(GameInstance, uid=unique_id)
+
+    if request.method == "POST":
+        skillForm = SkillSetForm(request.POST, elements=game.vacancy.skill_sets)
+        if skillForm.is_valid():
+            for data in skillForm.cleaned_data:
+                _skill = SkillSet.objects.get(title=data)
+                skill_set = get_skill(game, _skill)
+                skill_set.score = skillForm.cleaned_data[data]
+                skill_set.game_instance = game
+                skill_set.skill = _skill
+                skill_set.save()
+
+            skills = json.dumps(dict(game.get_all_skills()))
+            links = json.dumps(game.get_all_links())
+        else:
+            print(skillForm.errors)
+
+    upload_state = {'skills': skills, 'links': links}
+    return render(request, "update_player.js", upload_state, content_type=RequestContext(request))
+
+
+def update_state(request, game):
+    context = dict()
+    context.update({'game': game})
+    return render(request, "state.js", context, content_type="application/javascript")
 
 
 def show_uploaded_file(request, filename):
@@ -170,13 +274,85 @@ def handle_uploaded_file(submitted_file, title, unique_id):
 
 
 @csrf_exempt
+def process_links(request, unique_id):
+    link_list = str(request.POST.get('list')).split(",")
+    game = GameInstance.objects.get(uid=unique_id)
+    for _link in link_list:
+        if not 'http://' or not 'https://' in _link:
+            _link = 'http://' + _link
+
+        port = PortfolioLink()
+        port.links = _link
+        port.game_instance = game
+        port.save()
+
+    skills = json.dumps(dict(game.get_all_skills()))
+    links = json.dumps(game.get_all_links())
+
+    upload_state = {'skills': skills, 'links': links}
+    return render(request, "update_player.js", upload_state, content_type=RequestContext(request))
+
+
+
+@csrf_exempt
+def process_mail(request, unique_id):
+    game = GameInstance.objects.get(uid=unique_id)
+
+    game.player_defeated_boss = True
+    game.save()
+    # subject = request.POST.get('subject', 'Hello')
+    # message = request.POST.get('message', game.vacancy.mail_text)
+    # from_email = request.POST.get('from_email', 'Crysis.gomez@gmail.com')
+
+    #recipients = [settings.DEFAULT_FROM_EMAIL]
+
+    #send_mail('New article:', message, recipients, ['Crysis.gomez@gmail.com'], fail_silently=False)
+    send_mail('Subject here', 'Here is the message.', settings.DEFAULT_FROM_EMAIL,
+    ['crysis.gomez@gmail.com'], fail_silently=False)
+
+    return HttpResponse('All went well')
+    # if subject and message and from_email:
+    #     try:
+    #         send_mail(subject, message, from_email, ['Jerry.Gomez@spilgames.com'])
+    #     except BadHeaderError:
+    #         return HttpResponse('Invalid header found.')
+    #     return HttpResponse('All went well')
+    # else:
+    #     # In reality we'd use a form class
+    #     # to get proper validation errors.
+    #     return HttpResponse('Make sure all fields are entered and valid.')
+
+
+
+@csrf_exempt
+def process_meeting(request, unique_id):
+    game = GameInstance.objects.get(uid=unique_id)
+    meeting = Meeting()
+    upload_state = {"action": "meeting", 'success': 'Thanks for submitting'}
+
+    if request.method == 'POST':
+        date_id = request.POST.get('value1')
+        try:
+            meeting = get_object_or_404(Meeting, dateID=date_id)
+            meeting.player_name = game.player_name
+            meeting.taken = True
+            meeting.save()
+        except Http404:
+            meeting.player_name = game.player_name
+            meeting.taken = True
+            meeting.save()
+
+    return render(request, "results_template.js", upload_state, content_type=RequestContext(request))
+
+
+@csrf_exempt
 def process_motivation_letter(request, unique_id):
 
     game = GameInstance.objects.get(uid=unique_id)
     form = LetterForm(request.POST)
     motivation_letter = MotivationLetter()
 
-    upload_state = {"action": "motivation", 'success': 'Thx for submitting!'}
+    upload_state = {"action": "motivation", 'success': 'Thanks for submitting'}
 
     if not form.is_valid():
         error = form.errors
@@ -199,8 +375,7 @@ def process_contact(request, unique_id):
 
     game = GameInstance.objects.get(uid=unique_id)
     form = ContactInformationForm(request.POST)
-    #print form
-    upload_state = {"action": "contact", 'success': 'Thx for submitting!', 'playername': 'name'}
+    upload_state = {"action": "contact", 'success': 'Thanks for submitting', 'playername': 'name'}
 
     if form.is_valid():
         game.player_name = form.cleaned_data['name']
@@ -211,6 +386,7 @@ def process_contact(request, unique_id):
         print(form.errors)
         upload_state['success'] = json.dumps(form.errors)
 
+    #update_state(request, game)
     return render(request, "results_template.js", upload_state, content_type=RequestContext(request))
 
 
@@ -242,19 +418,14 @@ def process_motivation_upload(request, unique_id):
     if not request.method == "POST":
         return render(request, "results_template.js", upload_state, content_type="application/json")
 
-    form = UploadFileForm(request.POST, request.FILES)
-    if form.is_valid():
+    if request.FILES.get("attachment"):
+        form = UploadFileForm()
+        form.document = request.FILES['attachment']
         upload_success = True
-        upload_success = handle_uploaded_motivation(request.FILES['document'], form.cleaned_data['title'], unique_id)
+        upload_success = handle_uploaded_motivation(form.document, form.document.name, unique_id)
 
         if upload_success:
-            upload_state['success'] = 'Thanks for submitting'
-        else:
-            upload_state['success'] = 'did you try to re-upload? Thats not possible at the moment!'
-    else:
-        print(form.errors)
-        upload_state['success'] = json.dumps(form.errors)
-
+            upload_state['success'] = 'Thanks for submitting'     
     return render(request, "results_template.js", upload_state, content_type="text/html")
 
 
@@ -265,19 +436,10 @@ def process_upload(request, unique_id):
     if not request.method == "POST":
         return render(request, "results_template.js", upload_state, content_type="application/json")
 
-    #print 'cv' in request.POST['title']
-
     form = UploadFileForm(request.POST, request.FILES)
     if form.is_valid():
-        upload_success = True
-        # if x[1] == "document":
         upload_success = handle_uploaded_file(request.FILES['document'], form.cleaned_data['title'], unique_id)
-        #else:
-           # upload_success = handle_uploaded_motivation(request.FILES['document'], form.cleaned_data['title'], unique_id)
-        if upload_success:
-            upload_state['success'] = 'Thanks for submitting'
-        else:
-            upload_state['success'] = 'did you try to re-upload? Thats not possible at the moment!'
+        upload_state['success'] = 'Thanks for submitting'
     else:
         print(form.errors)
         upload_state['success'] = json.dumps(form.errors)
