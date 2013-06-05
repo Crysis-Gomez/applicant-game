@@ -1,0 +1,20 @@
+server {
+        listen 80;
+        server_name     application.spilgames.com;
+        gzip            on;
+        include         conf/defaults.conf;
+        #Deny all remote IP's for now
+        #include         conf/access-private.conf;
+
+
+        include uwsgi_params;
+        location / {
+                add_header Cache-Control  max-age=1800;
+                uwsgi_pass unix:/tmp/swag.sock;
+        }
+
+        location /static/ {
+                root /bigdisk/docs/WEBROOT/swag/;
+                log_not_found on;
+        }
+}

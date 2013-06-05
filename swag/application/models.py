@@ -64,7 +64,6 @@ class GameInstance(models.Model):
         try:
              get_object_or_404(PlayerQuestion, game_instance=self.id)
         except Http404:
-            print "Heerer"
             return False
 
         return True
