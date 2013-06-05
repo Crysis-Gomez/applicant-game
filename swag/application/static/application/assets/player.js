@@ -147,12 +147,11 @@ Crafty.c('Player',
 
 		this.z = 1;
 		this.collisionFunction = func;
-		
 		this.requires("SpriteAnimation")
-		 .animate("walk_left",8,0,10)
-		 .animate("walk_right",11,0,13)
-		 .animate("walk_up",5,0,7)
-		 .animate("walk_down",2,0,4)
+		 .animate("walk_left",6,1,8)
+		 .animate("walk_right",6,2,8)
+		 .animate("walk_up",6,3,8)
+		 .animate("walk_down",6,0,8)
 		 .bind('EnterFrame', function()
 		 {
 		 	if(!this.mayMove)this.stopMovement();

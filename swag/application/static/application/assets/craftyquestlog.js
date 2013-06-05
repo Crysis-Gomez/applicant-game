@@ -151,11 +151,11 @@ Crafty.c("Questlog",{
 			quest.h = 30;
 			quest.z =1;
 			quest.infolog = this.infolog;
-
 			quest.questlog = this;
 			quest.unlock();
 			this.show();
 			quest.isSelected = false;
+			if(quest.npc !== null) quest.npc.removeMark();
 			if(condition) sendQuest(quest.questID);
 		}
 	});
@@ -178,6 +178,7 @@ Crafty.c("Questlog",{
 			this.isSelected = false;
 			this.questlog = null;
 			this.questID = 0;
+			this.npc = null;
 
 			this.bind("MouseOver", function()
 			{ 
@@ -210,7 +211,7 @@ Crafty.c("Questlog",{
 			this.text('<div style="margin-top:12px;">' + this.name + '<div style="margin-left:100px;">' + this.completed);
 		},
 
-		addQuestInfo:function(id,name,info,checkFunction,unlock)
+		addQuestInfo:function(id,name,info,checkFunction,unlock,checkGotQuest)
 		{
 			this.name = name;
 			this.info = info;
@@ -219,6 +220,7 @@ Crafty.c("Questlog",{
 			this.completed = checkFunction();
 			this.unlock = unlock;
 			this.isSelected = false;
+			this.checkGotQuest = checkGotQuest;
 		},
 		showText:function()
 		{

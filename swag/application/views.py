@@ -375,13 +375,14 @@ def process_contact(request, unique_id):
 
     game = GameInstance.objects.get(uid=unique_id)
     form = ContactInformationForm(request.POST)
-    upload_state = {"action": "contact", 'success': 'Thanks for submitting', 'playername': 'name'}
+    upload_state = {"action": "contact", 'success': 'Thanks for submitting', 'playername': 'name', 'playeremail': 'email'}
 
     if form.is_valid():
         game.player_name = form.cleaned_data['name']
         game.player_email = form.cleaned_data['email']
         game.save()
         upload_state['playername'] = json.dumps(game.player_name)
+        upload_state['playeremail'] = json.dumps(game.player_email)
     else:
         print(form.errors)
         upload_state['success'] = json.dumps(form.errors)

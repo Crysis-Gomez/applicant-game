@@ -218,6 +218,8 @@ function uploadAnswer()
 {
 	document.getElementById("container").style.display = 'block';
 	document.getElementById("id_answer").style.display = 'block';
+	document.getElementById("question_form").style.display = 'block';
+	
 	$("#success_div").show();
 	return !(Crafty.pause(true));
 }

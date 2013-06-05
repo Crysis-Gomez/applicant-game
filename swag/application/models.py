@@ -183,6 +183,10 @@ class PlayerQuestion(models.Model):
         unique_together = (("question", "game_instance"),)
 
 
+    def __unicode__(self):
+        return self.question.title
+
+
 
 class PlayerSkill(models.Model):
     id = models.AutoField(primary_key=True)
@@ -192,6 +196,8 @@ class PlayerSkill(models.Model):
 
     class Meta:
         unique_together = (("skill", "game_instance"),)
+
+
 
 
 class Meeting(models.Model):

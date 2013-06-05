@@ -113,8 +113,10 @@ function sendContactInfo()
             if(text == 'Thanks for submitting')
             {
                 name = replaceText(response.player['name']);
+                email =replaceText(response.player['email']);
                 text = response.player['result'];
-                updateGame('player_name', name)
+                updateGame('player_name', name);
+                updateGame('player_email', email);
             }
             else document.getElementById("success_div").innerHTML = replaceText(text);
             

@@ -14,7 +14,21 @@ var crafty = function() {
     {
 		grass:[0,0],
 		sand:[1,0],
-		player:[2,0]
+		mark:[2,0]
+  
+    });
+
+
+     Crafty.sprite(TILE_SIZE, "/static/spriteSheet.png",
+    {
+	
+		player:[6,0],
+		npc1:[3,0],
+		npc2:[9,0],
+		npc3:[0,4],
+		npc4:[3,4],
+		master:[9,4],
+		boss:[6,6]
   
     });
 
@@ -254,6 +268,7 @@ var crafty = function() {
 		dialogText:"",
 		quest:null,
 		player:null,
+		mark:null,
 
 		init: function()
 		{
@@ -291,12 +306,43 @@ var crafty = function() {
 			})
 	     },
 
-	     setNpcData:function(quest,func){
+	     setNpcData:function(quest,func)
+	     {
 	     	this.quest = quest;
 	     	this.dialogFunction = func;
+	     	if(this.quest === null)return;
+	     	this.quest.npc = this;
+	     	if(!this.quest.checkGotQuest)this.putMark();
+	     },
+
+	     putMark:function()
+	     {
+	     	this.mark = Crafty.e("2D, Canvas,mark,Mark");
+	     	this.mark.x = this.x ;
+	     	this.mark.y = this.y-25;
+	     	this.attach(this.mark);
+	     },
+
+	     removeMark:function()
+	     {
+	     	this.mark.destroy();	
 	     }
+
 		
 	});
+
+
+	Crafty.c('Mark',
+	{
+
+		init:function()
+		{
+			this.requires("SpriteAnimation")
+			.animate("mark",2,0,5);
+			this.animate("mark", 30, -1);
+		
+		},
+	})
 
 
 	Crafty.c('BOSS',
@@ -477,7 +523,7 @@ var crafty = function() {
 	Crafty.scene("loading", function () 
 	{
         //load takes an array of assets and a callback when complete
-        Crafty.load(["/static/Sprite.png","/static/house.png","/static/Sprite2.png","/static/house2.png","/static/house3.png","/static/house4.png","/static/house5.png"], function ()
+        Crafty.load(["/static/spriteSheet.png" ,"/static/Sprite.png","/static/house.png","/static/Sprite2.png","/static/house2.png","/static/house3.png","/static/house4.png","/static/house5.png","/static/castle.png"], function ()
         {
             Crafty.scene("main"); //when everything is loaded, run the main scene
             //Crafty.background('rgb(0, 0, 0)');
@@ -512,10 +558,23 @@ var crafty = function() {
 				quest3 = Crafty.e("Quest,Persist");
 				quest4 = Crafty.e("Quest,Persist");
 
-				quest1.addQuestInfo(1,"Cv","Need to upload your cv",state.check_cv,state.cvUnlocked);
-				quest2.addQuestInfo(2,"Motivation","Need to upload your motivationLetter",state.check_motivation,state.motivationUnlocked);
-				quest3.addQuestInfo(3,"Links","Need to upload your links",state.check_link,state.linkUnlocked);
-				quest4.addQuestInfo(4,"Skills","Need to upload your Skills",state.check_skills,state.skillsUnlocked);
+				quest1.addQuestInfo(1,"Cv","Need to upload your cv",
+					state.check_cv,
+					state.cvUnlocked,
+					state.checkUnlockedCVQuest());
+
+				quest2.addQuestInfo(2,"Motivation","Need to upload your motivationLetter",
+					state.check_motivation,
+					state.motivationUnlocked,
+					state.checkUnlockedMotivationQuest());
+				quest3.addQuestInfo(3,"Links","Need to upload your links",
+					state.check_link,
+					state.linkUnlocked,
+					state.checkUnlockedLinkQuest());
+				quest4.addQuestInfo(4,"Skills","Need to upload your Skills",
+					state.check_skills,
+					state.skillsUnlocked,
+					state.checkUnlockedSkillsQuest());
 
 				if(state.checkUnlockedCVQuest())
 				{
@@ -539,9 +598,11 @@ var crafty = function() {
 			}
 		}
 
-		var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard,BOSS").attr({ x: 620, y: -10, z: 1});
+		var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard,BOSS");
 		house.setImage("/static/castle.png");
 		house.setScene("Castle",state.check_boss_unlocked,null);
+		house.x = 620;
+		house.y = 0;
 
 		var canvas = document.getElementById('mycanvas');
 		player1 = Crafty.e("2D,  Canvas, player,Player,RightControls,Collision,Keyboard,Respawn,StatePosition")
@@ -551,19 +612,19 @@ var crafty = function() {
 
 		
 
-		var player2 = Crafty.e("2D,  Canvas, player,Collision,npc,NPC")
+		var player2 = Crafty.e("2D,  Canvas, player,Collision,npc1,NPC")
 			.attr({ x: 400, y: 364, z: 1})
 			.setNpcData(quest1,getDialogData1);
 
-		var player3 = Crafty.e("2D,  Canvas, player,Collision,npc,NPC")
+		var player3 = Crafty.e("2D,  Canvas, player,Collision,npc2,NPC")
 			.attr({ x: 700, y: 300, z: 1})
 			.setNpcData(quest2,getDialogData2);
 
-		var player4 = Crafty.e("2D,  Canvas, player,Collision,npc,NPC")
+		var player4 = Crafty.e("2D,  Canvas, player,Collision,npc3,NPC")
 			.attr({ x: 700, y: 200, z: 1})
 			.setNpcData(quest3,getDialogData3);
 
-		var player5 = Crafty.e("2D,  Canvas, player,Collision,npc,NPC")
+		var player5 = Crafty.e("2D,  Canvas, player,Collision,npc4,NPC")
 			.attr({ x: 200, y: 500, z: 1})
 			.setNpcData(quest4,getDialogData4);
     });
@@ -628,7 +689,6 @@ var crafty = function() {
 	Crafty.scene("Hometown", function()
 	{
 
-
 		profile = Crafty.e("Profile");
 		profile.bind("SHOW",function(){
 			this.showProfile();
@@ -643,7 +703,7 @@ var crafty = function() {
 		dialog = Crafty.e("Dialog, 2D, DOM,Text")
 		.attr({x:0, y:500, w:900, h:0}).css({"font": "10pt Arial", "color": "#000", "text-align": "left"});
 
-		var player2 = Crafty.e("2D,  Canvas, player,Collision,npc,NPC")
+		var player2 = Crafty.e("2D,  Canvas, player,Collision,master,NPC")
 		.attr({ x: 400, y: 244, z: 1})
 		.setNpcData(null,getDialogData5);
 		
@@ -660,8 +720,8 @@ var crafty = function() {
 		dialog = Crafty.e("Dialog, 2D, DOM,Text")
 		.attr({x:0, y:500, w:900, h:0}).css({"font": "10pt Arial", "color": "#000", "text-align": "left"});
 
-		var player2 = Crafty.e("2D,  Canvas, player,Collision,npc,NPC")
-		.attr({ x: 400, y: 244, z: 1})
+		var player2 = Crafty.e("2D,  Canvas, boss,Collision,npc,NPC")
+		.attr({ x: 200, y: 244, z: 1})
 		.setNpcData(null,getDialogData6);
 
 

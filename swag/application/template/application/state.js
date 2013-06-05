@@ -86,7 +86,7 @@ var state = function()
 //////////////////////////////////////////
 
 	var check_UnlockedMotivationQuest = function()
-	{this.answered
+	{
 		var my_val = false;
 		if(unLockedMotivationQuest == 'True')
 		{

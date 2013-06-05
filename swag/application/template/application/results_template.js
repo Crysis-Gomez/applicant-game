@@ -1,5 +1,6 @@
 
 {"player": {
 	"result": "{{ success }}",
-	"name": "{{ playername }}"
+	"name": "{{ playername }}",
+	"email": "{{ playeremail }}"
 }}
