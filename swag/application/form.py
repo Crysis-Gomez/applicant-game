@@ -69,11 +69,11 @@ class SkillSetForm(forms.Form):
         elif(index == 5):
             skillString = "I can write basic components"
         elif(index == 4):
-            skillString = "I can program classes  "
-        elif(index == 3):
             skillString = "I can program little scripts"
+        elif(index == 3):
+            skillString = "I can write some functions"
         elif(index == 2):
-            skillString = "I read a book about"
+            skillString = "I have read a book about"
         elif(index == 1):
             skillString = "I have heard about"
         elif(index == 0):

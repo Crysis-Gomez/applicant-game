@@ -151,7 +151,7 @@ var crafty = function() {
 				if(i  == 15 && j == 0)
 				{
 					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard");
-					house.setImage("/static/house.png");
+					house.setImage("/static/house3.png");
 					house.setScene("BuildingLink",state.checkUnlockedLinkQuest,state.check_link());
 					house.x = TILE_SIZE*i;
 					house.y = TILE_SIZE*j;
@@ -172,7 +172,7 @@ var crafty = function() {
 				if(i  == 24 && j == 13)
 				{
 					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard");
-					house.setImage("/static/house2.png");
+					house.setImage("/static/house4.png");
 					house.setScene("Hometown",null,null);
 					house.x = TILE_SIZE*i;
 					house.y = TILE_SIZE*j;
@@ -183,7 +183,7 @@ var crafty = function() {
 				if(i  == 1 && j == 10)
 				{
 					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard");
-					house.setImage("/static/house.png");
+					house.setImage("/static/house5.png");
 					house.setScene("BuildingSkills",state.checkUnlockedSkillsQuest,state.check_skills());
 					house.x = TILE_SIZE*i;
 					house.y = TILE_SIZE*j;
@@ -199,7 +199,7 @@ var crafty = function() {
 		sceneString:"",
 		check:null,
 		questDone:null,
-		offsetX:20,
+		offsetX:10,
 		offsetY:10,
 
 
@@ -477,7 +477,7 @@ var crafty = function() {
 	Crafty.scene("loading", function () 
 	{
         //load takes an array of assets and a callback when complete
-        Crafty.load(["/static/Sprite.png","/static/house.png","/static/Sprite2.png","/static/house2.png"], function ()
+        Crafty.load(["/static/Sprite.png","/static/house.png","/static/Sprite2.png","/static/house2.png","/static/house3.png","/static/house4.png","/static/house5.png"], function ()
         {
             Crafty.scene("main"); //when everything is loaded, run the main scene
             //Crafty.background('rgb(0, 0, 0)');

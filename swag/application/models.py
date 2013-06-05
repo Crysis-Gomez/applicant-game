@@ -52,8 +52,8 @@ class GameInstance(models.Model):
     player_link_unlockedQuest = models.BooleanField(default=False)
     player_skill_unlockedQuest = models.BooleanField(default=False)
     player_unlocked_boss = models.BooleanField(default=False)
-    player_name = models.CharField(max_length=50, null=True, blank=True)
-    player_email = models.EmailField(max_length=100, null=True, blank=True)
+    player_name = models.CharField(max_length=50, blank=True)
+    player_email = models.EmailField(max_length=100, blank=True)
 
     vacancy = models.ForeignKey(Vacancy)
 
