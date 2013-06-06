@@ -6,6 +6,8 @@ from django.core.exceptions import MultipleObjectsReturned
 from django.http import Http404
 from django.utils.html import format_html
 import json
+import datetime
+from django.utils import timezone
 
 
 class SkillSet(models.Model):
@@ -19,7 +21,6 @@ class Question(models.Model):
     title = models.CharField(max_length=200)
     question = models.TextField(null=True, blank=False)
 
-
     def __unicode__(self):
         return self.title
 
@@ -31,6 +32,10 @@ class Vacancy(models.Model):
     mail_text = models.CharField(max_length=500)
     skill_sets = models.ManyToManyField(SkillSet)
     question = models.ForeignKey(Question, null=True, blank=False)
+    pub_date = models.DateTimeField(auto_now=True, auto_now_add=True)
+
+    def was_published(self):
+        return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
 
     def __unicode__(self):
         return str(self.title)

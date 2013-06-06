@@ -1,11 +1,22 @@
 body {background-color:#c0c0c0;
 }
 
-#contact_form
+/*#contact_form
 {
 	 z-index:3;
-     display: none;
+     xdisplay: none;
+}*/
+
+#myModal
+{
+    height: 200px;
+    width:  300px;
+    keyboard: false;
+    backdrop: 'static';
+
 }
+
+
 #cv_form
 {
      z-index:3;

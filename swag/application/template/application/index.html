@@ -210,20 +210,11 @@
 </form>
 
 
-{%endif%}<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <h3 id="myModalLabel">Modal header</h3>
-  </div>
-  <div class="modal-body">
-    <p>One fine body…</p>
-  </div>
-  <div class="modal-footer">
-    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-    <button class="btn btn-primary">Save changes</button>
-  </div>
-</div>
+{%endif%}
 {% endblock %}
+
+
+
 <div id="success_div" name="response">Response will be placed here on submit.</div>
 </div>
 
@@ -249,9 +240,9 @@
 </div>
 
 <!-- <a href='#myModal' data-toggle='modal'>Open my damn modal</a>
-<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false">
   <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="false">×</button>
     <h3 id="myModalLabel">Modal header</h3>
   </div>
   <div class="modal-body">
@@ -264,6 +255,24 @@
 </div>
  -->
 
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false">
+ <form enctype="multipart/form-data" method="post" name="contact_form" id="contact_form"  >
+    
+    <table>
+    {{ contact_info.as_table }}
+    
+    {% for error in contact_info.errors %}
+    {{error}}
+    {% endfor %}
+    
+    </table> 
+    <!-- <button class="btn btn-primary">Save changes</button> -->
+    <button id="contactButton" type="button" class="btn btn-primary" onclick="sendContactInfo()">Submit contact</button>
+    <!--<div id="info_div" name="response">Response will be placed here on submit.</div>-->
+</form>
+</div>
+
+<a href='#myModal' data-toggle='modal'>Open my damn modal</a>
 
 </body>
 </html>
