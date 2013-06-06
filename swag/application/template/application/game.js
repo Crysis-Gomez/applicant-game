@@ -15,13 +15,11 @@ var crafty = function() {
 		grass:[0,0],
 		sand:[1,0],
 		mark:[2,0]
-  
     });
 
 
      Crafty.sprite(TILE_SIZE, "/static/spriteSheet.png",
     {
-	
 		player:[6,0],
 		npc1:[3,0],
 		npc2:[9,0],
@@ -29,7 +27,6 @@ var crafty = function() {
 		npc4:[3,4],
 		master:[9,4],
 		boss:[6,6]
-  
     });
 
     Crafty.sprite(TILE_SIZE, "/static/Sprite2.png",
@@ -149,7 +146,6 @@ var crafty = function() {
 		houses = new Array();
 		for (i = 0; i < 31; i++)
 		{
-
 			for (j = 0; j < 21; j++)
 			{
 				if(i  == 1 && j == 0)
@@ -172,7 +168,6 @@ var crafty = function() {
 					houses.push(house);
 				}
 
-
 				if(i  == 15 && j == 10)
 				{
 					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard")
@@ -191,8 +186,6 @@ var crafty = function() {
 					house.x = TILE_SIZE*i;
 					house.y = TILE_SIZE*j;
 				}
-
-
 
 				if(i  == 1 && j == 10)
 				{
@@ -216,15 +209,12 @@ var crafty = function() {
 		offsetX:10,
 		offsetY:10,
 
-
 		setScene:function(str,check,quest)
 		{
 			this.sceneString = str;
 			this.check = check;
 			this.questDone = quest;
-	
 		},
-
 
 		setImage:function(str)
 		{
@@ -233,7 +223,6 @@ var crafty = function() {
 			poly1 = new Crafty.polygon([0+this.offsetX,0+this.offsetY],[im._w-this.offsetX,0+this.offsetY],[im._w-this.offsetX,im._h-this.offsetY],[0+this.offsetX,im._h-this.offsetY]);
 			this.collision(poly1);
 		},
-
 
 		enterBuilding:function()
 		{
@@ -299,8 +288,6 @@ var crafty = function() {
 					if(dialog.finished)
 					{
 						dialog.nextDialog();
-						
-
 					}	
 				}
 			})
@@ -312,11 +299,12 @@ var crafty = function() {
 	     	this.dialogFunction = func;
 	     	if(this.quest === null)return;
 	     	this.quest.npc = this;
-	     	if(!this.quest.checkGotQuest)this.putMark();
+	     	//if(!this.quest.checkGotQuest())this.putMark();
 	     },
 
 	     putMark:function()
 	     {
+	     	if(this.quest.checkGotQuest())return;
 	     	this.mark = Crafty.e("2D, Canvas,mark,Mark");
 	     	this.mark.x = this.x ;
 	     	this.mark.y = this.y-25;
@@ -325,22 +313,19 @@ var crafty = function() {
 
 	     removeMark:function()
 	     {
-	     	this.mark.destroy();	
+	     	this.mark.destroy();
+	     	state.update_unlockQuest(this.quest.id);
 	     }
-
-		
 	});
 
 
 	Crafty.c('Mark',
 	{
-
 		init:function()
 		{
 			this.requires("SpriteAnimation")
 			.animate("mark",2,0,5);
 			this.animate("mark", 30, -1);
-		
 		},
 	})
 
@@ -394,7 +379,6 @@ var crafty = function() {
 				this.locked = false;
 				state.update('boss_unlocked','True')
 				unlockBoss();
-				
 			}
 		},
 
@@ -407,7 +391,6 @@ var crafty = function() {
 
 	Crafty.c('AI',
 	{
-
 		walkToPlayer:function()
 		{
 
@@ -442,7 +425,6 @@ var crafty = function() {
 			this.color('#FFF')
 			this.bind('EnterFrame', function()
 			{
-
 				if(this.hasStarted && !this.finished && this.checkDialog())
 				{
 					if(this.DialogText.length != this.DataText.length)
@@ -472,7 +454,6 @@ var crafty = function() {
 			if(!Crafty.isPaused()) this.dialogIndex += 1;
 			
 			this.DataText = this.data[this.dialogIndex];
-
 			trigger = craftyTriggers(this.DataText,this.npc); 
 			
 			if(trigger[0])
@@ -487,6 +468,7 @@ var crafty = function() {
 			if(this.DataText == "Bob: Welcome to the vacancy of ")
 			{
 				this.DataText += "{{game.vacancy}},"+ window.state.name() + "!";
+				Crafty.trigger("getQuest");
 			}  
 
 			this.finished = false;
@@ -528,8 +510,6 @@ var crafty = function() {
             Crafty.scene("main"); //when everything is loaded, run the main scene
             //Crafty.background('rgb(0, 0, 0)');
         });
-
-
     });
 
     //automatically play the loading scene
@@ -538,7 +518,6 @@ var crafty = function() {
     Crafty.scene("main", function ()
     {
 		generateWorld();
-	
 
 		if(!state.checklog())
 		{
@@ -546,10 +525,8 @@ var crafty = function() {
 			dialog = Crafty.e("Dialog, 2D, DOM,Text")
 			.attr({x:0, y:500, w:900, h:0}).css({"font": "10pt Arial", "color": "#000", "text-align": "left"});
 
-		
-			if (typeof quest_log  === 'undefined') {
-
-				
+			if (typeof quest_log  === 'undefined') 
+			{
 				info = Crafty.e("Infolog,Persist");
 				quest_log = Crafty.e("Questlog,Persist")
 				.attr({ x: -150, y: 100, z: 1});
@@ -561,24 +538,25 @@ var crafty = function() {
 				quest1.addQuestInfo(1,"Cv","Need to upload your cv",
 					state.check_cv,
 					state.cvUnlocked,
-					state.checkUnlockedCVQuest());
+					state.checkUnlockedCVQuest);
 
 				quest2.addQuestInfo(2,"Motivation","Need to upload your motivationLetter",
 					state.check_motivation,
 					state.motivationUnlocked,
-					state.checkUnlockedMotivationQuest());
+					state.checkUnlockedMotivationQuest);
 				quest3.addQuestInfo(3,"Links","Need to upload your links",
 					state.check_link,
 					state.linkUnlocked,
-					state.checkUnlockedLinkQuest());
+					state.checkUnlockedLinkQuest);
 				quest4.addQuestInfo(4,"Skills","Need to upload your Skills",
 					state.check_skills,
 					state.skillsUnlocked,
-					state.checkUnlockedSkillsQuest());
+					state.checkUnlockedSkillsQuest);
 
 				if(state.checkUnlockedCVQuest())
 				{
 					quest_log.addQuest(quest1,false);
+
 				}
 
 				if(state.checkUnlockedMotivationQuest())
@@ -610,23 +588,34 @@ var crafty = function() {
 			.Player();
 
 
+		var player2 = Crafty.e("2D,  Canvas, player,Collision,npc1,NPC");
+			player2.attr({ x: 100, y: 100, z: 1});
+			player2.setNpcData(quest1,getDialogData1);
+			player2.putMark();
+
+
+		var player3 = Crafty.e("2D,  Canvas, player,Collision,npc2,NPC");
+			player3.attr({ x: 600, y: 450, z: 1});
+			player3.setNpcData(quest2,getDialogData2);
+			player3.bind("getQuest",player3.putMark);
+
+		var player4 = Crafty.e("2D,  Canvas, player,Collision,npc3,NPC");
+			player4.attr({ x: 550, y: 100, z: 1})
+			player4.setNpcData(quest3,getDialogData3);
+			player4.bind("getQuest",player4.putMark);
+
+		var player5 = Crafty.e("2D,  Canvas, player,Collision,npc4,NPC");
+			player5.attr({ x: 100, y: 400, z: 1});
+			player5.setNpcData(quest4,getDialogData4);
+			player5.bind("getQuest",player5.putMark);
+
+
+		if(state.checkUnlockedCVQuest())
+		{
+			Crafty.trigger("getQuest");
+		}
+
 		
-
-		var player2 = Crafty.e("2D,  Canvas, player,Collision,npc1,NPC")
-			.attr({ x: 400, y: 364, z: 1})
-			.setNpcData(quest1,getDialogData1);
-
-		var player3 = Crafty.e("2D,  Canvas, player,Collision,npc2,NPC")
-			.attr({ x: 700, y: 300, z: 1})
-			.setNpcData(quest2,getDialogData2);
-
-		var player4 = Crafty.e("2D,  Canvas, player,Collision,npc3,NPC")
-			.attr({ x: 700, y: 200, z: 1})
-			.setNpcData(quest3,getDialogData3);
-
-		var player5 = Crafty.e("2D,  Canvas, player,Collision,npc4,NPC")
-			.attr({ x: 200, y: 500, z: 1})
-			.setNpcData(quest4,getDialogData4);
     });
 
 	Crafty.scene("Game2",function()

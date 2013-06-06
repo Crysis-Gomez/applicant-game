@@ -210,7 +210,6 @@ Crafty.c('Player',
 
 			if (this.isDown('ENTER'))
 			{
-
 				if(this.isCollidingWithHouse && state.checkUnlockedCVQuest())
 				{
 					this.enterHouse();

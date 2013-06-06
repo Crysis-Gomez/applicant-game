@@ -178,6 +178,30 @@ var state = function()
 	}
 
 
+	var update_unlockQuest = function(id)
+	{
+		switch(id)
+		{
+			case 1:
+					cv_Unlocked();
+			break;
+
+			case 2:
+					motivation_Unlocked();
+			break;
+
+			case 3:
+					link_Unlocked();
+			break;
+
+			case 4:
+					skills_Unlocked();
+			break;
+
+		}
+	}
+
+
 	var boolChecker = function(value)
 	{
 		var my_val = false;
@@ -271,6 +295,7 @@ var state = function()
 		checkMayUploadSkills:check_MayUploadSkills,
 		boss_unlocked:boss_unlocked,
 		check_boss_unlocked:check_boss_unlocked,
+		update_unlockQuest: update_unlockQuest,
 
 		get_skills: function() 
 		{

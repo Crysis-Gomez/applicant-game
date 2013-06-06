@@ -2,7 +2,6 @@
 import os, sys
 
 SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
-print SITE_ROOT
 PROJECT_ROOT = os.path.realpath(os.path.dirname(__file__))
 
 DEBUG = True
