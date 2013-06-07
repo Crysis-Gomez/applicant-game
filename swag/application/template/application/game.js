@@ -43,22 +43,6 @@ var crafty = function() {
 	
 	function generateWorld()
 	{
-		for (i = 0; i < 31; i++)
-		{
-			for (j = 0; j < 21; j++)
-			{
-				if(i != 10  && j != 15)
-				{
-					Crafty.e("2D, Canvas, grass")
-	                	.attr({ x: i * TILE_SIZE, y: j * TILE_SIZE, z:-1 });
-	            }
-	            else
-	            {
-					Crafty.e("2D, Canvas, sand")
-	                	.attr({ x: i * TILE_SIZE, y: j * TILE_SIZE, z:-1 });
-	            }    
-			}
-		}
 		generateObjects();
 	}
 
@@ -107,21 +91,21 @@ var crafty = function() {
 					 break;
 
 					 case "1":
-							Crafty.e("2D, Canvas, wall,Collision,Wall")
+							Crafty.e("2D, Canvas, wall,Collision,Wall,Solid")
 					 		.collision(new Crafty.polygon([0,0],[32,0],[32,16],[0,16]))
 	                  		.attr({ x: x * TILE_SIZE+OFFSET, y: y * TILE_SIZE, z:-1 });
 					 break;
 
 
 					 case "2":
-					 		Crafty.e("2D, Canvas,Image,Collision,Door,door")
+					 		Crafty.e("2D, Canvas,Image,Collision,Door,door,Solid")
 							.collision(new Crafty.polygon([0,0],[32,0],[32,16],[0,16]))
 							.attr({ x: x * TILE_SIZE+OFFSET, y: y * TILE_SIZE, z:-1 });
 					 break;
 
 
 					 case "3":
-					 		Crafty.e("2D, Canvas,Image,Collision,machine,Machine")
+					 		Crafty.e("2D, Canvas,Image,Collision,machine,Machine,Solid")
 							.collision(new Crafty.polygon([0,0],[32,0],[32,32],[0,32]))
 							.attr({ x: x * TILE_SIZE+OFFSET, y: y * TILE_SIZE, z:-1 })
 							.startGame = game;
@@ -150,7 +134,7 @@ var crafty = function() {
 			{
 				if(i  == 1 && j == 0)
 				{
-					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard")
+					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard,Solid")
 					house.setImage("/static/house2.png");
 					house.setScene("BuildingCV",state.checkUnlockedCVQuest,state.check_cv());
 					house.x = TILE_SIZE*i;
@@ -160,7 +144,7 @@ var crafty = function() {
 
 				if(i  == 15 && j == 0)
 				{
-					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard");
+					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard,Solid");
 					house.setImage("/static/house3.png");
 					house.setScene("BuildingLink",state.checkUnlockedLinkQuest,state.check_link());
 					house.x = TILE_SIZE*i;
@@ -170,7 +154,7 @@ var crafty = function() {
 
 				if(i  == 15 && j == 10)
 				{
-					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard")
+					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard,Solid")
 					house.setImage("/static/house.png");
 					house.setScene("BuildingMotivation",state.checkUnlockedMotivationQuest,state.check_motivation());
 					house.x = TILE_SIZE*i;
@@ -180,7 +164,7 @@ var crafty = function() {
 
 				if(i  == 24 && j == 13)
 				{
-					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard");
+					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard,Solid");
 					house.setImage("/static/house4.png");
 					house.setScene("Hometown",null,null);
 					house.x = TILE_SIZE*i;
@@ -189,7 +173,7 @@ var crafty = function() {
 
 				if(i  == 1 && j == 10)
 				{
-					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard");
+					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard,Solid");
 					house.setImage("/static/house5.png");
 					house.setScene("BuildingSkills",state.checkUnlockedSkillsQuest,state.check_skills());
 					house.x = TILE_SIZE*i;
@@ -261,36 +245,21 @@ var crafty = function() {
 
 		init: function()
 		{
-			this.onHit('player',function(hit)
-			{
-				this.isCollidingWithPlayer = true;
-				this.player = hit[0].obj;
-				if(!dialog.inConversation)
-				{
-					//show dialog
-				}
-			},
-			function(noHit)
-			{
-					//drop dialog
-				this.isCollidingWithPlayer = false;
-			})
 			
-			.requires('Keyboard').bind('KeyDown', function ()
-			{ 
-				if (this.isDown('ENTER') && !Crafty.isPaused() && this.isCollidingWithPlayer)
-				{
-					if(!dialog.inConversation)
-					{
-						dialog.startDialog(this);
-						this.player.mayMove = false;
-					}
-					if(dialog.finished)
-					{
-						dialog.nextDialog();
-					}	
-				}
-			})
+	    },
+
+	     startDialog:function()
+	     {
+	     	if(!dialog.inConversation)
+			{
+				dialog.startDialog(this);
+				this.player.mayMove = false;
+			}
+			if(dialog.finished)
+			{
+				dialog.nextDialog();
+			}	
+
 	     },
 
 	     setNpcData:function(quest,func)
@@ -505,10 +474,10 @@ var crafty = function() {
 	Crafty.scene("loading", function () 
 	{
         //load takes an array of assets and a callback when complete
-        Crafty.load(["/static/spriteSheet.png" ,"/static/Sprite.png","/static/house.png","/static/Sprite2.png","/static/house2.png","/static/house3.png","/static/house4.png","/static/house5.png","/static/castle.png"], function ()
+        Crafty.load(["/static/spriteSheet.png" ,"/static/Sprite.png","/static/house.png","/static/Sprite2.png","/static/house2.png","/static/house3.png","/static/house4.png","/static/house5.png","/static/castle.png","/static/background.png"], function ()
         {
             Crafty.scene("main"); //when everything is loaded, run the main scene
-            //Crafty.background('rgb(0, 0, 0)');
+            
         });
     });
 
@@ -517,6 +486,7 @@ var crafty = function() {
 
     Crafty.scene("main", function ()
     {
+    	Crafty.background("url('/static/background.png')");
 		generateWorld();
 
 		if(!state.checklog())
@@ -588,24 +558,24 @@ var crafty = function() {
 			.Player();
 
 
-		var player2 = Crafty.e("2D,  Canvas, player,Collision,npc1,NPC");
-			player2.attr({ x: 100, y: 100, z: 1});
+		var player2 = Crafty.e("2D,  Canvas, player,Collision,npc1,NPC,Solid");
+			player2.attr({ x: 150, y: 100, z: 1});
 			player2.setNpcData(quest1,getDialogData1);
 			player2.putMark();
 
 
-		var player3 = Crafty.e("2D,  Canvas, player,Collision,npc2,NPC");
-			player3.attr({ x: 600, y: 450, z: 1});
+		var player3 = Crafty.e("2D,  Canvas, player,Collision,npc2,NPC,Solid");
+			player3.attr({ x: 400, y: 450, z: 1});
 			player3.setNpcData(quest2,getDialogData2);
 			player3.bind("getQuest",player3.putMark);
 
-		var player4 = Crafty.e("2D,  Canvas, player,Collision,npc3,NPC");
-			player4.attr({ x: 550, y: 100, z: 1})
+		var player4 = Crafty.e("2D,  Canvas, player,Collision,npc3,NPC,Solid");
+			player4.attr({ x: 400, y: 100, z: 1})
 			player4.setNpcData(quest3,getDialogData3);
 			player4.bind("getQuest",player4.putMark);
 
-		var player5 = Crafty.e("2D,  Canvas, player,Collision,npc4,NPC");
-			player5.attr({ x: 100, y: 400, z: 1});
+		var player5 = Crafty.e("2D,  Canvas, player,Collision,npc4,NPC,Solid");
+			player5.attr({ x: 150, y: 450, z: 1});
 			player5.setNpcData(quest4,getDialogData4);
 			player5.bind("getQuest",player5.putMark);
 
@@ -727,8 +697,8 @@ var crafty = function() {
 			this.addComponent("2D,DOM,Text");
 		},
 
-
-		getText:function(str){
+		getText:function(str)
+		{
 			this.str = str;
 		},
 
@@ -740,22 +710,75 @@ var crafty = function() {
 
 	Crafty.c('PopUp',
 	{
+		isShown:false,
+		isHouse:false,
+		isNpc:false,
+		isExit:false,
+		isWarp:false,
+
 		init:function()
 		{
 			this.addComponent("2D,DOM,Text,Color");
-			// this.w = 80;  
-			// this.h = 40;
-			// this.color('#fff');
-			// this.css({"border-radius": "5px"});
-			// this.text('<div  style="margin-top:20px; text-align:center;">'+"Enter");
+			this.color('#fff');
+			this.css({"border-radius": "5px"});
+			//this.text('<div  style="margin-top:20px; text-align:center;">'+"Enter");
+		},
+
+		showTalk:function()
+		{
+			this.w = 80;  
+			this.h = 40;
+			this.text("Enter");
+			this.text('<div  style="margin-top:20px; text-align:center;">'+"Talk");
+			this.isShown = true;
+			this.isHouse = false;
+			this.isNpc = true;
+			this.isWarp = false;
+			this.isExit = false;
+		},
+
+		showEnter:function()
+		{
+			this.w = 80;  
+			this.h = 40;
+			this.text("Enter");
+			this.text('<div  style="margin-top:20px; text-align:center;">'+"Enter");
+			this.isShown = true;
+			this.isHouse = true;
+			this.isNpc = false;
+			this.isWarp = false;
+			this.isExit = false;
 		},
 
 
-		show:function()
+		showWarp:function()
 		{
-			this.w = 100;  
-			this.h = 100;
+			this.w = 80;  
+			this.h = 40;
 			this.text("Enter");
+			this.text('<div  style="margin-top:20px; text-align:center;">'+"Warp");
+			this.isShown = true;
+			
+			this.isHouse = false;
+			this.isNpc = false;
+			this.isWarp = true;
+			this.isExit = false;
+		},
+
+
+
+		showExit:function()
+		{
+			this.w = 80;  
+			this.h = 40;
+			this.text("Enter");
+			this.text('<div  style="margin-top:20px; text-align:center;">'+"Exit");
+			this.isShown = true;
+			
+			this.isHouse = false;
+			this.isNpc = false;
+			this.isWarp = false;
+			this.isExit = true;
 		},
 
 
@@ -764,6 +787,9 @@ var crafty = function() {
 			this.w = 0;  
 			this.h = 0;
 			this.text("");
+			this.isShown = false;
+			this.isHouse = false;
+			this.isNpc = false;
 		}
 	});
 

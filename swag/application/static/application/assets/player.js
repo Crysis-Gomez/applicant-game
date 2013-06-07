@@ -1,6 +1,5 @@
 Crafty.c('Respawn',
 {
-
 	init:function()
 	{
 		this.x = state.checkPosition()[0];
@@ -18,13 +17,14 @@ Crafty.c('StatePosition',
 	}
 })
 
-
 Crafty.c('Player',
 {
 	
 	house:Object,
-	isCollidingWithHouse: false,
-	isCollindingWithDoor:false,
+	npc:Object,
+	collidedObject:Object,
+	machine:Object,
+	door:Object,
 	dirX:0,
 	dirY:0,
 	count:0,
@@ -71,23 +71,35 @@ Crafty.c('Player',
 		}
 	},
 
-	enterCollisionHouse:function(e)
+	enterCollisionSolid:function(e)
 	{
-		this.house = e[0].obj;
-		if(this.y <= this.house.y+10)
-		{
-			this.convert(this.house);
-			this.house.sort(0.5,2);
-		}
-		else
-		{
-			if(this.dirY > 0 && this.y <= this.house.y+10)this.house.sort(0.5,2);
-			this.stopMovement();
-			this.isCollidingWithHouse = true;
-		}
-		//this.stopMovement();
-		//this.isCollidingWithHouse = true
+		this.collidedObject = e[0].obj;
+		 if(this.collidedObject.has("Building"))
+		 {
+		 	this.house = e[0].obj;
+		 	if(this.y <= this.house.y+10)
+			{
+				this.convert(this.house);
+				this.house.sort(0.5,2);
+				return;
+			}
+			else
+			{
+				if(this.dirY > 0 && this.y <= this.house.y+10)this.house.sort(0.5,2);
+				this.stopMovement();
+				return;
+			}
+		 }
+
+		 this.stopMovement();
 	},
+
+	exitCollisionSolid:function(e)
+	{
+		
+		if(this.collidedObject.has("Building"))this.house.sort(1,1);
+	},
+
 
 	enterCollisionBoss:function(e)
 	{
@@ -117,39 +129,6 @@ Crafty.c('Player',
 		}
 		else this.stopMovement();
 	},
-
-
-	enterCollisionMachine:function(e)
-	{
-		this.stopMovement();
-		Crafty.scene(e[0].obj.startGame);
-		
-	},
-
-	exitCollisionMachine:function(e)
-	{
-		
-		
-	},
-
-	enterCollisionDoor:function(e)
-	{
-		this.stopMovement();
-		this.isCollindingWithDoor = true;
-	},
-
-	exitCollisionHouse:function()
-	{
-		this.house.sort(1,1);
-	},
-
-
-	enterCollisionWall:function(e)
-	{
-		this.stopMovement();
-		
-	},
-
 
 	Player:function(func)
 	{
@@ -202,19 +181,63 @@ Crafty.c('Player',
 		.bind('Moved',function()
 		{
 
-			list = Crafty.map.search({_x: this.x, _y: this.y, _w: 100, _h: 100}, true);
+			list = Crafty.map.search({_x: this.x, _y: this.y, _w: 40, _h: 40}, true);
 
-			console.log(list);
-			
 			if(this.update)this.update();
 			
-			if(this.isCollidingWithHouse)
-			{
-				this.isCollidingWithHouse = false;
-			}
 			if(this.isCollindingWithDoor)
 			{
 				this.isCollindingWithDoor = false;
+			}
+
+			for (enity in list)
+			{
+				if(list[enity].has("NPC"))
+				{
+					if(!this.popUp.isShown)
+					{
+						this.npc = list[enity];
+						this.npc.player = this;
+						this.popUp.showTalk();
+					}
+					return;
+				}
+				if(list[enity].has("Building"))
+				{
+					if(!this.popUp.isShown)
+					{
+						this.house = list[enity];
+						this.popUp.showEnter();
+					}
+					return;
+				}
+
+
+				if(list[enity].has("Door"))
+				{
+					if(!this.popUp.isShown)
+					{
+						this.door = list[enity];
+						this.popUp.showExit();
+					}
+					return;
+				} 
+
+
+				if(list[enity].has("Machine"))
+				{
+					if(!this.popUp.isShown)
+					{
+						this.machine = list[enity];
+						this.popUp.showWarp();
+					}
+					return;
+				} 
+			}
+
+			if(this.popUp.isShown)
+			{
+				this.popUp.hide();
 			}
 		})
 
@@ -223,17 +246,26 @@ Crafty.c('Player',
 
 			if (this.isDown('ENTER'))
 			{
-				if(this.isCollidingWithHouse && state.checkUnlockedCVQuest())
+				if(this.popUp.isHouse)
 				{
 					this.enterHouse();
-					this.isCollidingWithHouse = false;
 				}
 
-				if(this.isCollindingWithDoor)
+				if(this.popUp.isNpc)
+				{
+					this.npc.startDialog();
+				}
+
+				if(this.popUp.isWarp)
+				{
+					Crafty.scene(this.machine.startGame);
+				}
+
+				if(this.popUp.isExit)
 				{
 					Crafty.scene("main");
-					this.isCollindingWithDoor = false;
 				}
+
 			}
 		})
 			
@@ -241,19 +273,24 @@ Crafty.c('Player',
 		{
 			if (e.key == 76 && !Crafty.isPaused())
 			{
-				if(quest_log.x  <= -150)quest_log.Up();
-				else if(quest_log.x >=  10)quest_log.Out();
+				if(quest_log.x  <= -150)
+				{
+					quest_log.Up();
+					this.mayMove = false;
+				}
+				else if(quest_log.x >=  10)
+				{
+					quest_log.Out();
+					this.mayMove = true;
+				}
 
 			}
 			return true;
 		})
 
-		.onHit("house",this.enterCollisionHouse,this.exitCollisionHouse)
-		.onHit("Door",this.enterCollisionDoor)
-		.onHit("Wall",this.enterCollisionWall)
+
+		.onHit("Solid",this.enterCollisionSolid,this.exitCollisionSolid)
 		.onHit("Block",this.enterCollisionBlock)
-		.onHit("Machine",this.enterCollisionMachine,this.exitCollisionMachine)
-		.onHit("boss",this.enterCollisionBoss);	
 	}
 
 });

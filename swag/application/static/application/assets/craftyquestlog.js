@@ -1,6 +1,6 @@
 Crafty.c("Infolog",{
 		init:function(){
-			this.addComponent("2D, DOM,Color,Text");
+			this.addComponent("2D, DOM,Color2,Text");
 			this.x = 0;
 			this.y = 0;
 			this.z = 1;

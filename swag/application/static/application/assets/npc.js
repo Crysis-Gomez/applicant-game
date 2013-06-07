@@ -177,11 +177,16 @@ function uploadCV()
 	return (Crafty.pause(true));
 }
 
+
 function uploadContact()
 {
 	$("#myModal").modal('show');
-	document.getElementById("contact_form").style.display = 'block';
-	document.getElementById("id_name").focus();
+
+	$('#myModal').on('shown', function () {
+		document.getElementById("contact_form").style.display = 'block';
+		document.getElementById("id_name").focus();
+	})
+
 	
 	return !(Crafty.pause(true));
 }
@@ -216,8 +221,14 @@ function uploadSkills()
 function uploadAnswer()
 {
 	$("#myModal").modal('show');
-	document.getElementById("id_answer").style.display = 'block';
-	document.getElementById("question_form").style.display = 'block';
+
+
+	$('#myModal').on('shown', function () {
+		document.getElementById("id_answer").style.display = 'block';
+		document.getElementById("id_answer").focus();
+		document.getElementById("question_form").style.display = 'block';
+	})
+
 	
 	$("#success_div").show();
 	return !(Crafty.pause(true));
@@ -243,7 +254,6 @@ function craftyTriggers(str,npc)
 		 		 
 		 return [true,uploadContact()]
 
-
 		 case MOTIVATION:
 
 		 return [true,uploadMotivation()]
@@ -256,7 +266,6 @@ function craftyTriggers(str,npc)
 
 		 return [true,uploadSkills()]
 
-
 		 case QUEST:
 		 		
 		 return [true,addQuest(npc)];
@@ -265,12 +274,9 @@ function craftyTriggers(str,npc)
 		 		Crafty.trigger("SHOW");
 		 return [true,false];
 
-
-
 		 case QUESTION:
 		 		
 		 return [true,uploadAnswer()];
-
 
 		 case EXIT:
 		 		Crafty.trigger("HIDE");
