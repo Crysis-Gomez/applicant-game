@@ -160,9 +160,9 @@ def play(request, unique_id):
         return HttpResponseRedirect('/')
 
     context = dict()
-    #if game.get_contact() == False:
-    contact_info = ContactInformationForm()
-    context.update({'contact_info': contact_info})
+    if game.get_contact() == False:
+        contact_info = ContactInformationForm()
+        context.update({'contact_info': contact_info})
 
     letter = LetterForm(initial={'title': 'motivation'})
     context.update({'letter': letter})
