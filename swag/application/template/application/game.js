@@ -299,7 +299,6 @@ var crafty = function() {
 	     	this.dialogFunction = func;
 	     	if(this.quest === null)return;
 	     	this.quest.npc = this;
-	     	//if(!this.quest.checkGotQuest())this.putMark();
 	     },
 
 	     putMark:function()
@@ -422,7 +421,8 @@ var crafty = function() {
 			this.y = 0;
 			this.w = 900;  
 			this.h = 0;
-			this.color('#FFF')
+			this.color('#fff');
+		
 			this.bind('EnterFrame', function()
 			{
 				if(this.hasStarted && !this.finished && this.checkDialog())
@@ -523,7 +523,8 @@ var crafty = function() {
 		{
 			
 			dialog = Crafty.e("Dialog, 2D, DOM,Text")
-			.attr({x:0, y:500, w:900, h:0}).css({"font": "10pt Arial", "color": "#000", "text-align": "left"});
+			.attr({x:0, y:500, w:900, h:0}).css({"font": "10pt Arial", "color": "#000", "text-align": "left","border-radius": "20px"});
+			dialog.alpha = 0.8;
 
 			if (typeof quest_log  === 'undefined') 
 			{
@@ -556,7 +557,6 @@ var crafty = function() {
 				if(state.checkUnlockedCVQuest())
 				{
 					quest_log.addQuest(quest1,false);
-
 				}
 
 				if(state.checkUnlockedMotivationQuest())
@@ -609,13 +609,10 @@ var crafty = function() {
 			player5.setNpcData(quest4,getDialogData4);
 			player5.bind("getQuest",player5.putMark);
 
-
 		if(state.checkUnlockedCVQuest())
 		{
 			Crafty.trigger("getQuest");
-		}
-
-		
+		}		
     });
 
 	Crafty.scene("Game2",function()
@@ -679,18 +676,21 @@ var crafty = function() {
 	{
 
 		profile = Crafty.e("Profile");
-		profile.bind("SHOW",function(){
+		profile.bind("SHOW",function()
+		{
 			this.showProfile();
 
 		});
 
-		profile.bind("HIDE",function(){
+		profile.bind("HIDE",function()
+		{
 			this.hideProfile();
 			
 		});
 		
 		dialog = Crafty.e("Dialog, 2D, DOM,Text")
-		.attr({x:0, y:500, w:900, h:0}).css({"font": "10pt Arial", "color": "#000", "text-align": "left"});
+		.attr({x:0, y:500, w:900, h:0}).css({"font": "10pt Arial", "color": "#000", "text-align": "left","border-radius": "20px"});
+		dialog.alpha = 0.8;
 
 		var player2 = Crafty.e("2D,  Canvas, player,Collision,master,NPC")
 		.attr({ x: 400, y: 244, z: 1})
@@ -704,10 +704,9 @@ var crafty = function() {
 
 	Crafty.scene("Castle", function()
 	{
-
-
 		dialog = Crafty.e("Dialog, 2D, DOM,Text")
-		.attr({x:0, y:500, w:900, h:0}).css({"font": "10pt Arial", "color": "#000", "text-align": "left"});
+		.attr({x:0, y:500, w:900, h:0}).css({"font": "10pt Arial", "color": "#000", "text-align": "left","border-radius": "20px"});
+		dialog.alpha = 0.8;
 
 		var player2 = Crafty.e("2D,  Canvas, boss,Collision,npc,NPC")
 		.attr({ x: 200, y: 244, z: 1})
@@ -737,14 +736,41 @@ var crafty = function() {
 		{
 			this.text('<div style="margin-top:12px;">' + this.str + '<div style="margin-left:400px;">');
 		}
+	});
 
-	})
+	Crafty.c('PopUp',
+	{
+		init:function()
+		{
+			this.addComponent("2D,DOM,Text,Color");
+			// this.w = 80;  
+			// this.h = 40;
+			// this.color('#fff');
+			// this.css({"border-radius": "5px"});
+			// this.text('<div  style="margin-top:20px; text-align:center;">'+"Enter");
+		},
+
+
+		show:function()
+		{
+			this.w = 100;  
+			this.h = 100;
+			this.text("Enter");
+		},
+
+
+		hide:function()
+		{
+			this.w = 0;  
+			this.h = 0;
+			this.text("");
+		}
+	});
 
 	Crafty.c("Profile",
 	{
 		attributePositionY:0,
 		totalAttributes:Array,
-
 
 		init:function()
 		{
@@ -754,7 +780,8 @@ var crafty = function() {
 			this.h = 400;
 			this.x = SCREEN_WIDTH *0.5-this.w*0.5;
 			this.y = SCREEN_HEIGTH *0.5-this.h *0.5;
-			this.color("#eee");
+			this.color('#fff');
+			this.css({"border-radius": "20px"})
 			this.totalAttributes = new Array();
 			this.getProfile();
 			this.hideProfile();

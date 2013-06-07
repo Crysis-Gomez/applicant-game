@@ -147,6 +147,12 @@ Crafty.c('RotateWall2',
       }
 
 
+      if(e.key == 83)
+      {
+        state.motivationMayUpload();
+        Crafty.scene("BuildingMotivation");
+
+      }
 
       if(e.key == 37 && this.mayRotate)
       {

@@ -6,7 +6,9 @@ Crafty.c("Infolog",{
 			this.z = 1;
 			this.w = 250;  
 			this.h = 0;
-			this.color("#eee");
+			this.color("#fff");
+			this.css({"border-radius": "15px"});
+			//this.css({"border":"3px solid black"})
 		}
 	});
 
@@ -19,7 +21,7 @@ Crafty.c("Questlog",{
 			this.y = 0;
 			this.w = 150;  
 			this.h = 100;   
-			this.color("#eee");
+			this.color("#fff");
 			this.array = [];
 			this.infolog = info;
 			this.popUp = false;
@@ -32,6 +34,7 @@ Crafty.c("Questlog",{
 			this.marginX = 5;
 			this.marginY = 30;
 			this.infoLogHeight = 100;
+			this.css({"border-radius": "15px"});
 
 			this.bind('EnterFrame', function() {
 
@@ -200,9 +203,9 @@ Crafty.c("Questlog",{
 			if(this.questlog.popDown) return;
 			
 			if(this.isSelected) this.color("#ccc");
-			else this.color("#eee");
-           	
-           	this.infolog.text('<div style="margin-top:12px;">' + this.info);
+			else this.color("#fff");
+           	this.css({"border-radius": "5px"});
+           	this.infolog.text('<div  style="margin-top:10px; margin-left:20px;" >' + this.info);
 		},
 
 		update:function()

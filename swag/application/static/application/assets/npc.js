@@ -171,7 +171,7 @@ function getDialogData6(state)
 
 function uploadCV()
 {
-
+	$("#myModal").modal('show');
 	document.getElementById("cv_form").style.display = 'block';
 	document.getElementById("container").style.display = 'block';
 	return (Crafty.pause(true));
@@ -179,9 +179,8 @@ function uploadCV()
 
 function uploadContact()
 {
-
+	$("#myModal").modal('show');
 	document.getElementById("contact_form").style.display = 'block';
-	document.getElementById("container").style.display = 'block';
 	document.getElementById("id_name").focus();
 	
 	return !(Crafty.pause(true));
@@ -189,16 +188,16 @@ function uploadContact()
 
 function uploadMotivation()
 {
-	document.getElementById("container").style.display = 'block';
+	$("#myModal").modal('show');
 	document.getElementById("choice").style.display = 'block';
 	$("#success_div").show();
-	document.getElementById("success_div").innerHTML = "Pleas chose your picking";
+	document.getElementById("success_div").innerHTML = "Please select one";
 	return !(Crafty.pause(true));
 }
 
 function uploadLink()
 {
-	document.getElementById("container").style.display = 'block';
+	$("#myModal").modal('show');
 	document.getElementById("links_form").style.display = 'block';
 	$("#success_div").show();
 	return !(Crafty.pause(true));
@@ -207,7 +206,7 @@ function uploadLink()
 
 function uploadSkills()
 {
-	document.getElementById("container").style.display = 'block';
+	$("#myModal").modal('show');
 	document.getElementById("skill_form").style.display = 'block';
 	$("#success_div").show();
 	return !(Crafty.pause(true));
@@ -216,7 +215,7 @@ function uploadSkills()
 
 function uploadAnswer()
 {
-	document.getElementById("container").style.display = 'block';
+	$("#myModal").modal('show');
 	document.getElementById("id_answer").style.display = 'block';
 	document.getElementById("question_form").style.display = 'block';
 	

@@ -28,7 +28,8 @@
 </head>
 <body>
 
-<div class="container" id="container">
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" data-backdrop="static" data-keyboard="false">
+<div id="container" >
 
     <form method="post" name="skill_form" id="skill_form" class='form-inline'>
     {%block skills %}
@@ -42,7 +43,7 @@
       
         </table> 
 
-        <button id="submit_skills" type="button" onclick="submitSkills()">Submit</button>
+        <button id="submit_skills" type="button" class="btn btn-primary" onclick="submitSkills()">Submit</button>
      </div>
     </form>
 
@@ -61,7 +62,7 @@
       
         </table> 
 
-        <button id="submit_answer" type="button" onclick="submitAnswer()">Submit</button>
+        <button id="submit_answer" type="button" class="btn btn-primary" onclick="submitAnswer()">Submit</button>
      </div>
 </form>
 
@@ -81,9 +82,9 @@
         {{portfolio.as_table}}
       
         </table> 
-         <button id="addLink"      type="button" onclick="addLink()">add Links</button>
-         <button id="linksbutton"  type="button" onclick="submitlinks()">Submit</button>
-         <!--<div id="success_div" name="response">Response will be placed here on submit.</div>-->
+         <button id="addLink"      type="button" class="btn btn-primary" onclick="addLink()">add Links</button>
+         <button id="linksbutton"  type="button" class="btn btn-primary" onclick="submitlinks()">Submit</button>
+         
     </div>
 
     <div class="linkList" id="linkList">
@@ -108,19 +109,18 @@
                 {{letter.as_table}}
           
             </table> 
-             <button id="letterbutton"  type="button" onclick="sendMotivation()">Send motivation</button>
+             <button id="letterbutton"  type="button" class="btn btn-primary" onclick="sendMotivation()">Send motivation</button>
         </form>
         
-         <!--<div id="success_div" name="response">Response will be placed here on submit.</div>-->
     {%endif%}
 
     {% endblock %}
 
 
     <div class="choice" id="choice">
-        <button id="freeformbutton" type="button" onclick="freeForm()">Free From</button>
+        <button id="freeformbutton" type="button" class="btn btn-primary" margin-top: "50px" onclick="freeForm()">Free From</button>
         
-        <button id="uploaddocumentbutton" type="button" onclick="uploadDocument()">Upload document</button>
+        <button id="uploaddocumentbutton" type="button" class="btn btn-primary" onclick="uploadDocument()">Upload document</button>
 
     </div>
 
@@ -155,7 +155,7 @@
 {% endblock %}
 {% block contact %}
 
-{% if game.get_contact == False %}
+ {% if game.get_contact == False %}
 <form enctype="multipart/form-data" method="post" name="contact_form" id="contact_form" >
     
     <table>
@@ -167,11 +167,10 @@
     
     </table> 
     
-    <button id="contactButton" type="button" onclick="sendContactInfo()">Submit contact</button>
-    <!--<div id="info_div" name="response">Response will be placed here on submit.</div>-->
+    <button id="contactButton" type="button" class="btn btn-primary" onclick="sendContactInfo()" >Submit contact</button>
 </form>
 
-{%endif%}
+{%endif%} 
 
 {% endblock %}
 
@@ -204,7 +203,7 @@
     {% for error in form.errors %}
     {{error}}!
     {% endfor %}
-    <button type="button" id="cvButton" onclick="sendFiles()">Send CV</button>
+    <button type="button" class="btn btn-primary" id="cvButton" onclick="sendFiles()">Send CV</button>
     
     
 </form>
@@ -213,12 +212,11 @@
 {%endif%}
 {% endblock %}
 
-
-
 <div id="success_div" name="response">Response will be placed here on submit.</div>
 </div>
+</div>
 
- <div id="questlog" class="questlog">
+<!--  <div id="questlog" class="questlog">
 
     <div id="quest_title" class="quest_title">
         Questlog
@@ -233,46 +231,19 @@
 
     </div>
 
-    </div>
+</div> -->
+
+
 <canvas id="mycanvas" style="position: absolute; left: 0; top: 0; z-index: 0;"></canvas>
 <div id="cr-stage">
 
 </div>
 
-<!-- <a href='#myModal' data-toggle='modal'>Open my damn modal</a>
-<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="false">×</button>
-    <h3 id="myModalLabel">Modal header</h3>
-  </div>
-  <div class="modal-body">
-    <p>One fine body…</p>
-  </div>
-  <div class="modal-footer">
-    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-    <button class="btn btn-primary">Save changes</button>
-  </div>
-</div>
- -->
 
-<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false">
- <form enctype="multipart/form-data" method="post" name="contact_form" id="contact_form"  >
-    
-    <table>
-    {{ contact_info.as_table }}
-    
-    {% for error in contact_info.errors %}
-    {{error}}
-    {% endfor %}
-    
-    </table> 
-    <!-- <button class="btn btn-primary">Save changes</button> -->
-    <button id="contactButton" type="button" class="btn btn-primary" onclick="sendContactInfo()">Submit contact</button>
-    <!--<div id="info_div" name="response">Response will be placed here on submit.</div>-->
-</form>
-</div>
 
-<a href='#myModal' data-toggle='modal'>Open my damn modal</a>
+    
+
+
 
 </body>
 </html>

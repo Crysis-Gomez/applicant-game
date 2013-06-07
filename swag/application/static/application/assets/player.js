@@ -18,6 +18,7 @@ Crafty.c('StatePosition',
 	}
 })
 
+
 Crafty.c('Player',
 {
 	
@@ -30,7 +31,15 @@ Crafty.c('Player',
 	mayStop:false,
 	mayMove:true,
 
-	
+	init:function()
+	{
+		this.popUp = Crafty.e("PopUp");
+		this.popUp.x = this.x+50;
+		this.popUp.y = this.y-20;
+		this.attach(this.popUp);
+
+	},
+
 	convert:function(obj)
 	{
 		if(typeof this.house === obj)return;
@@ -192,6 +201,10 @@ Crafty.c('Player',
 
 		.bind('Moved',function()
 		{
+
+			list = Crafty.map.search({_x: this.x, _y: this.y, _w: 100, _h: 100}, true);
+
+			console.log(list);
 			
 			if(this.update)this.update();
 			

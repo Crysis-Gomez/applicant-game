@@ -2,7 +2,7 @@ var isFreeFrom = false;
 
 function freeForm()
 {
-    $("#container").show();
+    $("#myModal").modal('show');
     $("#id_entry").show();
     $("#letter_form").show();
     $("#choice").hide();
@@ -14,7 +14,7 @@ function freeForm()
 
 function uploadDocument()
 {
-    $("#container").show();
+    $("#myModal").modal('show');
     $("#id_attachment").show();
     $("#letter_form").show();
     $("#choice").hide();
@@ -38,9 +38,6 @@ function unlockBoss()
         }
   });
 }
-
-
-
 
 function sendMotivation()
 {
@@ -92,7 +89,7 @@ function updateGame(property,value)
     window.quest_log.update();
     document.getElementById("success_div").innerHTML = "Response will be placed here on submit";
     $("#contact_form").hide();
-    $("#container").hide();
+    $("#myModal").modal('hide');
     $("#id_attachment").hide();
     $("#letter_form").hide();
     $("#id_entry").hide();
@@ -232,10 +229,10 @@ function submitlinks()
     document.getElementById("linksbutton").blur();
 }
 
-function showUploadedItem (source)
-{
-        return true;
-}
+// function showUploadedItem (source)
+// {
+//       return true;
+// }
 
 function restartCrafty()
 {
@@ -266,9 +263,6 @@ function sendFiles()
 
 $(document).ready(function()
 {
-    //window.addEventListener('load', loadLevelTxt());
-    
-    //loadLevelTxt();
     window.game = crafty();
     var game = window.game.crafty.init(900, 600);
     {% if contact_info == 'yes' %}
@@ -278,10 +272,10 @@ $(document).ready(function()
     (function ()
     {
         
-    function showUploadedItem (source)
-    {
-        return true;
-    }   
+    // function showUploadedItem (source)
+    // {
+    //     return true;
+    // }   
 
     if (window.FormData) 
     {
@@ -293,13 +287,9 @@ $(document).ready(function()
 
 });
 
-
-
-
 function getUrl(value)
 {
 
-  console.log(value);
   switch(value)
   {
     case 1:

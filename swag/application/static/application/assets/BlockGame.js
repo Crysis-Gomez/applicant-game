@@ -365,6 +365,13 @@ Crafty.c('PlayerCharacter',
       {
         Game.restart();
       }
+
+      if(e.key == 83)
+      {
+        state.cvMayUpload();
+        Crafty.scene("BuildingCV");
+      }
+
       if(e.key  == 39)
       {
         this.lastDirectionX = 1;
