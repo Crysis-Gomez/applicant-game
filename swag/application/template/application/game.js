@@ -17,14 +17,12 @@ var crafty = function() {
 		mark:[2,0]
     });
 
-
      Crafty.sprite(TILE_SIZE, "/static/spriteSheet.png",
     {
 		player:[6,0],
 		npc1:[3,0],
 		npc2:[9,0],
-		npc3:[0,4],
-		npc4:[3,4],
+		npc3:[0,4], npc4:[3,4],
 		master:[9,4],
 		boss:[6,6]
     });
@@ -139,6 +137,7 @@ var crafty = function() {
 					house.setScene("BuildingCV",state.checkUnlockedCVQuest,state.check_cv());
 					house.x = TILE_SIZE*i;
 					house.y = TILE_SIZE*j;
+					house.z = -1;
 					houses.push(house);
 				}
 
@@ -149,6 +148,7 @@ var crafty = function() {
 					house.setScene("BuildingLink",state.checkUnlockedLinkQuest,state.check_link());
 					house.x = TILE_SIZE*i;
 					house.y = TILE_SIZE*j;
+					house.z = -1;
 					houses.push(house);
 				}
 
@@ -159,6 +159,7 @@ var crafty = function() {
 					house.setScene("BuildingMotivation",state.checkUnlockedMotivationQuest,state.check_motivation());
 					house.x = TILE_SIZE*i;
 					house.y = TILE_SIZE*j;
+					house.z = -1;
 					houses.push(house);
 				}
 
@@ -169,6 +170,8 @@ var crafty = function() {
 					house.setScene("Hometown",null,null);
 					house.x = TILE_SIZE*i;
 					house.y = TILE_SIZE*j;
+					house.z = -1;
+
 				}
 
 				if(i  == 1 && j == 10)
@@ -178,6 +181,7 @@ var crafty = function() {
 					house.setScene("BuildingSkills",state.checkUnlockedSkillsQuest,state.check_skills());
 					house.x = TILE_SIZE*i;
 					house.y = TILE_SIZE*j;
+					house.z = -1;
 					houses.push(house);
 				}
 
@@ -206,6 +210,7 @@ var crafty = function() {
 			im = this.image(str);
 			poly1 = new Crafty.polygon([0+this.offsetX,0+this.offsetY],[im._w-this.offsetX,0+this.offsetY],[im._w-this.offsetX,im._h-this.offsetY],[0+this.offsetX,im._h-this.offsetY]);
 			this.collision(poly1);
+			im._z = -1;
 		},
 
 		enterBuilding:function()
@@ -476,7 +481,7 @@ var crafty = function() {
         //load takes an array of assets and a callback when complete
         Crafty.load(["/static/spriteSheet.png" ,"/static/Sprite.png","/static/house.png","/static/Sprite2.png","/static/house2.png","/static/house3.png","/static/house4.png","/static/house5.png","/static/castle.png","/static/background.png"], function ()
         {
-            Crafty.scene("main"); //when everything is loaded, run the main scene
+            Crafty.scene("BlockGame"); //when everything is loaded, run the main scene
             
         });
     });
@@ -552,10 +557,13 @@ var crafty = function() {
 		house.x = 620;
 		house.y = 0;
 
+
 		var canvas = document.getElementById('mycanvas');
 		player1 = Crafty.e("2D,  Canvas, player,Player,RightControls,Collision,Keyboard,Respawn,StatePosition")
 			.rightControls(2)
 			.Player();
+
+
 
 
 		var player2 = Crafty.e("2D,  Canvas, player,Collision,npc1,NPC,Solid");
@@ -891,7 +899,6 @@ var crafty = function() {
 			{
 				this.addAttribute(state.get_links()[key],true);
 			}
-			
 			
 		}
 	});

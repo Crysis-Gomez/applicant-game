@@ -28,8 +28,9 @@
 </head>
 <body>
 
-<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" data-backdrop="static" >
 <div id="container" >
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" data-backdrop="static" >
+
 
     <form method="post" name="skill_form" id="skill_form" class='form-inline'>
     {%block skills %}
@@ -212,15 +213,40 @@
 {%endif%}
 {% endblock %}
 
-<div id="success_div" name="response">Response will be placed here on submit.</div>
+<div id="success_div" class="alert alert-error" name="response">Response will be placed here on submit.</div>
+
+<div id="question" name="question"></div>
 </div>
+
+
+
+
+
+
 </div>
+
+
+
+
+
+
 
 
 <canvas id="mycanvas" style="position: absolute; left: 0; top: 0; z-index: 0;"></canvas>
 <div id="cr-stage">
 
+
+<!-- <div class="alert alert-success" id="alert-success">  
+  <a class="close" data-dismiss="alert"></a>  
+  <strong>Submitted!</strong>
+</div>   -->
 </div>
+
+<div class="alert alert-success" id="alert-success">  
+  <a class="close" data-dismiss="alert"></a>  
+  <strong>Submitted!</strong>
+</div>  
+
 
 </body>
 </html>

@@ -169,6 +169,7 @@ function getDialogData6(state)
 
 
 
+
 function uploadCV()
 {
 	$("#myModal").modal('show');
@@ -180,14 +181,10 @@ function uploadCV()
 
 function uploadContact()
 {
+	document.getElementById("contact_form").style.display = 'block';
+
 	$("#myModal").modal('show');
 
-	$('#myModal').on('shown', function () {
-		document.getElementById("contact_form").style.display = 'block';
-		document.getElementById("id_name").focus();
-	})
-
-	
 	return !(Crafty.pause(true));
 }
 
@@ -195,7 +192,6 @@ function uploadMotivation()
 {
 	$("#myModal").modal('show');
 	document.getElementById("choice").style.display = 'block';
-	$("#success_div").show();
 	document.getElementById("success_div").innerHTML = "Please select one";
 	return !(Crafty.pause(true));
 }
@@ -204,7 +200,6 @@ function uploadLink()
 {
 	$("#myModal").modal('show');
 	document.getElementById("links_form").style.display = 'block';
-	$("#success_div").show();
 	return !(Crafty.pause(true));
 }
 
@@ -213,24 +208,34 @@ function uploadSkills()
 {
 	$("#myModal").modal('show');
 	document.getElementById("skill_form").style.display = 'block';
-	$("#success_div").show();
 	return !(Crafty.pause(true));
 }
 
 
 function uploadAnswer()
 {
+	
+
+
+	$('#myModal').modal({
+        backdrop: false,
+        keyboard: false
+    }).css({
+    	'height':function(){
+    		return 400;
+    	},
+
+	});
+
+	document.getElementById("id_answer").style.display = 'block';
+	document.getElementById("question_form").style.display = 'block';
+	document.getElementById("question").style.display = 'block';
+	document.getElementById("question").innerHTML = state.getQuestion();
+
+
 	$("#myModal").modal('show');
 
 
-	$('#myModal').on('shown', function () {
-		document.getElementById("id_answer").style.display = 'block';
-		document.getElementById("id_answer").focus();
-		document.getElementById("question_form").style.display = 'block';
-	})
-
-	
-	$("#success_div").show();
 	return !(Crafty.pause(true));
 }
 

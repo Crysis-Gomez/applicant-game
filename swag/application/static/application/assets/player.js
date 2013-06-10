@@ -152,6 +152,8 @@ Crafty.c('Player',
 				if(!this.mayMove)return;
 				this.dirX = direction.x;
 				this.dirY = direction.y;
+				 $("#alert-success").hide();
+
 				if (direction.x < 0)
 				{
 					if (!this.isPlaying("walk_left"))
@@ -181,6 +183,7 @@ Crafty.c('Player',
 		.bind('Moved',function()
 		{
 
+			if(!this.mayMove)return;
 			list = Crafty.map.search({_x: this.x, _y: this.y, _w: 40, _h: 40}, true);
 
 			if(this.update)this.update();

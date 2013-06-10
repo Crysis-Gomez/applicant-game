@@ -13,16 +13,30 @@ body {background-color:#c0c0c0;
 }
 
 
+#success_div
+{
+    display: none;
+}
+
+
+#question
+{
+  display: :none;
+  margin-top: 10px;
+}
+
 #cv_form
 {
     z-index:3;
     display: none;
 }
 
+
 #form3
 {
   z-index:3;
   display: none;
+
 }
 
 #links_form
@@ -127,10 +141,6 @@ body {background-color:#c0c0c0;
 	display: none;
 }
 
-#success_div
-{
-    display: :none;
-}
 
 #id_answer
 {
@@ -153,4 +163,18 @@ body {background-color:#c0c0c0;
 #cr-stage
 {
 	margin: auto;
+    z-index: 0;
+}
+
+
+
+#alert-success
+{
+    width:50px;
+    height:10px;
+    margin: auto;
+    margin-top: -24%;
+    position:relative;
+    display: none;
+    
 }

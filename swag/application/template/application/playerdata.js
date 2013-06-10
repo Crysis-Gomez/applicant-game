@@ -6,7 +6,6 @@ function freeForm()
     $("#id_entry").show();
     $("#letter_form").show();
     $("#choice").hide();
-    $("#success_div").hide();
     document.getElementById("id_entry").focus();
     document.getElementById("freeformbutton").blur();
     isFreeFrom = true;
@@ -18,7 +17,6 @@ function uploadDocument()
     $("#id_attachment").show();
     $("#letter_form").show();
     $("#choice").hide();
-    $("#success_div").hide();
     document.getElementById("uploaddocumentbutton").blur();
     isFreeFrom:false;
 }
@@ -87,17 +85,29 @@ function updateGame(property,value)
     window.state.update(property, value);
     var game = window.game.crafty.pause(false);
     window.quest_log.update();
-    document.getElementById("success_div").innerHTML = "Response will be placed here on submit";
-    $("#contact_form").hide();
+    document.getElementById("success_div").innerHTML = "";
+    
+
     $("#myModal").modal('hide');
-    $("#id_attachment").hide();
-    $("#letter_form").hide();
-    $("#id_entry").hide();
-    $("#cv_form").hide();
-    $("#skill_form").hide();
-    $("#links_form").hide();
-    $("#id_answer").hide();
-    $("#question_form").hide();
+
+    $('#myModal').on('hidden', function () 
+    {
+      $("#contact_form").hide();
+      $("#id_attachment").hide();
+      $("#letter_form").hide();
+      $("#id_entry").hide();
+      $("#cv_form").hide();
+      $("#skill_form").hide();
+      $("#links_form").hide();
+      $("#id_answer").hide();
+      $("#question_form").hide();
+      $("#question").hide();
+      $("#success_div").hide();
+      $("#alert-success").show();
+
+
+    
+    });
 }
         
 function sendContactInfo()
@@ -115,7 +125,7 @@ function sendContactInfo()
                 updateGame('player_name', name);
                 updateGame('player_email', email);
             }
-            else document.getElementById("success_div").innerHTML = replaceText(text);
+            else showError(replaceText(text));
             
          }
      });
@@ -124,11 +134,37 @@ function sendContactInfo()
 }
 
 function replaceText(string)
-{
+{ 
     tempText = string.replace(/([&;.*+?^=!:${}()|[\]\/\\])/g,"");
     tempText = tempText.replace(/quot/g,"");
-    tempText = tempText.replace(/,/g,'<br>');
-    return tempText
+  
+    if(tempText.indexOf(", ") !== -1)
+    {
+       textArray = tempText.split(", ");
+
+      for (var i = 0; i < textArray.length; i++) 
+      {
+          textArray[i] = capitaliseFirstLetter(textArray[i]);
+      };
+
+      finaltext  = "";
+
+      for (var i = 1; i < textArray.length; i++) 
+      {
+          finaltext =  textArray[i-1] +"<br>" +textArray[i]; 
+      };
+    }
+    else
+    {
+      return capitaliseFirstLetter(tempText);
+    }
+
+    return finaltext
+}
+
+function capitaliseFirstLetter(string)
+{
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 function checkURL(str) {
@@ -156,7 +192,8 @@ function submitAnswer()
           {
             updateGame('answered', 'True')
           }
-          else document.getElementById("success_div").innerHTML = replaceText(text);
+          else  showError(replaceText(text));
+
         }
     })
 
@@ -165,7 +202,6 @@ function submitAnswer()
 
 function submitSkills() 
 {   
-    //$.post('/uploadskills/{{game.uid}}/', $('#skill_form').serialize());
     $("#skill_form").ajaxSubmit({url:'/uploadskills/{{game.uid}}/', type: 'post',
         success:function(res)
         {
@@ -254,7 +290,7 @@ function sendFiles()
                 text = response.player['result'];
                 updateGame('has_cv', 'True')
             }
-            else document.getElementById("success_div").innerHTML = replaceText(text);
+            else  showError(replaceText(text));
          }
      });
 
@@ -263,6 +299,25 @@ function sendFiles()
 
 $(document).ready(function()
 {
+    $('#myModal').on('shown', function () {
+
+      if(document.getElementById("contact_form") !== null ){
+        if(document.getElementById("contact_form").style.display =='block')
+        {
+          document.getElementById("id_name").focus();
+        }
+      }
+
+      if(document.getElementById("id_answer").style.display !== null){
+        if(document.getElementById("id_answer").style.display == 'block')
+        {
+          document.getElementById("id_answer").focus();
+        }
+      }
+      
+    });
+
+
     window.game = crafty();
     var game = window.game.crafty.init(900, 600);
     {% if contact_info == 'yes' %}

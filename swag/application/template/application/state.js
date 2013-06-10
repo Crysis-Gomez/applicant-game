@@ -238,7 +238,6 @@ var state = function()
 
 	var check_answered = function()
 	{
-		console.log(answered)
 		return boolChecker(answered);
 	}
 
@@ -252,7 +251,6 @@ var state = function()
 
 		getQuestion:function()
 		{
-			console.log(question)
 			return question;
 		},
 
