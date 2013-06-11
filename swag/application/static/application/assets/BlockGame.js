@@ -90,7 +90,15 @@ Crafty.scene("BlockGame", function ()
                 break;
 
                 case "4":
-                  Crafty.e('Block,putOnTile,block,Destroy').at(x, y,1).putOnTile();
+                  if(this.levelNumber == 0)
+                  {
+                     Crafty.e('Block,putOnTile,block,Destroy,Sign').at(x, y,1).putOnTile().setUpSign();
+                  }
+                  else
+                  {
+                    Crafty.e('Block,putOnTile,block,Destroy').at(x, y,1).putOnTile();
+                  }
+                 
                 break;
 
                 case "5":
@@ -117,11 +125,42 @@ Crafty.scene("BlockGame", function ()
     {
       Crafty.background('rgb(249, 223, 125)');
       this.loadLevel();  
+
+      controls = Crafty.e("2D,Image,Canvas");
+      image =  controls.image("/static/controls.png");
+      controls.x = SCREEN_WIDTH*0.5 - image._w*0.5;
+      controls.y = SCREEN_HEIGHT - image._h;
+      image.alpha = 0.7;
+
+
+
+      //controls.setImage("/static/controls.png");
     }
   }
 
   Game.start();
 });
+
+
+Crafty.c('Sign',
+{
+  sign:null,
+
+  init:function()
+  {
+  
+  },
+
+  setUpSign:function()
+  {
+    this.sign = Crafty.e("2D,Image,Canvas");
+    image = this.sign.image("/static/sign1.png");
+    this.sign.x = this.x
+    this.sign.y = this.y+40;
+    this.attach(this.sign);
+  },
+
+})
 
 
 Crafty.c('Destroy',
@@ -196,6 +235,8 @@ Crafty.c('putOnTile',
     onGridX = (this.x-Game.map_grid.offSetX) / Game.map_grid.tile.width;
     onGridY = (this.y-Game.map_grid.offSetY) / Game.map_grid.tile.height;
     Game.myArray[onGridX][onGridY].obj = this;
+
+    return this;
   },
 
   removeFromTile:function()

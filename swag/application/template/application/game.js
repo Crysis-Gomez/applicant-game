@@ -4,11 +4,11 @@ var HOUSE_WIDTH = 20;
 var HOUSE_HEIGHT = 10;
 var OFFSET = 120;
 var SCREEN_WIDTH = 900;
-var SCREEN_HEIGTH = 600; 
+var SCREEN_HEIGHT = 600; 
 	
 var crafty = function() {
 
-    Crafty.init(SCREEN_WIDTH, SCREEN_HEIGTH);
+    Crafty.init(SCREEN_WIDTH, SCREEN_HEIGHT);
 
     Crafty.sprite(TILE_SIZE, "/static/Sprite.png",
     {
@@ -479,7 +479,7 @@ var crafty = function() {
 	Crafty.scene("loading", function () 
 	{
         //load takes an array of assets and a callback when complete
-        Crafty.load(["/static/spriteSheet.png" ,"/static/Sprite.png","/static/house.png","/static/Sprite2.png","/static/house2.png","/static/house3.png","/static/house4.png","/static/house5.png","/static/castle.png","/static/background.png"], function ()
+        Crafty.load(["/static/sign1.png", "/static/controls.png", "/static/spriteSheet.png" ,"/static/Sprite.png","/static/house.png","/static/Sprite2.png","/static/house2.png","/static/house3.png","/static/house4.png","/static/house5.png","/static/castle.png","/static/background.png"], function ()
         {
             Crafty.scene("BlockGame"); //when everything is loaded, run the main scene
             
@@ -813,7 +813,7 @@ var crafty = function() {
 			this.w = 300;  
 			this.h = 400;
 			this.x = SCREEN_WIDTH *0.5-this.w*0.5;
-			this.y = SCREEN_HEIGTH *0.5-this.h *0.5;
+			this.y = SCREEN_HEIGHT *0.5-this.h *0.5;
 			this.color('#fff');
 			this.css({"border-radius": "20px"})
 			this.totalAttributes = new Array();
@@ -905,6 +905,6 @@ var crafty = function() {
 
     return {
     	"crafty": Crafty,
-    	"init_game": Crafty.init(SCREEN_WIDTH,SCREEN_HEIGTH)
+    	"init_game": Crafty.init(SCREEN_WIDTH,SCREEN_HEIGHT)
     }
 };
