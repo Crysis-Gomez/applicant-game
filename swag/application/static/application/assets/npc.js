@@ -167,7 +167,17 @@ function getDialogData6(state)
 	return data;
 }
 
+function getDialogIntro(state)
+{
+   	data="";
+   	data = ["Rick: Hi, I have noticed that you want to apply for a job at Spil Games!!!",
+		"Rick: Currently we have problems with our systems",
+		"Rick: It`s has been taken over by the hiring manager!!",
+		"Rick: Solve the problems and convenience the hiring manager that you can overcome these challenges!!"]  
+ 
+  return data;
 
+}
 
 
 function uploadCV()
@@ -192,7 +202,9 @@ function uploadMotivation()
 {
 	$("#myModal").modal('show');
 	document.getElementById("choice").style.display = 'block';
-	document.getElementById("success_div").innerHTML = "Please select one";
+	document.getElementById("success_div").style.display = 'block';
+	document.getElementById("success_div").innerHTML = "Please upload your motivation or write it in the free from";
+	
 	return !(Crafty.pause(true));
 }
 

@@ -6,6 +6,7 @@ function freeForm()
     $("#id_entry").show();
     $("#letter_form").show();
     $("#choice").hide();
+    $("#success_div").hide();
     document.getElementById("id_entry").focus();
     document.getElementById("freeformbutton").blur();
     isFreeFrom = true;
@@ -17,6 +18,7 @@ function uploadDocument()
     $("#id_attachment").show();
     $("#letter_form").show();
     $("#choice").hide();
+    $("#success_div").hide();
     document.getElementById("uploaddocumentbutton").blur();
     isFreeFrom:false;
 }
@@ -225,6 +227,15 @@ function addLink()
     }else  showError("Please insert a link");
 }
 
+function removeLink()
+{
+    list = $("#list")[0];
+    if(list.children.length > 0)
+    {
+	child = list.children[list.children.length -1];
+	list.removeChild(child); 	
+    }  		
+}
 
 function submitlinks()
 {

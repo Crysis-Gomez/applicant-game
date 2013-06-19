@@ -364,6 +364,16 @@ var crafty = function() {
 
 	Crafty.c('AI',
 	{
+		target:null,
+
+		setTarget:function(target)
+		{
+		 this.target = target;
+		 this.bind('EnterFrame',function(){
+			 console.log("update");
+			});
+		},	
+	
 		walkToPlayer:function()
 		{
 
@@ -481,7 +491,7 @@ var crafty = function() {
         //load takes an array of assets and a callback when complete
         Crafty.load(["/static/sign1.png", "/static/controls.png", "/static/spriteSheet.png" ,"/static/Sprite.png","/static/house.png","/static/Sprite2.png","/static/house2.png","/static/house3.png","/static/house4.png","/static/house5.png","/static/castle.png","/static/background.png"], function ()
         {
-            Crafty.scene("BlockGame"); //when everything is loaded, run the main scene
+            Crafty.scene("Intro"); //when everything is loaded, run the main scene
             
         });
     });
@@ -597,6 +607,29 @@ var crafty = function() {
 	{
 		player1 = Crafty.e("2D,update")
 		.startGame("BuildingMotivation");
+	});
+
+	Crafty.scene("Intro",function()
+	{
+		Crafty.background("url('/static/background.png')");
+		dialog = Crafty.e("Dialog, 2D, DOM,Text")
+		.attr({x:0, y:500, w:900, h:0}).css({"font": "10pt Arial", "color": "#000", "text-align": "left","border-radius": "20px"});
+			dialog.alpha = 0.8;
+
+
+		player1 = Crafty.e("2D,  Canvas, player,Player,RightControls,Collision,Keyboard,Respawn,StatePosition")
+		.rightControls(2)
+		.Player();
+
+
+
+
+		var player2 = Crafty.e("2D,  Canvas, player,Collision,npc1,NPC,Solid,AI");
+			player2.attr({ x: 150, y: 100, z: 1});
+			player2.setNpcData(null,getDialogIntro);
+			player2.setTarget(player1);
+
+
 	});
 
 
@@ -877,7 +910,7 @@ var crafty = function() {
 
 			if(state.checkUnlockedMotivationQuest())
 			{
-				this.addAttribute("Uploaded Motivation:"+ state.check_cv());
+				this.addAttribute("Uploaded Motivation:"+ state.check_motivation());
 			}
 
 			if(state.checkUnlockedLinkQuest())
