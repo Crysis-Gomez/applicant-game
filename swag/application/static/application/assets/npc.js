@@ -8,6 +8,7 @@ var QUEST = "QUEST";
 var PROFILE = "PROFILE";
 var EXIT = "EXIT";
 var QUESTION  = "QUESTION";
+var LEAD ="LEAD";
 
 
 function getDialogData1(state)
@@ -170,10 +171,14 @@ function getDialogData6(state)
 function getDialogIntro(state)
 {
    	data="";
-   	data = ["Rick: Hi, I have noticed that you want to apply for a job at Spil Games!!!",
-		"Rick: Currently we have problems with our systems",
-		"Rick: It`s has been taken over by the hiring manager!!",
-		"Rick: Solve the problems and convenience the hiring manager that you can overcome these challenges!!"]  
+   	data = ["Sandra: Help,Help ......",
+   		"Sandra: We have a problem! I have noticed that you want to apply for a job at Spil Games!!!",
+		"Sandra: Currently we have problems with our systems",
+		"Sandra: It`s has been taken over by the hiring manager!!",
+		"Sandra: Solve the problems and convenience the hiring manager that you can overcome these challenges!!",
+		"Sandra: Follow Me pls",
+		 LEAD,
+		]  
  
   return data;
 
@@ -298,6 +303,10 @@ function craftyTriggers(str,npc)
 		 case EXIT:
 		 		Crafty.trigger("HIDE");
 		 return [true,false];
+
+		 case LEAD:
+		 		Crafty.trigger("LEAD");
+		 return [true,true];
 
 	}
 

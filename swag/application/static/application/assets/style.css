@@ -3,7 +3,7 @@ body {background-color:#c0c0c0;
 
 #contact_form
 {
-
+    display: none;
 }
 
 #myModal
@@ -72,7 +72,7 @@ body {background-color:#c0c0c0;
 #choice
 {
     margin-top:40px;
-    display: none;
+    xdisplay: none;
 }
 #meetingForm
 {

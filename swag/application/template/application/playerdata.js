@@ -44,21 +44,20 @@ function sendMotivation()
     var uploadURL = "/uploadfilemotivation/{{game.uid}}/";
 
     if(isFreeFrom)uploadURL = "/uploadmotivation/{{game.uid}}/";
-    
- 
-     if(document.getElementById("id_attachment").value != "" || document.getElementById("id_entry").value != "")
-     {
-         $("#letter_form").ajaxSubmit({url:uploadURL, type: 'post',
-             success:function(res)
-             {
-
-                updateGame('has_motivation','True')
-             }
+       
+        $("#letter_form").ajaxSubmit({url:uploadURL, type: 'post',
+            success:function(res)
+            {
+                response = JSON.parse(res);
+                text = response.player['result'];
+                if(text == 'Thanks for submitting')
+                {
+                  updateGame('has_motivation','True')
+                }
+                else showError(replaceText(text));
+          
+            }
         });
-    }
-    else showError("Please input something");
-
-
     document.getElementById("letterbutton").blur();
 }
 
@@ -137,9 +136,12 @@ function sendContactInfo()
 
 function replaceText(string)
 { 
+
+    
     tempText = string.replace(/([&;.*+?^=!:${}()|[\]\/\\])/g,"");
     tempText = tempText.replace(/quot/g,"");
-  
+    tempText = tempText.replace('__all__','');
+    
     if(tempText.indexOf(", ") !== -1)
     {
        textArray = tempText.split(", ");

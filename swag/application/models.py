@@ -8,6 +8,7 @@ from django.utils.html import format_html
 import json
 import datetime
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 
 class SkillSet(models.Model):
@@ -29,7 +30,8 @@ class Vacancy(models.Model):
     title = models.CharField(max_length=200)
     department = models.CharField(max_length=20)
     slug = models.SlugField(max_length=50, unique=True)
-    mail_text = models.CharField(max_length=500)
+    mail_text = models.TextField(max_length=500)
+    mail_text2 = models.TextField(max_length=500)
     skill_sets = models.ManyToManyField(SkillSet)
     question = models.ForeignKey(Question, null=True, blank=False)
     pub_date = models.DateTimeField(auto_now=True, auto_now_add=True)
@@ -56,6 +58,7 @@ class GameInstance(models.Model):
     player_motivation_unlockedQuest = models.BooleanField(default=False)
     player_link_unlockedQuest = models.BooleanField(default=False)
     player_skill_unlockedQuest = models.BooleanField(default=False)
+    player_finished_intro = models.BooleanField(default=False)
     player_unlocked_boss = models.BooleanField(default=False)
     player_name = models.CharField(max_length=50, blank=True)
     player_email = models.EmailField(max_length=100, blank=True)
@@ -65,9 +68,13 @@ class GameInstance(models.Model):
     def __unicode__(self):
         return self.name()
 
+    def get_Intro(self):
+
+        return self.player_finished_intro
+
     def get_answer(self):
         try:
-             get_object_or_404(PlayerQuestion, game_instance=self.id)
+            get_object_or_404(PlayerQuestion, game_instance=self.id)
         except Http404:
             return False
 
@@ -186,10 +193,8 @@ class PlayerQuestion(models.Model):
     class Meta:
         unique_together = (("question", "game_instance"),)
 
-
     def __unicode__(self):
         return self.question.title
-
 
 
 class PlayerSkill(models.Model):
@@ -200,8 +205,6 @@ class PlayerSkill(models.Model):
 
     class Meta:
         unique_together = (("skill", "game_instance"),)
-
-
 
 
 class Meeting(models.Model):
@@ -246,6 +249,7 @@ class CvDocument(models.Model):
     def __unicode__(self):
         return str(self.title)
 
+
 class MotivationLetter(models.Model):
 
     title = models.CharField(max_length=50, editable=False)
@@ -258,9 +262,12 @@ class MotivationLetter(models.Model):
         null=True,
         blank=True)
 
+    def clean(self):
+        if not self.attachment and not self.entry:
+            raise ValidationError('Current field is empty')
+
     def __unicode__(self):
         return str(self.title)
-
 
 class Applicationdocumentfiles(models.Model):
     filename = models.CharField(max_length=255, primary_key=True)

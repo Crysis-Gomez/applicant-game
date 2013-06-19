@@ -4,7 +4,8 @@ var HOUSE_WIDTH = 20;
 var HOUSE_HEIGHT = 10;
 var OFFSET = 120;
 var SCREEN_WIDTH = 900;
-var SCREEN_HEIGHT = 600; 
+var SCREEN_HEIGHT = 600;
+var dialog; 
 	
 var crafty = function() {
 
@@ -35,7 +36,7 @@ var crafty = function() {
 		 door:[5,0]
     });
 
-	var dialog;
+	
 	var houses;
 
 	
@@ -189,6 +190,21 @@ var crafty = function() {
 		}
 	}
 
+
+
+	Crafty.c('setCollision',
+	{
+		setImage:function(str)
+		{
+
+			im = this.image(str);
+			poly1 = new Crafty.polygon([0+this.offsetX,0+this.offsetY],[im._w-this.offsetX,0+this.offsetY],[im._w-this.offsetX,im._h-this.offsetY],[0+this.offsetX,im._h-this.offsetY]);
+			this.collision(poly1);
+			im._z = -1;
+		},
+
+	});
+
 	Crafty.c('Building',
 	{
 		sceneString:"",
@@ -215,6 +231,7 @@ var crafty = function() {
 
 		enterBuilding:function()
 		{
+
 			if(this.check === null)
 			{
 				Crafty.scene(this.sceneString);
@@ -259,12 +276,12 @@ var crafty = function() {
 			{
 				dialog.startDialog(this);
 				this.player.mayMove = false;
+				this.player.stop();
 			}
 			if(dialog.finished)
 			{
 				dialog.nextDialog();
 			}	
-
 	     },
 
 	     setNpcData:function(quest,func)
@@ -364,25 +381,185 @@ var crafty = function() {
 
 	Crafty.c('AI',
 	{
-		target:null,
+		tar:null,
+		posX:null,
+		posY:null,
+		speed:2,
+		hasTalked:false,
+		TO_TARGET:1,
+		TO_POSITION:2,
+		TO_LEAD:3,
+		TYPE:0,
 
-		setTarget:function(target)
+		init:function()
 		{
-		 this.target = target;
-		 this.bind('EnterFrame',function(){
-			 console.log("update");
-			});
-		},	
-	
-		walkToPlayer:function()
-		{
+			
+			  this.requires("SpriteAnimation")
+			 .animate("walk_left",3,1,5)
+			 .animate("walk_right",3,2,5)
+			 .animate("walk_up",3,3,5)
+			 .animate("walk_down",3,0,5)
+
+			 this.bind('EnterFrame',function()
+			 {
+			 	switch(this.TYPE)
+			 	{
+			 		case this.TO_TARGET:
+			 			this.walkToTarget();
+			 		break;
+
+			 		case this.TO_POSITION:
+			 			this.walkToPosition();
+			 		break;
+
+
+			 		case this.TO_LEAD:
+			 			this.walkToLead();
+			 		break
+
+			 	}
+				  
+			 });
 
 		},
 
-		update:function()
+		reset:function()
 		{
-			walkToPlayer();
-		}
+			this.tar = null;
+			this.posX = null;
+			this.posY = null;
+
+		},
+
+		setTarget:function(target)
+		{
+			this.reset();
+			this.tar = target;
+			this.TYPE = this.TO_TARGET;
+		},
+
+		setPosition:function(x,y)
+		{	
+			this.reset();
+			this.posX = x;
+			this.posY = y;
+			this.TYPE = this.TO_POSITION;
+		},
+
+		setLead:function(target,x,y)
+		{
+			this.reset();
+			this.tar = target;
+			this.posX = x;
+			this.posY = y;
+			this.TYPE = this.TO_LEAD;
+		},
+
+
+		walkToPosition:function()
+		{
+			distance = Math.pow(this.posX - this.x,2) + Math.pow(this.posY - this.y,2);
+			distance = Math.sqrt(distance);
+			this.walk(distance,this.posX,this.posY);
+
+		},
+
+
+		walkToLead:function()
+		{
+
+			distance = Math.pow(this.posX - this.x,2) + Math.pow(this.posY - this.y,2);
+			distance = Math.sqrt(distance);
+			
+			distance2 = Math.pow(this.tar.x - this.x,2) + Math.pow(this.tar.y - this.y,2);
+			distance2 = Math.sqrt(distance2);
+
+			if(distance2  < 100)
+			{
+				this.walk(distance,this.posX,this.posY);
+				if(this.tar.x > 900)
+				{
+					jQuery.post("/intro/{{game.uid}}/"); 
+					Crafty.scene("main");
+				}	
+			}else this.stop();
+
+
+		},
+
+		walkToTarget:function()
+		{
+			
+			distance = Math.pow(this.tar.x - this.x,2) + Math.pow(this.tar.y - this.y,2);
+			distance = Math.sqrt(distance);
+			this.walk(distance,this.tar.x,this.tar.y);
+		
+			if(distance <= 45)
+			{
+				if(!dialog.inConversation && !this.hasTalked)
+				{
+					this.player = this.tar;
+					this.player.npc = this;
+					this.startDialog();
+					this.hasTalked = true;
+				}
+				this.stop();
+			} 
+		},
+
+		walk:function(distance,x,y)
+		{
+
+			if(distance  > 45)
+			{
+				velocityX = (x - this.x);
+				velocityY = (y - this.y);
+
+				tempVelX = Math.abs(velocityX);
+				tempVelY = Math.abs(velocityY);
+
+				if(tempVelX > tempVelY)
+				{
+					if(velocityX  > 0)
+					{
+						if (!this.isPlaying("walk_right"))
+						this.stop().animate("walk_right", 10, -1);
+					}
+					else
+					{
+						if (!this.isPlaying("walk_left"))
+						this.stop().animate("walk_left", 10, -1);
+					}
+				}
+				else
+				{
+
+					if(velocityY  > 0)
+					{
+						if (!this.isPlaying("walk_down"))
+						this.stop().animate("walk_down", 10, -1);
+
+					}
+					else
+					{
+						if (!this.isPlaying("walk_up"))
+						this.stop().animate("walk_up", 10, -1);
+
+					}
+
+				}
+				
+				velocityX = velocityX / distance;
+				velocityY = velocityY / distance;
+				velocityX = velocityX * this.speed;
+				velocityY = velocityY * this.speed;
+				this.x += velocityX;
+				this.y += velocityY; 
+			}
+
+		},
+
+
 	});
 
 	Crafty.c("Dialog",
@@ -459,6 +636,7 @@ var crafty = function() {
 			this.DialogText = "";
 			this.text("");
 			this.TextIndex = 0;
+
 		},
 	
 		closeDialog:function()
@@ -483,16 +661,20 @@ var crafty = function() {
 			this.h = this.maxHeight;
 			this.inConversation = true;
 
+
 		}
 	}); 
 
 	Crafty.scene("loading", function () 
 	{
         //load takes an array of assets and a callback when complete
-        Crafty.load(["/static/sign1.png", "/static/controls.png", "/static/spriteSheet.png" ,"/static/Sprite.png","/static/house.png","/static/Sprite2.png","/static/house2.png","/static/house3.png","/static/house4.png","/static/house5.png","/static/castle.png","/static/background.png"], function ()
+        Crafty.load(["/static/sign1.png", "/static/controls.png", "/static/spriteSheet.png" ,"/static/Sprite.png","/static/house.png","/static/Sprite2.png","/static/house2.png","/static/house3.png","/static/house4.png","/static/house5.png","/static/castle.png","/static/background.png","/static/background2.png","/static/fence.png"], function ()
         {
-            Crafty.scene("Intro"); //when everything is loaded, run the main scene
-            
+       		if('{{game.get_Intro}}' == 'False')Crafty.scene("Intro"); //when everything is loaded, run the main scene
+            else Crafty.scene("main");
+
+
+            $("#myModal").modal('show');
         });
     });
 
@@ -569,7 +751,8 @@ var crafty = function() {
 
 
 		var canvas = document.getElementById('mycanvas');
-		player1 = Crafty.e("2D,  Canvas, player,Player,RightControls,Collision,Keyboard,Respawn,StatePosition")
+		var Mainplayer = Crafty.e("2D,  Canvas, player,Player,RightControls,Collision,Keyboard,Respawn,StatePosition")
+			.attr({ x: 100, y: 300, z: 1})
 			.rightControls(2)
 			.Player();
 
@@ -611,23 +794,35 @@ var crafty = function() {
 
 	Crafty.scene("Intro",function()
 	{
-		Crafty.background("url('/static/background.png')");
+		Crafty.background("url('/static/background2.png')");
 		dialog = Crafty.e("Dialog, 2D, DOM,Text")
 		.attr({x:0, y:500, w:900, h:0}).css({"font": "10pt Arial", "color": "#000", "text-align": "left","border-radius": "20px"});
 			dialog.alpha = 0.8;
 
-
-		player1 = Crafty.e("2D,  Canvas, player,Player,RightControls,Collision,Keyboard,Respawn,StatePosition")
-		.rightControls(2)
-		.Player();
-
-
-
+	    var	player1 = Crafty.e("2D,  Canvas, player,Player,RightControls,Collision,Keyboard,Respawn,StatePosition");
+		player1.rightControls(2)
+		player1.attr({ x: 150, y: 280, z: 1});
+		player1.Player();
 
 		var player2 = Crafty.e("2D,  Canvas, player,Collision,npc1,NPC,Solid,AI");
-			player2.attr({ x: 150, y: 100, z: 1});
+			player2.attr({ x: 650, y: 300, z: 1});
 			player2.setNpcData(null,getDialogIntro);
 			player2.setTarget(player1);
+			player2.bind("LEAD",function()
+			{
+				player2.setLead(player1,1000,300);
+				
+			});
+
+
+
+		var fence  = Crafty.e("2D, Canvas,Image,Collision,setCollision,Solid");
+		fence.setImage("/static/fence.png");
+		fence.attr({ x: 0, y: 320, z: 1});
+
+		var fence  = Crafty.e("2D, Canvas,Image,Collision,setCollision,Solid");
+		fence.setImage("/static/fence.png");
+		fence.attr({ x: 0, y: 240, z: 0});
 
 
 	});
@@ -656,6 +851,7 @@ var crafty = function() {
 		}
 
 		$("#mycanvas").hide();
+
 	});
 
 	Crafty.scene("BuildingMotivation", function()

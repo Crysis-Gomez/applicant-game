@@ -30,6 +30,7 @@ urlpatterns = patterns(
     url(r'^skillquest/(?P<unique_id>\w+)/', views.unlock_skill_quest, name='submit_skill_quest'),
     url(r'^answer/(?P<unique_id>\w+)/', views.process_answer, name='submit_answer'),
     url(r'^boss/(?P<unique_id>\w+)/', views.process_boss, name='submit_boss'),
+    url(r'^intro/(?P<unique_id>\w+)/', views.process_intro, name='submit_intro'),
 
 
     url(r'^uploadfilemotivation/(?P<unique_id>\w+)/', views.process_motivation_upload, name='submitmotivationfile'),

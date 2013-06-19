@@ -32,6 +32,7 @@ from django.forms.models import inlineformset_factory
 from django.db import IntegrityError
 
 
+
 # def get_contact_info(game):
 #     if not game.player_name and not game.player_email:
 #         return False
@@ -160,7 +161,7 @@ def play(request, unique_id):
         return HttpResponseRedirect('/')
 
     context = dict()
-    if game.get_contact() == False:
+    if game.get_contact() is False:
         contact_info = ContactInformationForm()
         context.update({'contact_info': contact_info})
 
@@ -176,16 +177,26 @@ def play(request, unique_id):
 
     answer = Answer()
 
-
     context.update({'skill': skillForm})
 
     form = UploadFileForm(initial={'title': 'cv'})
     context.update({
         'game': game,
         'portfolio': portfolio,
-        'answer':answer,
+        'answer': answer,
         'form': form})
     return render_to_response("index.html", context)
+
+
+@csrf_exempt
+def process_intro(request, unique_id):
+
+    game = get_object_or_404(GameInstance, uid=unique_id)
+    if request.method == "POST":
+        game.player_finished_intro = True
+        game.save()
+
+    return HttpResponse('All went well')
 
 
 @csrf_exempt
@@ -351,12 +362,11 @@ def process_motivation_letter(request, unique_id):
     game = GameInstance.objects.get(uid=unique_id)
     form = LetterForm(request.POST)
     motivation_letter = MotivationLetter()
-
     upload_state = {"action": "motivation", 'success': 'Thanks for submitting'}
 
     if not form.is_valid():
         error = form.errors
-
+        print error
         upload_state['success'] = json.dumps(error)
     else:
         try:
@@ -387,18 +397,14 @@ def process_contact(request, unique_id):
         print(form.errors)
         upload_state['success'] = json.dumps(form.errors)
 
-    #update_state(request, game)
     return render(request, "results_template.js", upload_state, content_type=RequestContext(request))
 
 
 @csrf_exempt
 def handle_uploaded_motivation(submitted_file, title, unique_id):
-
     game = GameInstance.objects.get(uid=unique_id)
     name = "{name}-{title}".format(name=game.player_name, title=title)
-
     motivation_letter = MotivationLetter()
-
     try:
         motivation_letter = get_object_or_404(MotivationLetter, game_instance=game)
     except Http404:
@@ -415,7 +421,7 @@ def handle_uploaded_motivation(submitted_file, title, unique_id):
 @csrf_exempt
 def process_motivation_upload(request, unique_id):
 
-    upload_state = {"action": "file_upload", 'success': 'false'}
+    upload_state = {"action": "file_upload", 'success': 'Current field is empty'}
     if not request.method == "POST":
         return render(request, "results_template.js", upload_state, content_type="application/json")
 
@@ -426,7 +432,7 @@ def process_motivation_upload(request, unique_id):
         upload_success = handle_uploaded_motivation(form.document, form.document.name, unique_id)
 
         if upload_success:
-            upload_state['success'] = 'Thanks for submitting'     
+            upload_state['success'] = 'Thanks for submitting'
     return render(request, "results_template.js", upload_state, content_type="text/html")
 
 
@@ -439,7 +445,7 @@ def process_upload(request, unique_id):
 
     form = UploadFileForm(request.POST, request.FILES)
     if form.is_valid():
-        upload_success = handle_uploaded_file(request.FILES['document'], form.cleaned_data['title'], unique_id)
+        #upload_success = handle_uploaded_file(request.FILES['document'], form.cleaned_data['title'], unique_id)
         upload_state['success'] = 'Thanks for submitting'
     else:
         print(form.errors)

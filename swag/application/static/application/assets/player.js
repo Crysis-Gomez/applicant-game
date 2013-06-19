@@ -71,27 +71,53 @@ Crafty.c('Player',
 		}
 	},
 
+
+	buildingCollision:function()
+	{
+		if(this.y <= this.house.y+10)
+		{
+			this.convert(this.house);
+			this.house.sort(0.5,2);
+			return;
+		}
+		else
+		{
+			if(this.dirY > 0 && this.y <= this.house.y+10)this.house.sort(0.5,2);
+			this.stopMovement();
+			return;
+		}
+		this.stopMovement();
+	},
+
+	fenceCollision:function()
+	{
+		
+		if(this.y <= this.house.y-10)return;
+
+		if(this.y >= this.house.y +10)return;
+
+		this.stopMovement();
+	
+	},
+
 	enterCollisionSolid:function(e)
 	{
 		this.collidedObject = e[0].obj;
+
 		 if(this.collidedObject.has("Building"))
 		 {
 		 	this.house = e[0].obj;
-		 	if(this.y <= this.house.y+10)
-			{
-				this.convert(this.house);
-				this.house.sort(0.5,2);
-				return;
-			}
-			else
-			{
-				if(this.dirY > 0 && this.y <= this.house.y+10)this.house.sort(0.5,2);
-				this.stopMovement();
-				return;
-			}
+		 	this.buildingCollision();
 		 }
+		else if(this.collidedObject.has("setCollision"))
+		 {
+		 	this.house = e[0].obj;
+		 	this.fenceCollision();
 
-		 this.stopMovement();
+		 }
+		 else this.stopMovement();
+
+		 
 	},
 
 	exitCollisionSolid:function(e)
@@ -132,8 +158,6 @@ Crafty.c('Player',
 
 	Player:function(func)
 	{
-
-		this.z = 1;
 		this.collisionFunction = func;
 		this.requires("SpriteAnimation")
 		 .animate("walk_left",6,1,8)
@@ -143,6 +167,7 @@ Crafty.c('Player',
 		 .bind('EnterFrame', function()
 		 {
 		 	if(!this.mayMove)this.stopMovement();
+
 		 })
 		
 		
@@ -254,7 +279,7 @@ Crafty.c('Player',
 					this.enterHouse();
 				}
 
-				if(this.popUp.isNpc)
+				if(this.popUp.isNpc || dialog.inConversation)
 				{
 					this.npc.startDialog();
 				}
@@ -290,7 +315,6 @@ Crafty.c('Player',
 			}
 			return true;
 		})
-
 
 		.onHit("Solid",this.enterCollisionSolid,this.exitCollisionSolid)
 		.onHit("Block",this.enterCollisionBlock)
