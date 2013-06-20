@@ -668,13 +668,13 @@ var crafty = function() {
 	Crafty.scene("loading", function () 
 	{
         //load takes an array of assets and a callback when complete
-        Crafty.load(["/static/sign1.png", "/static/controls.png", "/static/spriteSheet.png" ,"/static/Sprite.png","/static/house.png","/static/Sprite2.png","/static/house2.png","/static/house3.png","/static/house4.png","/static/house5.png","/static/castle.png","/static/background.png","/static/background2.png","/static/fence.png"], function ()
+        Crafty.load(["/static/sign1.png", "/static/goal.png", "/static/controls.png","/static/controls2.png", "/static/spriteSheet.png" ,"/static/Sprite.png","/static/house.png","/static/Sprite2.png","/static/house2.png","/static/house3.png","/static/house4.png","/static/house5.png","/static/castle.png","/static/background.png","/static/background2.png","/static/fence.png"], function ()
         {
-       		if('{{game.get_Intro}}' == 'False')Crafty.scene("Intro"); //when everything is loaded, run the main scene
-            else Crafty.scene("main");
+       		// if('{{game.get_Intro}}' == 'False')Crafty.scene("Intro"); //when everything is loaded, run the main scene
+         //    else Crafty.scene("main");
+         	Crafty.scene("RotateGame");
 
-
-            $("#myModal").modal('show');
+         //    $("#myModal").modal('show');
         });
     });
 
@@ -755,9 +755,6 @@ var crafty = function() {
 			.attr({ x: 100, y: 300, z: 1})
 			.rightControls(2)
 			.Player();
-
-
-
 
 		var player2 = Crafty.e("2D,  Canvas, player,Collision,npc1,NPC,Solid");
 			player2.attr({ x: 150, y: 100, z: 1});

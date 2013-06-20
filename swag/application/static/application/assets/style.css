@@ -72,7 +72,7 @@ body {background-color:#c0c0c0;
 #choice
 {
     margin-top:40px;
-    xdisplay: none;
+    display: none;
 }
 #meetingForm
 {

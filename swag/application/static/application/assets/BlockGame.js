@@ -41,7 +41,7 @@ Crafty.scene("BlockGame", function ()
     {
       currentLevel = new Array;
       //levelString = window.block_levels[levelNumber];
-      console.log(levelNumber);
+
       if(typeof window.block_levels[levelNumber] == "string")
       {
         levelString = window.block_levels[levelNumber];
@@ -86,13 +86,21 @@ Crafty.scene("BlockGame", function ()
                 break;
 
                 case "3":
-                  Crafty.e('Key,putOnTile,key,Destroy').at(x, y,0);
+                  if(this.levelNumber == 0)
+                  {
+                      Crafty.e('Key,putOnTile,key,Destroy,Sign').at(x, y,0).setUpSign("/static/goal.png");
+                  }
+                  else
+                  {
+                      Crafty.e('Key,putOnTile,key,Destroy').at(x, y,0);
+                  }
+                  
                 break;
 
                 case "4":
                   if(this.levelNumber == 0)
                   {
-                     Crafty.e('Block,putOnTile,block,Destroy,Sign').at(x, y,1).putOnTile().setUpSign();
+                     Crafty.e('Block,putOnTile,block,Destroy,Sign').at(x, y,1).putOnTile().setUpSign("/static/sign1.png");
                   }
                   else
                   {
@@ -102,7 +110,7 @@ Crafty.scene("BlockGame", function ()
                 break;
 
                 case "5":
-                  Crafty.e('GameDoor,putOnTile,Destroy').at(x, y,1).putOnTile();
+                  Crafty.e('GameDoor,putOnTile,Destroy').at(x, y,0).putOnTile();
                 break;
 
                 default:
@@ -140,113 +148,6 @@ Crafty.scene("BlockGame", function ()
 
   Game.start();
 });
-
-
-Crafty.c('Sign',
-{
-  sign:null,
-
-  init:function()
-  {
-  
-  },
-
-  setUpSign:function()
-  {
-    this.sign = Crafty.e("2D,Image,Canvas");
-    image = this.sign.image("/static/sign1.png");
-    this.sign.x = this.x
-    this.sign.y = this.y+40;
-    this.attach(this.sign);
-  },
-
-})
-
-
-Crafty.c('Destroy',
-{
-    init:function()
-    {
-       this.bind("Destroy",function()
-       {
-          this.destroy();
-       })
-    }
-})
-
-
-Crafty.c('Win',
-{
-    buildingName:"",
-
-    init:function()
-    {
-        this.addComponent("2D, DOM,Color,Text,Delay");
-        this.textColor('#000');
-        this.w = 500;
-        this.h = 50;
-        this.x = 350;
-        this.y = 300;
-        this.text('<div style="margin-top:12px;font-size:40px">' + "YOU WIN");
-
-        this.delay(function()
-        {
-          Crafty.scene(this.buildingName);
-        }, 5000);
-    },
-
-    setBuildingName:function(str)
-    {
-      this.buildingName = str;
-    }
-})
-
-
-Crafty.c('Grid',
-{
-  init: function()
-  {
-    this.attr({
-        w: Game.map_grid.tile.width,
-        h: Game.map_grid.tile.height
-    })
-  },
- 
-  at: function(x, y, z)
-  {
-    if (x === undefined && y === undefined)
-    {
-      return { x: this.x/Game.map_grid.tile.width+Game.map_grid.offSetX, y: this.y/Game.map_grid.tile.height+Game.map_grid.offSetY,z:z }
-    } 
-    else 
-    {
-      this.attr({ x: x * Game.map_grid.tile.width+Game.map_grid.offSetX, y: y * Game.map_grid.tile.height+Game.map_grid.offSetY,z:z});
-      return this;
-    }
-  }
-});
-
-
-Crafty.c('putOnTile',
-{
-
-  putOnTile:function()
-  {
-    onGridX = (this.x-Game.map_grid.offSetX) / Game.map_grid.tile.width;
-    onGridY = (this.y-Game.map_grid.offSetY) / Game.map_grid.tile.height;
-    Game.myArray[onGridX][onGridY].obj = this;
-
-    return this;
-  },
-
-  removeFromTile:function()
-  {
-    onGridX = (this.x-Game.map_grid.offSetX) / Game.map_grid.tile.width;
-    onGridY = (this.y-Game.map_grid.offSetY) / Game.map_grid.tile.height;
-    Game.myArray[onGridX][onGridY].obj = null;
-  }
-});
-
 
 
 Crafty.c('GameWall',
@@ -290,6 +191,12 @@ Crafty.c('Key',
         {
           Crafty.trigger("unlockDoor");
           this.unlockDoor = true;
+          if(this.has('Sign'))
+          {
+            this.removeSign();
+            this.removeComponent('Sign');
+          }
+
         }
     });
 
@@ -499,7 +406,6 @@ Crafty.c('PlayerCharacter',
 
   endGame:function()
   {
-    console.log("Destroy Level");
     this.checkGameComplete();
     Crafty.trigger("Destroy");
     Game.nextLevel();
@@ -537,10 +443,17 @@ Crafty.c('PlayerCharacter',
     {
       if(tile.obj.has('block'))
       {
-         if(tile.obj.checkMovement(this.lastDirectionX,this.lastDirectionY))
-         {
+        
+        if(tile.obj.has('Sign'))
+        {
+          tile.obj.removeSign();
+          tile.obj.removeComponent('Sign');
+        }
+
+        if(tile.obj.checkMovement(this.lastDirectionX,this.lastDirectionY))
+        {
             this.movePlayer(this.lastDirectionX,this.lastDirectionY);
-         }
+        }
       }
     }
   },
