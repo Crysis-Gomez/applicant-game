@@ -23,6 +23,7 @@ from django.conf import settings
 import uuid
 import json
 import mimetypes
+import sys
 from django.views.decorators.csrf import csrf_exempt
 from database_storage import DatabaseStorage
 from django.template import RequestContext
@@ -178,7 +179,7 @@ def play(request, unique_id):
     answer = Answer()
 
     context.update({'skill': skillForm})
-
+ 
     form = UploadFileForm(initial={'title': 'cv'})
     context.update({
         'game': game,
@@ -318,9 +319,12 @@ def process_mail(request, unique_id):
     #recipients = [settings.DEFAULT_FROM_EMAIL]
 
     #send_mail('New article:', message, recipients, ['Crysis.gomez@gmail.com'], fail_silently=False)
-    send_mail('Subject here', 'Here is the message.', settings.DEFAULT_FROM_EMAIL,
-    ['crysis.gomez@gmail.com'], fail_silently=False)
-
+	subject = game.vacancy.title
+	message = game.vacancy.mail_text
+	
+	send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
+        [game.player_email], fail_silently=False)
+	
     return HttpResponse('All went well')
     # if subject and message and from_email:
     #     try:
@@ -393,11 +397,28 @@ def process_contact(request, unique_id):
         game.save()
         upload_state['playername'] = json.dumps(game.player_name)
         upload_state['playeremail'] = json.dumps(game.player_email)
+	subject = game.vacancy.title
+	message = game.vacancy.mail_text
+	link = get_current_path(request)
+	link = sys.argv[-1]+link['current_path']
+ 
+	message = message.replace("link","http://"+link)
+	message = message.replace("uploadcontact","game")
+
+	send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
+        [game.player_email], fail_silently=False)
+	
+	
     else:
         print(form.errors)
         upload_state['success'] = json.dumps(form.errors)
 
     return render(request, "results_template.js", upload_state, content_type=RequestContext(request))
+
+def get_current_path(request):
+    return{
+	'current_path':	request.get_full_path()
+    }
 
 
 @csrf_exempt

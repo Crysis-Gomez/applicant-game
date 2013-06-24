@@ -672,7 +672,7 @@ var crafty = function() {
         {
        		// if('{{game.get_Intro}}' == 'False')Crafty.scene("Intro"); //when everything is loaded, run the main scene
          //    else Crafty.scene("main");
-         	Crafty.scene("RotateGame");
+         	Crafty.scene("main");
 
          //    $("#myModal").modal('show');
         });
