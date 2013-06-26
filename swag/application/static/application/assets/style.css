@@ -4,12 +4,18 @@ body {background-color:#c0c0c0;
 #contact_form
 {
     display: none;
+    margin-top: 10px;
+}
+
+#submitButton
+{
+    xdisplay: none;
 }
 
 #myModal
 {
-    height: 300px;
-    width:  450px;
+   /* height: 300px;
+    width:  450px;*/
 }
 
 
@@ -25,7 +31,7 @@ body {background-color:#c0c0c0;
   margin-top: 10px;
 }
 
-#cv_form
+#fileupload
 {
     z-index:3;
     display: none;
@@ -90,6 +96,13 @@ body {background-color:#c0c0c0;
     cursor:pointer;
 }
 
+#ajaxBusy {
+  display: none;
+  text-align: center;
+  background: url(images/ajax-loader.gif) no-repeat center center;
+
+}
+
 
 #quest_title
 {
@@ -137,7 +150,7 @@ body {background-color:#c0c0c0;
     height: 200px;
 }
 
-#cv
+#cv_form
 {
 	display: none;
 }

@@ -1,6 +1,7 @@
 Crafty.c('Respawn',
 {
-	init:function()
+
+	respawn:function()
 	{
 		this.x = state.checkPosition()[0];
 		this.y = state.checkPosition()[1];
@@ -13,7 +14,6 @@ Crafty.c('StatePosition',
 	update:function()
 	{
 		state.setPosition(this.x,this.y);
-
 	}
 })
 
@@ -177,7 +177,8 @@ Crafty.c('Player',
 				if(!this.mayMove)return;
 				this.dirX = direction.x;
 				this.dirY = direction.y;
-				 $("#alert-success").hide();
+				if(this.update)this.update();
+				//$("#alert-success").hide();
 
 				if (direction.x < 0)
 				{

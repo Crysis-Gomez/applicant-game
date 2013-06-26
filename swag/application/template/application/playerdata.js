@@ -58,13 +58,14 @@ function sendMotivation()
           
             }
         });
-    document.getElementById("letterbutton").blur();
+    document.getElementById("submitButton").blur();
 }
 
 function showError(string)
 {
   document.getElementById("success_div").innerHTML = string;
   $("#success_div").show();
+  $('#ajaxBusy').hide();
 }
 
 function submitMeeting()
@@ -77,7 +78,7 @@ function submitMeeting()
 
                         alert("Data Loaded: " + data);
                             });
-    document.getElementById("MeetButton").blur();
+    document.getElementById("submitButton").blur();
 }
 
 
@@ -104,8 +105,8 @@ function updateGame(property,value)
       $("#question_form").hide();
       $("#question").hide();
       $("#success_div").hide();
-      $("#alert-success").show();
-
+      //$("#alert-success").show();
+      $('#ajaxBusy').hide();
 
     
     });
@@ -114,6 +115,10 @@ function updateGame(property,value)
 function sendContactInfo()
 {
     $("#contact_form").ajaxSubmit({url:'/uploadcontact/{{game.uid}}/', type: 'post',
+
+        uploadProgress: function(event, position, total, percentComplete) {
+          $('#ajaxBusy').show();
+        },
          success:function(res)
          {
             response = JSON.parse(res);
@@ -125,13 +130,14 @@ function sendContactInfo()
                 text = response.player['result'];
                 updateGame('player_name', name);
                 updateGame('player_email', email);
+
             }
             else showError(replaceText(text));
             
          }
      });
 
-    document.getElementById("contactButton").blur();
+    document.getElementById("submitButton").blur();
 }
 
 function replaceText(string)
@@ -187,6 +193,11 @@ function checkURL(str) {
 function submitAnswer()
 {
    $("#question_form").ajaxSubmit({url:'/answer/{{game.uid}}/', type: 'post',
+
+        uploadProgress: function(event, position, total, percentComplete) {
+          $('#ajaxBusy').show();
+        },
+
         success:function(res)
         {
 
@@ -201,12 +212,17 @@ function submitAnswer()
         }
     })
 
-   document.getElementById("submit_answer").blur();
+   document.getElementById("submitButton").blur();
 }
 
 function submitSkills() 
 {   
     $("#skill_form").ajaxSubmit({url:'/uploadskills/{{game.uid}}/', type: 'post',
+
+        uploadProgress: function(event, position, total, percentComplete) {
+          $('#ajaxBusy').show();
+        },
+
         success:function(res)
         {
           response = JSON.parse(res);
@@ -216,7 +232,7 @@ function submitSkills()
         }
     })
   
-  document.getElementById("submit_skills").blur();
+  document.getElementById("submitButton").blur();
 }
 
 
@@ -234,8 +250,8 @@ function removeLink()
     list = $("#list")[0];
     if(list.children.length > 0)
     {
-	child = list.children[list.children.length -1];
-	list.removeChild(child); 	
+    	child = list.children[list.children.length -1];
+    	list.removeChild(child); 	
     }  		
 }
 
@@ -267,6 +283,9 @@ function submitlinks()
             data: formdata,
             processData: false,
             contentType: false,
+            uploadProgress: function(event, position, total, percentComplete) {
+              $('#ajaxBusy').show();
+            },
              success: function (res)
              {
                 
@@ -275,7 +294,7 @@ function submitlinks()
         });
     }
 
-    document.getElementById("linksbutton").blur();
+    document.getElementById("submitButton").blur();
 }
 
 // function showUploadedItem (source)
@@ -293,6 +312,11 @@ function sendFiles()
 {
 
     $("#cv_form").ajaxSubmit({url:'/submitfile/{{game.uid}}/', type: 'post',
+        uploadProgress: function(event, position, total, percentComplete) {
+          $('#ajaxBusy').show();
+        },
+
+
          success:function(res)
          {
             response = JSON.parse(res);
@@ -307,7 +331,7 @@ function sendFiles()
          }
      });
 
-    document.getElementById("cvButton").blur();
+    document.getElementById("submitButton").blur();
 }
 
 $(document).ready(function()

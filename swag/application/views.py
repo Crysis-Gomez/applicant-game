@@ -179,7 +179,9 @@ def play(request, unique_id):
     answer = Answer()
 
     context.update({'skill': skillForm})
- 
+
+    print sys.argv[-1]
+
     form = UploadFileForm(initial={'title': 'cv'})
     context.update({
         'game': game,
@@ -265,24 +267,7 @@ def show_uploaded_file(request, filename):
     return response
 
 
-def handle_uploaded_file(submitted_file, title, unique_id):
 
-    game = GameInstance.objects.get(uid=unique_id)
-    name = "{name}-{title}".format(name=game.player_name, title=title)
-
-    application_document = CvDocument()
-    try:
-        application_document = get_object_or_404(CvDocument, game_instance=game)
-    except Http404:
-        application_document.game_instance = game
-        application_document.title = name
-        submitted_file.name = "{uid}-{filename}".format(uid=unique_id, filename=submitted_file.name)
-        application_document.attachment = submitted_file
-        application_document.save()
-
-        return True
-
-    return False
 
 
 @csrf_exempt
@@ -319,12 +304,10 @@ def process_mail(request, unique_id):
     #recipients = [settings.DEFAULT_FROM_EMAIL]
 
     #send_mail('New article:', message, recipients, ['Crysis.gomez@gmail.com'], fail_silently=False)
-	subject = game.vacancy.title
-	message = game.vacancy.mail_text
-	
-	send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
+    subject = game.vacancy.title
+    message = game.vacancy.mail_text
+    send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
         [game.player_email], fail_silently=False)
-	
     return HttpResponse('All went well')
     # if subject and message and from_email:
     #     try:
@@ -384,6 +367,19 @@ def process_motivation_letter(request, unique_id):
     return render(request, "results_template.js", upload_state, content_type=RequestContext(request))
 
 
+
+def process_first_mail(request, game):
+
+    subject = game.vacancy.title
+    message = game.vacancy.mail_text
+    link = get_current_path(request)
+    link = sys.argv[-1]+link['current_path']
+    message = message.replace("link", "http://"+link)
+    message = message.replace("uploadcontact", "game")
+    send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
+    [game.player_email], fail_silently=False)
+
+
 @csrf_exempt
 def process_contact(request, unique_id):
 
@@ -397,27 +393,17 @@ def process_contact(request, unique_id):
         game.save()
         upload_state['playername'] = json.dumps(game.player_name)
         upload_state['playeremail'] = json.dumps(game.player_email)
-	subject = game.vacancy.title
-	message = game.vacancy.mail_text
-	link = get_current_path(request)
-	link = sys.argv[-1]+link['current_path']
- 
-	message = message.replace("link","http://"+link)
-	message = message.replace("uploadcontact","game")
-
-	send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
-        [game.player_email], fail_silently=False)
-	
-	
+        process_first_mail(request,game)
     else:
         print(form.errors)
         upload_state['success'] = json.dumps(form.errors)
 
     return render(request, "results_template.js", upload_state, content_type=RequestContext(request))
 
+
 def get_current_path(request):
     return{
-	'current_path':	request.get_full_path()
+        'current_path':	request.get_full_path()
     }
 
 
@@ -425,18 +411,15 @@ def get_current_path(request):
 def handle_uploaded_motivation(submitted_file, title, unique_id):
     game = GameInstance.objects.get(uid=unique_id)
     name = "{name}-{title}".format(name=game.player_name, title=title)
-    motivation_letter = MotivationLetter()
-    try:
-        motivation_letter = get_object_or_404(MotivationLetter, game_instance=game)
-    except Http404:
-        motivation_letter.game_instance = game
-        motivation_letter.title = name
-        submitted_file.name = "{uid}-{filename}".format(uid=unique_id, filename=submitted_file.name)
-        motivation_letter.attachment = submitted_file
-        motivation_letter.save()
-        return True
+    motivation_letter,created = MotivationLetter.objects.get_or_create(game_instance=game)
 
-    return False
+    motivation_letter.game_instance = game
+    motivation_letter.title = name
+    submitted_file.name = "{uid}-{filename}".format(uid=unique_id, filename=submitted_file.name)
+    motivation_letter.attachment = submitted_file
+    motivation_letter.save()
+    return True
+
 
 
 @csrf_exempt
@@ -457,6 +440,44 @@ def process_motivation_upload(request, unique_id):
     return render(request, "results_template.js", upload_state, content_type="text/html")
 
 
+
+def handle_uploaded_file(submitted_file, title, unique_id,request):
+
+    game = GameInstance.objects.get(uid=unique_id)
+    name = "{name}-{title}".format(name=game.player_name, title=title)
+    response_data = ''
+
+    application_document = CvDocument()
+    try:
+        application_document = get_object_or_404(CvDocument, game_instance=game)
+    except Http404:
+        application_document.game_instance = game
+        application_document.title = name
+        submitted_file.name = "{uid}-{filename}".format(uid=unique_id, filename=submitted_file.name)
+        print dir(submitted_file)
+        application_document.attachment = submitted_file
+        application_document.save()
+
+        result = []
+        result.append({"name":  name,
+                       "size": submitted_file.size,
+                       "url": '',
+                       "thumbnail_url": '',
+                       "delete_url": '',
+                       "delete_type": "POST", })
+
+        response_data = json.dumps({'files': result})
+
+    if "application/json" in request.META['HTTP_ACCEPT_ENCODING']:
+            mimetype = 'application/json'
+    else:
+            mimetype = 'text/plain'
+
+    return HttpResponse(response_data, mimetype=mimetype)
+
+
+
+
 @csrf_exempt
 def process_upload(request, unique_id):
 
@@ -466,10 +487,21 @@ def process_upload(request, unique_id):
 
     form = UploadFileForm(request.POST, request.FILES)
     if form.is_valid():
-        #upload_success = handle_uploaded_file(request.FILES['document'], form.cleaned_data['title'], unique_id)
+        upload_success = handle_uploaded_file(request.FILES['document'], form.cleaned_data['title'], unique_id,request)
         upload_state['success'] = 'Thanks for submitting'
     else:
         print(form.errors)
         upload_state['success'] = json.dumps(form.errors)
+
+
+    #     #checking for json data type
+    #     #big thanks to Guy Shapiro
+    #     if "application/json" in request.META['HTTP_ACCEPT_ENCODING']:
+    #         mimetype = 'application/json'
+    #     else:
+    #         mimetype = 'text/plain'
+    #     return HttpResponse(response_data, mimetype=mimetype)
+    # else: #GET
+    #     return HttpResponse('Only POST accepted')
 
     return render(request, "results_template.js", upload_state, content_type="text/html")

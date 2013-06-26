@@ -269,9 +269,10 @@ class MotivationLetter(models.Model):
     def __unicode__(self):
         return str(self.title)
 
+
 class Applicationdocumentfiles(models.Model):
     filename = models.CharField(max_length=255, primary_key=True)
-    data = models.TextField()
+    data = models.CharField(max_length=200)
     size = models.IntegerField()
 
     class Meta:

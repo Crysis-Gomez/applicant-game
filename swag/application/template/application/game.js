@@ -626,7 +626,7 @@ var crafty = function() {
 				return true;
 			}
 
-			if(this.DataText == "Bob: Welcome to the vacancy of ")
+			if(this.DataText == "Sandra: Welcome to the vacancy of ")
 			{
 				this.DataText += "{{game.vacancy}},"+ window.state.name() + "!";
 				Crafty.trigger("getQuest");
@@ -670,11 +670,11 @@ var crafty = function() {
         //load takes an array of assets and a callback when complete
         Crafty.load(["/static/sign1.png", "/static/goal.png", "/static/controls.png","/static/controls2.png", "/static/spriteSheet.png" ,"/static/Sprite.png","/static/house.png","/static/Sprite2.png","/static/house2.png","/static/house3.png","/static/house4.png","/static/house5.png","/static/castle.png","/static/background.png","/static/background2.png","/static/fence.png"], function ()
         {
-       		// if('{{game.get_Intro}}' == 'False')Crafty.scene("Intro"); //when everything is loaded, run the main scene
-         //    else Crafty.scene("main");
+       		 // if('{{game.get_Intro}}' == 'False')Crafty.scene("Intro"); //when everything is loaded, run the main scene
+          //    else Crafty.scene("main");
          	Crafty.scene("main");
 
-         //    $("#myModal").modal('show');
+             //$("#myModal").modal('show');
         });
     });
 
@@ -721,6 +721,9 @@ var crafty = function() {
 					state.skillsUnlocked,
 					state.checkUnlockedSkillsQuest);
 
+
+
+
 				if(state.checkUnlockedCVQuest())
 				{
 					quest_log.addQuest(quest1,false);
@@ -753,8 +756,10 @@ var crafty = function() {
 		var canvas = document.getElementById('mycanvas');
 		var Mainplayer = Crafty.e("2D,  Canvas, player,Player,RightControls,Collision,Keyboard,Respawn,StatePosition")
 			.attr({ x: 100, y: 300, z: 1})
-			.rightControls(2)
-			.Player();
+			.rightControls(2);
+		
+		Mainplayer.Player();
+		Mainplayer.respawn();
 
 		var player2 = Crafty.e("2D,  Canvas, player,Collision,npc1,NPC,Solid");
 			player2.attr({ x: 150, y: 100, z: 1});

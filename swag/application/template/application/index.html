@@ -31,6 +31,9 @@
 
 <div id="container" >
 <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" data-backdrop="static" >
+<div class="modal-header">
+    <h3 id="model-header-text">Modal header</h3>
+</div>
 
 
     <form method="post" name="skill_form" id="skill_form" class='form-inline'>
@@ -45,7 +48,6 @@
       
         </table> 
 
-        <button id="submit_skills" type="button" class="btn btn-primary" onclick="submitSkills()">Submit</button>
      </div>
     </form>
 
@@ -64,7 +66,7 @@
       
         </table> 
 
-        <button id="submit_answer" type="button" class="btn btn-primary" onclick="submitAnswer()">Submit</button>
+       
      </div>
 </form>
 
@@ -84,9 +86,7 @@
         {{portfolio.as_table}}
       
         </table> 
-         <button id="addLink"      type="button" class="btn btn-primary" onclick="addLink()">add Links</button>
-         <button id="linksbutton"  type="button" class="btn btn-primary" onclick="submitlinks()">Submit</button>
-  	 <button id="remove"       type="button" class="btn btn-primary" onclick="removeLink()">Remove</button>
+         
 
     </div>
 
@@ -112,7 +112,7 @@
                 {{letter.as_table}}
           
             </table> 
-             <button id="letterbutton"  type="button" class="btn btn-primary" onclick="sendMotivation()">Send motivation</button>
+             
         </form>
         
     {%endif%}
@@ -120,12 +120,7 @@
     {% endblock %}
 
 
-    <div class="choice" id="choice">
-        <button id="freeformbutton" type="button" class="btn btn-primary" margin-top: "50px" onclick="freeForm()">Free From</button>
-        
-        <button id="uploaddocumentbutton" type="button" class="btn btn-primary" onclick="uploadDocument()">Upload document</button>
-
-    </div>
+    
 
 
 {% block meeting %}
@@ -170,7 +165,7 @@
     
     </table> 
     
-    <button id="contactButton" type="button" class="btn btn-primary" onclick="sendContactInfo()" >Submit contact</button>
+    
 </form>
 
 {%endif%} 
@@ -206,7 +201,7 @@
     {% for error in form.errors %}
     {{error}}!
     {% endfor %}
-    <button type="button" class="btn btn-primary" id="cvButton" onclick="sendFiles()">Send CV</button>
+    <!-- <button type="button" class="btn btn-primary" id="cvButton" onclick="sendFiles()">Send CV</button> -->
     
     
 </form>
@@ -216,6 +211,27 @@
 {% endblock %}
 
 <div id="success_div" class="alert alert-error" name="response">Response will be placed here on submit.</div>
+<div id="ajaxBusy"><p id="ajaxBusyMsg">Please wait...</p></div>
+<div class="modal-footer">
+<button id="submitButton" type="button" class="btn btn-primary" onclick="sendContactInfo()" >Submit</button>
+<!-- <button id="submit_skills" type="button" class="btn btn-primary" onclick="submitSkills()">Submit</button>
+<button id="submit_answer" type="button" class="btn btn-primary" onclick="submitAnswer()">Submit</button>
+<button id="letterbutton"  type="button" class="btn btn-primary" onclick="sendMotivation()">Submit</button>
+<button id="linksbutton"   type="button" class="btn btn-primary" onclick="submitlinks()">Submit</button>
+<button id="addLink"       type="button" class="btn btn-primary" onclick="addLink()">add Links</button>
+<button id="remove"        type="button" class="btn btn-primary" onclick="removeLink()">Remove</button> -->
+
+<div class="choice" id="choice">
+        
+    <button id="freeformbutton" type="button" class="btn btn-primary" margin-top: "50px" onclick="freeForm()">Free From</button>
+        
+    <button id="uploaddocumentbutton" type="button" class="btn btn-primary" onclick="uploadDocument()">Upload document</button>
+
+</div>
+
+
+
+</div>
 
 <div id="question" name="question"></div>
 </div>
@@ -233,10 +249,10 @@
 </div>   -->
 </div>
 
- <div class="alert alert-success" id="alert-success">  
+<!--  <div class="alert alert-success" id="alert-success">  
   <a class="close" data-dismiss="alert"></a>  
   <strong>Submitted!</strong>
-</div>  
+</div>   -->
 
 
 </body>

@@ -16,25 +16,36 @@ function getDialogData1(state)
  	data ="";
   	if(!state.check_name())
   	{
-			data = ["Bob: Hi I`m bob nice to meet you!",
+			data = ["Sandra: Hi I`m Sandra nice to meet you!",
 								  "How may I call you?",
 								   CONTACT, // Player enters name....
-								  "Bob: Welcome to the vacancy of ", 
-								  "Bob: Next thing you need to do is to upload your C.V.",
-								  "But you need to fix the machine in the first building",
+								  "Sandra: Welcome to the vacancy of ", 
+								  "Sandra: Next thing you need to do is to upload your C.V.",
+								  "Sandra: But you need to fix the machine in the first building",
 								   QUEST,
-								  "Bob: Press L, so you can see the quest log.",
-								  "Bob: Good luck."];
-	}	
+								  "Sandra: Press L, so you can see the quest log.",
+								  "Sandra: Good luck."];
+	}
+	else if(!state.checkUnlockedCVQuest())
+	{
+		data = ["Sandra: Welcome back " + state.name(),
+				  "Sandra: Welcome to the vacancy of ",
+				  "Sandra: Next thing you need to do is to upload your C.V.",
+				  "Sandra: But you need to fix the machine in the first building",
+				   QUEST,
+				  "Sandra: Press L, so you can see the quest log.",
+				  "Sandra: Good luck."];
+	}
+
 	else if(!state.check_cv())
 	{
-		data = ["Bob: Welcome back " + state.name(),
-				"Bob: Time to upload your C.V man!"];
+		data = ["Sandra: Welcome back " + state.name(),
+				"Sandra: Time to upload your C.V man!"];
 	}
 	else
 	{ 
-		data = ["Bob: Welcome back " + state.name(),
-				 "Bob: It's time to kick some ass!"];
+		data = ["Sandra: Welcome back " + state.name(),
+				 "Sandra: It's time to kick some ass!"];
 	}
 
 	return data;
@@ -46,24 +57,24 @@ function getDialogData2(state)
 
  	if(!state.check_name())
  	{
- 		data = ["Richard: pls sumbit your name and e-mail at Bob and your first task"];
+ 		data = ["Maria: pls sumbit your name and e-mail at Bob and your first task"];
  	}
 	else if(!state.check_motivation() && !state.checkUnlockedMotivationQuest())
 	{
-		 	data = ["Richard: Hi " + state.name(),
-					"Richard: you can upload your motivation letter at the other building",
+		 	data = ["Maria: Hi " + state.name(),
+					"Maria: you can upload your motivation letter at the other building",
 					 QUEST,
-					"Richard: Good luck."];
+					"Maria: Good luck."];
 	}
 	else if(!state.check_motivation() && state.checkUnlockedMotivationQuest())
 	{
-		data = ["Richard: Hi " + state.name(),
-		"Richard: Time upload your motivation man"];
+		data = ["Maria: Hi " + state.name(),
+		"Maria: Time upload your motivation man"];
 	}
 	else
 	{
-		data = ["Richard: Hi " + state.name(),
-		"Richard: Time to kick some ass"];
+		data = ["Maria: Hi " + state.name(),
+		"Maria: Time to kick some ass"];
 	}
 
 	return data;
@@ -76,24 +87,24 @@ function getDialogData3(state)
 
  	if(!state.check_name())
  	{
- 		data = ["Richard: pls sumbit your name and e-mail at Bob and your first task"];
+ 		data = ["Sharron: pls sumbit your name and e-mail at Bob and your first task"];
  	}
 	else if(!state.check_link() && !state.checkUnlockedLinkQuest())
 	{
-		 	data = ["Richard: Hi " + state.name(),
-					"Richard: you can upload your links at the other building",
+		 	data = ["Sharron: Hi " + state.name(),
+					"Sharron: you can upload your links at the other building",
 					 QUEST,
-					"Richard: Good luck."];
+					"Sharron: Good luck."];
 	}
 	else if(!state.check_motivation() && state.checkUnlockedLinkQuest())
 	{
-		data = ["Richard: Hi " + state.name(),
-		"Richard: Time upload your links man"];
+		data = ["Sharron: Hi " + state.name(),
+		"Sharron: Time upload your links man"];
 	}
 	else
 	{
-		data = ["Richard: Hi " + state.name(),
-		"Richard: Time to kick some ass"];
+		data = ["Sharron: Hi " + state.name(),
+		"Sharron: Time to kick some ass"];
 	}
 
 	return data;
@@ -105,24 +116,24 @@ function getDialogData4(state)
 
  	if(!state.check_name())
  	{
- 		data = ["Richard: pls sumbit your name and e-mail at Bob and your first task"];
+ 		data = ["Vera: pls sumbit your name and e-mail at Bob and your first task"];
  	}
 	else if(!state.check_skills() && !state.checkUnlockedSkillsQuest())
 	{
-		 	data = ["Richard: Hi " + state.name(),
-					"Richard: you can upload your skills at the other building",
+		 	data = ["Vera: Hi " + state.name(),
+					"Vera: you can upload your skills at the other building",
 					 QUEST,
-					"Richard: Good luck."];
+					"Vera: Good luck."];
 	}
 	else if(!state.check_skills() && state.checkUnlockedSkillsQuest())
 	{
-		data = ["Richard: Hi " + state.name(),
-		"Richard: Time upload your links man"];
+		data = ["Vera: Hi " + state.name(),
+		"Vera: Time upload your links man"];
 	}
 	else
 	{
-		data = ["Richard: Hi " + state.name(),
-		"Richard: Time to kick some ass"];
+		data = ["Vera: Hi " + state.name(),
+		"Vera: Time to kick some ass"];
 	}
 
 	return data;
@@ -135,12 +146,12 @@ function getDialogData5(state)
 
  	if(!state.check_name())
  	{
- 		data = ["Richard: pls sumbit your name and e-mail at Bob and your first task"];
+ 		data = ["Mr. miyagi: pls sumbit your name and e-mail at Bob and your first task"];
  	}
 	else 
 	{
-		data = ["Richard: Here you can see your profile",
-				PROFILE,EXIT,"Bye"];
+		data = ["Mr. miyagi: Here you can see your profile",
+				PROFILE,EXIT,"Mr. miyagi:Bye"];
 	}
 
 	return data;
@@ -161,7 +172,7 @@ function getDialogData6(state)
  	else
  	{
  		data = ["Wouter: see you soon ",
-				"Bye"];
+				"Wouter: Bye"];
  	}
 
 
@@ -184,39 +195,43 @@ function getDialogIntro(state)
 
 }
 
-
 function uploadCV()
 {
 	$("#myModal").modal('show');
+	$("#model-header-text").html("Curriculum vitae")
 	document.getElementById("cv_form").style.display = 'block';
 	document.getElementById("container").style.display = 'block';
+
+	document.getElementById("submitButton").onclick = sendFiles
 	return (Crafty.pause(true));
 }
-
 
 function uploadContact()
 {
 	document.getElementById("contact_form").style.display = 'block';
-
 	$("#myModal").modal('show');
-
+	$("#model-header-text").html("Contact information")
+	document.getElementById("submitButton").onclick = sendContactInfo
 	return !(Crafty.pause(true));
 }
 
 function uploadMotivation()
 {
 	$("#myModal").modal('show');
+	$("#model-header-text").html("Motivation")
 	document.getElementById("choice").style.display = 'block';
 	document.getElementById("success_div").style.display = 'block';
 	document.getElementById("success_div").innerHTML = "Please upload your motivation or write it in the free from";
-	
+	document.getElementById("submitButton").onclick = sendMotivation
 	return !(Crafty.pause(true));
 }
 
 function uploadLink()
 {
 	$("#myModal").modal('show');
+	$("#model-header-text").html("Links")
 	document.getElementById("links_form").style.display = 'block';
+	document.getElementById("submitButton").onclick = submitlinks
 	return !(Crafty.pause(true));
 }
 
@@ -224,7 +239,9 @@ function uploadLink()
 function uploadSkills()
 {
 	$("#myModal").modal('show');
+	$("#model-header-text").html("Skills")
 	document.getElementById("skill_form").style.display = 'block';
+	document.getElementById("submitButton").onclick = submitSkills
 	return !(Crafty.pause(true));
 }
 
@@ -232,8 +249,6 @@ function uploadSkills()
 function uploadAnswer()
 {
 	
-
-
 	$('#myModal').modal({
         backdrop: false,
         keyboard: false
@@ -248,10 +263,9 @@ function uploadAnswer()
 	document.getElementById("question_form").style.display = 'block';
 	document.getElementById("question").style.display = 'block';
 	document.getElementById("question").innerHTML = state.getQuestion();
-
+	document.getElementById("submitButton").onclick = submitAnswer
 
 	$("#myModal").modal('show');
-
 
 	return !(Crafty.pause(true));
 }
