@@ -33,19 +33,21 @@ from django.forms.models import inlineformset_factory
 from django.db import IntegrityError
 
 
-
-# def get_contact_info(game):
-#     if not game.player_name and not game.player_email:
-#         return False
-#     else:
-#         return True
-
-
 def index(request):
     vacancies = Vacancy.objects.all().order_by('title')
     return render_to_response('list_vacancies.html', {
         'vacancies': vacancies
     })
+
+
+def get_client_ip(request):
+    if 'HTTP_X_FORWARDED_FOR' in request.META:
+        ip = request.META.get('HTTP_X_FORWARDED_FOR').split(',')[-1].strip()
+    else:
+        ip = request.META.get('REMOTE_ADDR', None)
+
+    print ip
+    return ip
 
 
 def start_game(request, slug):
@@ -64,12 +66,14 @@ def statejs(request, unique_id):
     skills = json.dumps(dict(game.get_all_skills()))
     links = json.dumps(game.get_all_links())
     question = json.dumps(game.vacancy.question.question)
+    ip = get_client_ip(request)
 
     context = {
         'game': game,
         'skills': skills,
         'links': links,
-        'question': question
+        'question': question,
+        'ip': ip
     }
     return render(request, "state.js", context, content_type="application/javascript")
 
@@ -180,7 +184,9 @@ def play(request, unique_id):
 
     context.update({'skill': skillForm})
 
-    print sys.argv[-1]
+    #print sys.argv[-1]
+
+   
 
     form = UploadFileForm(initial={'title': 'cv'})
     context.update({
@@ -213,6 +219,7 @@ def process_answer(request, unique_id):
             player_question, created = PlayerQuestion.objects.get_or_create(game_instance=game, question=game.vacancy.question)
             player_question.answer = ans.cleaned_data['answer']
             player_question.save()
+            process_second_mail(request, game)
         else:
             upload_state['success'] = json.dumps(ans.errors)
 
@@ -291,34 +298,34 @@ def process_links(request, unique_id):
 
 
 
-@csrf_exempt
-def process_mail(request, unique_id):
-    game = GameInstance.objects.get(uid=unique_id)
+# @csrf_exempt
+# def process_mail(request, unique_id):
+#     game = GameInstance.objects.get(uid=unique_id)
 
-    game.player_defeated_boss = True
-    game.save()
-    # subject = request.POST.get('subject', 'Hello')
-    # message = request.POST.get('message', game.vacancy.mail_text)
-    # from_email = request.POST.get('from_email', 'Crysis.gomez@gmail.com')
+#     game.player_defeated_boss = True
+#     game.save()
+#     # subject = request.POST.get('subject', 'Hello')
+#     # message = request.POST.get('message', game.vacancy.mail_text)
+#     # from_email = request.POST.get('from_email', 'Crysis.gomez@gmail.com')
 
-    #recipients = [settings.DEFAULT_FROM_EMAIL]
+#     #recipients = [settings.DEFAULT_FROM_EMAIL]
 
-    #send_mail('New article:', message, recipients, ['Crysis.gomez@gmail.com'], fail_silently=False)
-    subject = game.vacancy.title
-    message = game.vacancy.mail_text
-    send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
-        [game.player_email], fail_silently=False)
-    return HttpResponse('All went well')
-    # if subject and message and from_email:
-    #     try:
-    #         send_mail(subject, message, from_email, ['Jerry.Gomez@spilgames.com'])
-    #     except BadHeaderError:
-    #         return HttpResponse('Invalid header found.')
-    #     return HttpResponse('All went well')
-    # else:
-    #     # In reality we'd use a form class
-    #     # to get proper validation errors.
-    #     return HttpResponse('Make sure all fields are entered and valid.')
+#     #send_mail('New article:', message, recipients, ['Crysis.gomez@gmail.com'], fail_silently=False)
+#     subject = game.vacancy.title
+#     message = game.vacancy.mail_text
+#     send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
+#         [game.player_email], fail_silently=False)
+#     return HttpResponse('All went well')
+#     # if subject and message and from_email:
+#     #     try:
+#     #         send_mail(subject, message, from_email, ['Jerry.Gomez@spilgames.com'])
+#     #     except BadHeaderError:
+#     #         return HttpResponse('Invalid header found.')
+#     #     return HttpResponse('All went well')
+#     # else:
+#     #     # In reality we'd use a form class
+#     #     # to get proper validation errors.
+#     #     return HttpResponse('Make sure all fields are entered and valid.')
 
 
 
@@ -374,8 +381,19 @@ def process_first_mail(request, game):
     message = game.vacancy.mail_text
     link = get_current_path(request)
     link = sys.argv[-1]+link['current_path']
-    message = message.replace("link", "http://"+link)
-    message = message.replace("uploadcontact", "game")
+    link2 = link
+    link = link.replace("uploadcontact", "game")
+    link2= link2.replace("uploadcontact", "getprofile")
+    message = message.replace("link1", "http://"+link)
+    message = message.replace("link2", "http://"+link2)
+    send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
+    [game.player_email], fail_silently=False)
+
+
+def process_second_mail(request, game):
+
+    subject = game.vacancy.title
+    message = game.vacancy.mail_text2
     send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
     [game.player_email], fail_silently=False)
 
@@ -393,7 +411,7 @@ def process_contact(request, unique_id):
         game.save()
         upload_state['playername'] = json.dumps(game.player_name)
         upload_state['playeremail'] = json.dumps(game.player_email)
-        process_first_mail(request,game)
+        process_first_mail(request, game)
     else:
         print(form.errors)
         upload_state['success'] = json.dumps(form.errors)

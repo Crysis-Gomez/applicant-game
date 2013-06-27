@@ -9,7 +9,19 @@ body {background-color:#c0c0c0;
 
 #submitButton
 {
-    xdisplay: none;
+    display: none;
+}
+
+
+#addLink
+{
+    display: none;
+}
+
+
+#removeLink
+{
+    display: none;
 }
 
 #myModal
@@ -56,21 +68,22 @@ body {background-color:#c0c0c0;
   display: none;
 }
 
-.linkList
+#linkList
 {
-    float: right;
+  /*  float: right;
     margin-top: -50px;
     overflow: auto;
     height: 100px;
     width: 150px; 
-    overflow-y: scroll; 
+    overflow-y: scroll; */
+    margin-left: 10px;
 }
 
-#list
+/*#list
 {
     float: left;
 }
-
+*/
 #letter_form
 {
   display: none;

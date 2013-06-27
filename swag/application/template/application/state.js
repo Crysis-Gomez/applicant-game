@@ -30,6 +30,8 @@ var state = function()
 	this.boss_unlocked = '{{game.player_unlocked_boss}}';
 	this.answered = '{{game.get_answer}}';
 
+	this.ip = '{{ip}}'
+
 	var check_UnlockedSkillsQuest = function()
 	{
 		var my_val = false;
@@ -294,6 +296,7 @@ var state = function()
 		boss_unlocked:boss_unlocked,
 		check_boss_unlocked:check_boss_unlocked,
 		update_unlockQuest: update_unlockQuest,
+		ip:ip,
 
 		get_skills: function() 
 		{

@@ -9,6 +9,7 @@ function freeForm()
     $("#success_div").hide();
     document.getElementById("id_entry").focus();
     document.getElementById("freeformbutton").blur();
+    $("#submitButton").show();
     isFreeFrom = true;
 }
 
@@ -20,6 +21,7 @@ function uploadDocument()
     $("#choice").hide();
     $("#success_div").hide();
     document.getElementById("uploaddocumentbutton").blur();
+    $("#submitButton").show();
     isFreeFrom:false;
 }
 
@@ -46,6 +48,13 @@ function sendMotivation()
     if(isFreeFrom)uploadURL = "/uploadmotivation/{{game.uid}}/";
        
         $("#letter_form").ajaxSubmit({url:uploadURL, type: 'post',
+
+            uploadProgress: function(event, position, total, percentComplete) {
+            
+            $('#ajaxBusy').show();
+            
+            },
+            
             success:function(res)
             {
                 response = JSON.parse(res);
@@ -107,6 +116,10 @@ function updateGame(property,value)
       $("#success_div").hide();
       //$("#alert-success").show();
       $('#ajaxBusy').hide();
+      $("#submitButton").hide();
+
+      $("#addLink").hide();
+      $("#removeLink").hide();
 
     
     });
@@ -240,14 +253,14 @@ function addLink()
 {
     if(checkURL(document.getElementById('id_links').value))
     {
-        $("#list").append("<li>" + document.getElementById('id_links').value+ "</li>");
+        $("#linkList").append("<li>" + document.getElementById('id_links').value+ "</li>");
         document.getElementById('id_links').value = "";
     }else  showError("Please insert a link");
 }
 
 function removeLink()
 {
-    list = $("#list")[0];
+    list = $("#linkList")[0];
     if(list.children.length > 0)
     {
     	child = list.children[list.children.length -1];
@@ -257,7 +270,7 @@ function removeLink()
 
 function submitlinks()
 {
-    if(document.getElementById("list").children.length == 0)
+    if(document.getElementById("linkList").children.length == 0)
     {
         showError("please add, at least one link");
         return;
@@ -265,9 +278,9 @@ function submitlinks()
     if (window.FormData)
     {
         var list = Array();
-        for (var i = 0; i < document.getElementById("list").children.length; i++) 
+        for (var i = 0; i < document.getElementById("linkList").children.length; i++) 
         {
-            text = document.getElementById("list").children[i].textContent;
+            text = document.getElementById("linkList").children[i].textContent;
             list.push(text);
         }
 

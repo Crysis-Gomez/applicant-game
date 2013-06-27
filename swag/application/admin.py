@@ -111,6 +111,7 @@ class PlayerSkillAdmin(admin.ModelAdmin):
 
 admin.site.register(models.GameInstance, GameInstanceAdmin)
 admin.site.register(models.CvDocument)
+#admin.site.register(models.PlayerQuestion)
 admin.site.register(models.Question)
 admin.site.register(models.Vacancy, VacancyAdmin)
 admin.site.register(models.MotivationLetter)

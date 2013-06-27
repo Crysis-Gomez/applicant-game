@@ -36,7 +36,7 @@
 </div>
 
 
-    <form method="post" name="skill_form" id="skill_form" class='form-inline'>
+    <form enctype="multipart/form-data" method="post" name="skill_form" id="skill_form" class='form-inline'>
     {%block skills %}
      <div class="skillList" id="skillSet">
         <table>
@@ -53,8 +53,7 @@
 
     {% endblock %}
 
-
- <form method="post" name="question_form" id="question_form" class='question-inline'>
+ <form enctype="multipart/form-data" method="post" name="question_form" id="question_form" class='question-inline'>
     {%block question %}
      <div class="anwser" id="anwser">
         <table>
@@ -74,7 +73,7 @@
 
 
 
-<div class="links_form" id="links_form">
+<div enctype="multipart/form-data" method="post" class="links_form" id="links_form">
     {% block links %}
     <div class="links">
 
@@ -91,9 +90,9 @@
     </div>
 
     <div class="linkList" id="linkList">
-        <ul id="list" >
+       <!--  <ul id="list" >
 
-        </ul>
+        </ul> -->
 
     </div>
 
@@ -213,13 +212,10 @@
 <div id="success_div" class="alert alert-error" name="response">Response will be placed here on submit.</div>
 <div id="ajaxBusy"><p id="ajaxBusyMsg">Please wait...</p></div>
 <div class="modal-footer">
+<button id="addLink"       type="button" class="btn btn-primary" onclick="addLink()">add Link</button>
+<button id="removeLink"        type="button" class="btn btn-primary" onclick="removeLink()">Remove Link</button>
 <button id="submitButton" type="button" class="btn btn-primary" onclick="sendContactInfo()" >Submit</button>
-<!-- <button id="submit_skills" type="button" class="btn btn-primary" onclick="submitSkills()">Submit</button>
-<button id="submit_answer" type="button" class="btn btn-primary" onclick="submitAnswer()">Submit</button>
-<button id="letterbutton"  type="button" class="btn btn-primary" onclick="sendMotivation()">Submit</button>
-<button id="linksbutton"   type="button" class="btn btn-primary" onclick="submitlinks()">Submit</button>
-<button id="addLink"       type="button" class="btn btn-primary" onclick="addLink()">add Links</button>
-<button id="remove"        type="button" class="btn btn-primary" onclick="removeLink()">Remove</button> -->
+
 
 <div class="choice" id="choice">
         
@@ -242,7 +238,10 @@
 <canvas id="mycanvas" style="position: absolute; left: 0; top: 0; z-index: 0;"></canvas>
 <div id="cr-stage">
 
-
+<input type="text" id="ip1" />
+<input type="text" id="ip2"  />
+<input type="text" id="ip3" />
+<input type="text" id="ip4" />
 <!-- <div class="alert alert-success" id="alert-success">  
   <a class="close" data-dismiss="alert"></a>  
   <strong>Submitted!</strong>

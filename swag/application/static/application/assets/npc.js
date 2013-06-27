@@ -198,11 +198,11 @@ function getDialogIntro(state)
 function uploadCV()
 {
 	$("#myModal").modal('show');
-	$("#model-header-text").html("Curriculum vitae")
+	$("#model-header-text").html("Curriculum vitae");
+	$("#submitButton").show();
 	document.getElementById("cv_form").style.display = 'block';
 	document.getElementById("container").style.display = 'block';
-
-	document.getElementById("submitButton").onclick = sendFiles
+	document.getElementById("submitButton").onclick = sendFiles;
 	return (Crafty.pause(true));
 }
 
@@ -211,27 +211,31 @@ function uploadContact()
 	document.getElementById("contact_form").style.display = 'block';
 	$("#myModal").modal('show');
 	$("#model-header-text").html("Contact information")
-	document.getElementById("submitButton").onclick = sendContactInfo
+	$("#submitButton").show();
+	document.getElementById("submitButton").onclick = sendContactInfo;
 	return !(Crafty.pause(true));
 }
 
 function uploadMotivation()
 {
 	$("#myModal").modal('show');
-	$("#model-header-text").html("Motivation")
+	$("#model-header-text").html("Motivation");
 	document.getElementById("choice").style.display = 'block';
 	document.getElementById("success_div").style.display = 'block';
 	document.getElementById("success_div").innerHTML = "Please upload your motivation or write it in the free from";
-	document.getElementById("submitButton").onclick = sendMotivation
+	document.getElementById("submitButton").onclick = sendMotivation;
 	return !(Crafty.pause(true));
 }
 
 function uploadLink()
 {
 	$("#myModal").modal('show');
-	$("#model-header-text").html("Links")
+	$("#model-header-text").html("Links");
+	$("#submitButton").show();
 	document.getElementById("links_form").style.display = 'block';
-	document.getElementById("submitButton").onclick = submitlinks
+	document.getElementById("submitButton").onclick = submitlinks;
+	$("#addLink").show();
+	$("#removeLink").show();
 	return !(Crafty.pause(true));
 }
 
@@ -239,9 +243,10 @@ function uploadLink()
 function uploadSkills()
 {
 	$("#myModal").modal('show');
-	$("#model-header-text").html("Skills")
+	$("#model-header-text").html("Skills");
+	$("#submitButton").show();
 	document.getElementById("skill_form").style.display = 'block';
-	document.getElementById("submitButton").onclick = submitSkills
+	document.getElementById("submitButton").onclick = submitSkills;
 	return !(Crafty.pause(true));
 }
 
@@ -263,7 +268,8 @@ function uploadAnswer()
 	document.getElementById("question_form").style.display = 'block';
 	document.getElementById("question").style.display = 'block';
 	document.getElementById("question").innerHTML = state.getQuestion();
-	document.getElementById("submitButton").onclick = submitAnswer
+	document.getElementById("submitButton").onclick = submitAnswer;
+	$("#submitButton").show();
 
 	$("#myModal").modal('show');
 
