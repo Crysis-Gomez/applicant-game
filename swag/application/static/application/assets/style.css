@@ -30,6 +30,15 @@ body {background-color:#c0c0c0;
     width:  450px;*/
 }
 
+#ips
+{
+    display: none;
+    margin: auto;
+    width: 900px;
+
+    z-index: 0;
+}
+
 
 #success_div
 {

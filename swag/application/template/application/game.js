@@ -142,7 +142,7 @@ var crafty = function() {
 					houses.push(house);
 				}
 
-				if(i  == 15 && j == 0)
+				if(i  == 14 && j == 0)
 				{
 					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard,Solid");
 					house.setImage("/static/house3.png");
@@ -672,7 +672,7 @@ var crafty = function() {
         {
        		 // if('{{game.get_Intro}}' == 'False')Crafty.scene("Intro"); //when everything is loaded, run the main scene
           //    else Crafty.scene("main");
-         	Crafty.scene("TestGame");
+         	Crafty.scene("main");
 
              //$("#myModal").modal('show');
         });

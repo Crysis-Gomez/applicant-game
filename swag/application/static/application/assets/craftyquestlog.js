@@ -169,7 +169,7 @@ Crafty.c("Questlog",{
 	{
 
 		init:function(){
-			this.addComponent("2D, DOM,Color,Text,Mouse");
+			this.addComponent("2D, DOM,Color,Text");
 			this.x = 0;
 			this.y = 0;
 			this.w = 100;  
@@ -183,19 +183,19 @@ Crafty.c("Questlog",{
 			this.questID = 0;
 			this.npc = null;
 
-			this.bind("MouseOver", function()
-			{ 
-                //this.css({"cursor": "pointer"});
-                //this.isSelected = true;
-           		//this.selectQuest();
+			// this.bind("MouseOver", function()
+			// { 
+   //              //this.css({"cursor": "pointer"});
+   //              //this.isSelected = true;
+   //         		//this.selectQuest();
            		
-             });
+   //           });
 			
-			this.bind("MouseOut", function()
-			{ 
-           		//this.isSelected = false;
-           		//this.selectQuest();
-             });
+			// this.bind("MouseOut", function()
+			// { 
+   //         		//this.isSelected = false;
+   //         		//this.selectQuest();
+   //           });
 		},
 
 		selectQuest:function()

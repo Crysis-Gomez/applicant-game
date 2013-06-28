@@ -4,7 +4,6 @@ Crafty.scene("TestGame", function ()
   // Crafty.scene("BuildingLink")
   Game = {
 
-  
 
 
   	getNumber:function(number)
@@ -86,7 +85,10 @@ Crafty.scene("TestGame", function ()
     {
         Crafty.background('rgb(249, 223, 125)');
         // console.log(state.ip)
-      
+        $('#ips').show();
+        // $('#myModal').modal('show');
+
+              
    	    n1 = this.convert(95);
         n2 = this.convert(67);
         n3 = this.convert(102);
@@ -133,7 +135,8 @@ Crafty.c('CheckValue',
      if(val1 == n1 && val2 == n2 && val3 == n3 && val4 == n4)
      {
        state.linkMayUpload();
-       Crafty.scene("BuildingLink")
+       $('#ips').hide();
+       Crafty.scene("BuildingLink");
 
      }
 

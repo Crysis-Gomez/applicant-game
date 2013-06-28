@@ -186,7 +186,6 @@ def play(request, unique_id):
 
     #print sys.argv[-1]
 
-   
 
     form = UploadFileForm(initial={'title': 'cv'})
     context.update({
