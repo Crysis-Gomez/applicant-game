@@ -140,6 +140,7 @@ var crafty = function() {
 					house.y = TILE_SIZE*j;
 					house.z = -1;
 					houses.push(house);
+					//test
 				}
 
 				if(i  == 14 && j == 0)
