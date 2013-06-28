@@ -57,7 +57,7 @@ function getDialogData2(state)
 
  	if(!state.check_name())
  	{
- 		data = ["Maria: pls sumbit your name and e-mail at Bob and your first task"];
+ 		data = ["Maria: pls sumbit your name and e-mail at Sandra and your first task"];
  	}
 	else if(!state.check_motivation() && !state.checkUnlockedMotivationQuest())
 	{
@@ -87,7 +87,7 @@ function getDialogData3(state)
 
  	if(!state.check_name())
  	{
- 		data = ["Sharron: pls sumbit your name and e-mail at Bob and your first task"];
+ 		data = ["Sharron: pls sumbit your name and e-mail at Sandra and your first task"];
  	}
 	else if(!state.check_link() && !state.checkUnlockedLinkQuest())
 	{
@@ -116,7 +116,7 @@ function getDialogData4(state)
 
  	if(!state.check_name())
  	{
- 		data = ["Vera: pls sumbit your name and e-mail at Bob and your first task"];
+ 		data = ["Vera: pls sumbit your name and e-mail at Sandra and your first task"];
  	}
 	else if(!state.check_skills() && !state.checkUnlockedSkillsQuest())
 	{
@@ -146,7 +146,7 @@ function getDialogData5(state)
 
  	if(!state.check_name())
  	{
- 		data = ["Mr. miyagi: pls sumbit your name and e-mail at Bob and your first task"];
+ 		data = ["Mr. miyagi: pls sumbit your name and e-mail at Sandra and your first task"];
  	}
 	else 
 	{

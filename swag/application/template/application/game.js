@@ -336,41 +336,41 @@ var crafty = function() {
 
 		drawLines:function()
 		{
-			var canvas = document.getElementById('mycanvas');
+			// var canvas = document.getElementById('mycanvas');
 			
-			canvas.width = Crafty.viewport.width;
-			canvas.height = Crafty.viewport.height;
-			canvas.style.position = 'absolute';
-			canvas.style.left = "0px";
-			canvas.style.top = "0px";
-			Crafty.stage.elem.appendChild(canvas);
-			$("#mycanvas").show();
-			ctx = canvas.getContext('2d');
-			var count = 0;
+			// canvas.width = Crafty.viewport.width;
+			// canvas.height = Crafty.viewport.height;
+			// canvas.style.position = 'absolute';
+			// canvas.style.left = "0px";
+			// canvas.style.top = "0px";
+			// Crafty.stage.elem.appendChild(canvas);
+			// $("#mycanvas").show();
+			// ctx = canvas.getContext('2d');
+			// var count = 0;
 			
-			ctx.strokeStyle = "rgb(0,0,200)";
-			for (var i = 0; i < houses.length; i++)
-			{
-				if(houses[i].questDone == false)
-				{
-					ctx.beginPath();
-		        	ctx.moveTo(this.x+this.w*0.5, this.y+this.h*0.5);
-		        	ctx.lineTo(houses[i].x+houses[i]._w*0.5, houses[i].y+houses[i]._h*0.5);
-		        	ctx.closePath();
-		        	ctx.stroke();
-		        }
-		        else
-		        {
-		       		count++;
-		        }
-			};
+			// ctx.strokeStyle = "rgb(0,0,200)";
+			// for (var i = 0; i < houses.length; i++)
+			// {
+			// 	if(houses[i].questDone == false)
+			// 	{
+			// 		ctx.beginPath();
+		 //        	ctx.moveTo(this.x+this.w*0.5, this.y+this.h*0.5);
+		 //        	ctx.lineTo(houses[i].x+houses[i]._w*0.5, houses[i].y+houses[i]._h*0.5);
+		 //        	ctx.closePath();
+		 //        	ctx.stroke();
+		 //        }
+		 //        else
+		 //        {
+		 //       		count++;
+		 //        }
+			// };
 
-			if(count == houses.length && this.locked)
-			{
-				this.locked = false;
-				state.update('boss_unlocked','True')
-				unlockBoss();
-			}
+			// if(count == houses.length && this.locked)
+			// {
+			// 	this.locked = false;
+			// 	state.update('boss_unlocked','True')
+			// 	unlockBoss();
+			// }
 		},
 
 		update:function()
@@ -672,7 +672,7 @@ var crafty = function() {
         Crafty.load(["/static/sign1.png", "/static/goal.png", "/static/controls.png","/static/controls2.png", "/static/spriteSheet.png" ,"/static/Sprite.png","/static/house.png","/static/Sprite2.png","/static/house2.png","/static/house3.png","/static/house4.png","/static/house5.png","/static/castle.png","/static/background.png","/static/background2.png","/static/fence.png"], function ()
         {
        		 // if('{{game.get_Intro}}' == 'False')Crafty.scene("Intro"); //when everything is loaded, run the main scene
-          //    else Crafty.scene("main");
+          //    else Crafty.scene("Intro");
          	Crafty.scene("main");
 
              //$("#myModal").modal('show');
@@ -684,7 +684,7 @@ var crafty = function() {
 
     Crafty.scene("main", function ()
     {
-    	Crafty.background("url('/static/background.png')");
+    	//Crafty.background("url('/static/background.png')");
 		generateWorld();
 
 		if(!state.checklog())
@@ -696,7 +696,7 @@ var crafty = function() {
 
 			if (typeof quest_log  === 'undefined') 
 			{
-				info = Crafty.e("Infolog,Persist");
+				//info = Crafty.e("Infolog,Persist");
 				quest_log = Crafty.e("Questlog,Persist")
 				.attr({ x: -150, y: 100, z: 1});
 				quest1 = Crafty.e("Quest,Persist");
@@ -802,7 +802,7 @@ var crafty = function() {
 		.attr({x:0, y:500, w:900, h:0}).css({"font": "10pt Arial", "color": "#000", "text-align": "left","border-radius": "20px"});
 			dialog.alpha = 0.8;
 
-	    var	player1 = Crafty.e("2D,  Canvas, player,Player,RightControls,Collision,Keyboard,Respawn,StatePosition");
+	    var	player1 = Crafty.e("2D,  Canvas, player,Player,RightControls,Collision,Keyboard,Respawn");
 		player1.rightControls(2)
 		player1.attr({ x: 150, y: 280, z: 1});
 		player1.Player();
@@ -818,6 +818,9 @@ var crafty = function() {
 			});
 
 
+		
+		Crafty.pause(true);
+
 
 		var fence  = Crafty.e("2D, Canvas,Image,Collision,setCollision,Solid");
 		fence.setImage("/static/fence.png");
@@ -826,6 +829,23 @@ var crafty = function() {
 		var fence  = Crafty.e("2D, Canvas,Image,Collision,setCollision,Solid");
 		fence.setImage("/static/fence.png");
 		fence.attr({ x: 0, y: 240, z: 0});
+
+		$('#myModal').modal('show');
+		$("#model-header-text").html("Spil work applicant game");
+		$("#model-body-text").html("Welcome to Spiltopia dear player, Your current goal is to solve these challenges in Spiltopia")
+		$("#submitButton").show();
+		$("#submitButton").html("start");
+
+
+		start = function()
+		{
+			$("#submitButton").html("submit");
+			$('#myModal').modal('hide');
+			Crafty.pause(false);
+		}
+
+		document.getElementById("submitButton").onclick = start;
+
 
 
 	});

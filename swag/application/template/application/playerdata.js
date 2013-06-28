@@ -357,6 +357,11 @@ $(document).ready(function()
           document.getElementById("id_name").focus();
         }
       }
+      
+
+
+
+      if(!document.getElementById("id_answer"))return;
 
       if(document.getElementById("id_answer").style.display !== null){
         if(document.getElementById("id_answer").style.display == 'block')
