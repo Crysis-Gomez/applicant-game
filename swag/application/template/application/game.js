@@ -134,19 +134,18 @@ var crafty = function() {
 				if(i  == 1 && j == 0)
 				{
 					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard,Solid")
-					house.setImage("/static/house2.png");
+					house.setImage("/static/grayhouse2.png","/static/house2.png");
 					house.setScene("BuildingCV",state.checkUnlockedCVQuest,state.check_cv());
 					house.x = TILE_SIZE*i;
 					house.y = TILE_SIZE*j;
 					house.z = -1;
 					houses.push(house);
-					//test
 				}
 
 				if(i  == 14 && j == 0)
 				{
 					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard,Solid");
-					house.setImage("/static/house3.png");
+					house.setImage("/static/grayhouse3.png","/static/house3.png");
 					house.setScene("BuildingLink",state.checkUnlockedLinkQuest,state.check_link());
 					house.x = TILE_SIZE*i;
 					house.y = TILE_SIZE*j;
@@ -157,7 +156,7 @@ var crafty = function() {
 				if(i  == 15 && j == 10)
 				{
 					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard,Solid")
-					house.setImage("/static/house.png");
+					house.setImage("/static/grayhouse.png","/static/house.png");
 					house.setScene("BuildingMotivation",state.checkUnlockedMotivationQuest,state.check_motivation());
 					house.x = TILE_SIZE*i;
 					house.y = TILE_SIZE*j;
@@ -167,24 +166,27 @@ var crafty = function() {
 
 				if(i  == 24 && j == 13)
 				{
-					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard,Solid");
-					house.setImage("/static/house4.png");
-					house.setScene("Hometown",null,null);
-					house.x = TILE_SIZE*i;
-					house.y = TILE_SIZE*j;
-					house.z = -1;
+					// var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard,Solid");
+					// house.setImage("/static/grayhouse4.png","/static/house4.png");
+					// house.setScene("Hometown",null,null);
+					// house.x = TILE_SIZE*i;
+					// house.y = TILE_SIZE*j;
+					// house.z = -1;
+
+
 
 				}
 
 				if(i  == 1 && j == 10)
 				{
 					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard,Solid");
-					house.setImage("/static/house5.png");
+					house.setImage("/static/grayhouse5.png","/static/house5.png");
 					house.setScene("BuildingSkills",state.checkUnlockedSkillsQuest,state.check_skills());
 					house.x = TILE_SIZE*i;
 					house.y = TILE_SIZE*j;
 					house.z = -1;
 					houses.push(house);
+	
 				}
 
 			}
@@ -213,26 +215,53 @@ var crafty = function() {
 		questDone:null,
 		offsetX:10,
 		offsetY:10,
+		normalImage:null,
+		grayImage:null,
 
 		setScene:function(str,check,quest)
 		{
 			this.sceneString = str;
 			this.check = check;
 			this.questDone = quest;
+
+			if(this.check === null){
+			
+				return;
+			}
+
+			if(!this.check())this.image(this.grayImage);
+
+			this.bind("CheckBuilding",function()
+			{
+				if(this.check === null)return;
+			    if(this.check())this.image(this.normalImage);
+				
+			});
 		},
 
-		setImage:function(str)
+		setImage:function(grayImage,normalImage)
 		{
+			this.normalImage = normalImage;
+			this.grayImage = grayImage;
 
-			im = this.image(str);
-			poly1 = new Crafty.polygon([0+this.offsetX,0+this.offsetY],[im._w-this.offsetX,0+this.offsetY],[im._w-this.offsetX,im._h-this.offsetY],[0+this.offsetX,im._h-this.offsetY]);
+			 m = this.image(normalImage);
+			_width = m._w;
+			_heigth = m._h;	
+	
+			poly1 = new Crafty.polygon([0+this.offsetX,0+this.offsetY],[_width-this.offsetX,0+this.offsetY],[_width-this.offsetX,_heigth-this.offsetY],[0+this.offsetX,_heigth-this.offsetY]);
 			this.collision(poly1);
-			im._z = -1;
+			m._z = -1;
+
+		},
+
+		checkImage:function()
+		{
+			if(this.check === null)return;
+			if(this.check())this.image(this.normalImage);
 		},
 
 		enterBuilding:function()
 		{
-
 			if(this.check === null)
 			{
 				Crafty.scene(this.sceneString);
@@ -328,13 +357,13 @@ var crafty = function() {
 		init:function()
 		{
 			this.requires("Canvas, 2D");
-			this.bind("Draw", function(obj) 
-			{
-            	this.drawLines(obj.ctx);
-       		});
+			// this.bind("Draw", function(obj) 
+			// {
+   //          	this.drawLines(obj.ctx);
+   //     		});
 		},
 
-		drawLines:function()
+		checkHouses:function()
 		{
 			// var canvas = document.getElementById('mycanvas');
 			
@@ -346,13 +375,21 @@ var crafty = function() {
 			// Crafty.stage.elem.appendChild(canvas);
 			// $("#mycanvas").show();
 			// ctx = canvas.getContext('2d');
-			// var count = 0;
+			 var count = 0;
 			
 			// ctx.strokeStyle = "rgb(0,0,200)";
-			// for (var i = 0; i < houses.length; i++)
-			// {
-			// 	if(houses[i].questDone == false)
-			// 	{
+			for (var i = 0; i < houses.length; i++)
+			{
+				if(houses[i].questDone == true)count++;
+			}
+
+			if(count == houses.length && this.locked)
+			{
+				this.locked = false;
+				state.update('boss_unlocked','True')
+				unlockBoss();
+				this.image(this.normalImage);
+			}
 			// 		ctx.beginPath();
 		 //        	ctx.moveTo(this.x+this.w*0.5, this.y+this.h*0.5);
 		 //        	ctx.lineTo(houses[i].x+houses[i]._w*0.5, houses[i].y+houses[i]._h*0.5);
@@ -480,8 +517,10 @@ var crafty = function() {
 				this.walk(distance,this.posX,this.posY);
 				if(this.tar.x > 900)
 				{
+					this.stop().animate("walk_right", 10, -1);;
 					jQuery.post("/intro/{{game.uid}}/"); 
 					Crafty.scene("main");
+
 				}	
 			}else this.stop();
 
@@ -622,6 +661,7 @@ var crafty = function() {
 			{
 				if(trigger[1])
 				{
+					Crafty.trigger("CheckBuilding");
 					this.nextDialog();
 				}
 				return true;
@@ -669,11 +709,12 @@ var crafty = function() {
 	Crafty.scene("loading", function () 
 	{
         //load takes an array of assets and a callback when complete
-        Crafty.load(["/static/sign1.png", "/static/goal.png", "/static/controls.png","/static/controls2.png", "/static/spriteSheet.png" ,"/static/Sprite.png","/static/house.png","/static/Sprite2.png","/static/house2.png","/static/house3.png","/static/house4.png","/static/house5.png","/static/castle.png","/static/background.png","/static/background2.png","/static/fence.png"], function ()
+        Crafty.load(["/static/sign1.png", "/static/goal.png","/static/mainControler.png", "/static/controls.png","/static/controls2.png", "/static/spriteSheet.png" ,"/static/Sprite.png","/static/house.png","/static/Sprite2.png","/static/house2.png","/static/house3.png","/static/house4.png","/static/house5.png","/static/castle.png","/static/background.png","/static/background2.png","/static/fence.png","/static/checkmark.png","/static/grayhouse2.png","/static/checkmark2.png"], function ()
         {
-       		 // if('{{game.get_Intro}}' == 'False')Crafty.scene("Intro"); //when everything is loaded, run the main scene
-          //    else Crafty.scene("Intro");
-         	Crafty.scene("main");
+
+       		 if('{{game.get_Intro}}' == 'False')Crafty.scene("Intro"); //when everything is loaded, run the main scene
+             else Crafty.scene("main");
+         	//Crafty.scene("main");
 
              //$("#myModal").modal('show');
         });
@@ -684,8 +725,12 @@ var crafty = function() {
 
     Crafty.scene("main", function ()
     {
-    	//Crafty.background("url('/static/background.png')");
+    	Crafty.background("url('/static/background.png')");
 		generateWorld();
+		$('#model-body-text').hide();
+
+
+		
 
 		if(!state.checklog())
 		{
@@ -723,8 +768,6 @@ var crafty = function() {
 					state.checkUnlockedSkillsQuest);
 
 
-
-
 				if(state.checkUnlockedCVQuest())
 				{
 					quest_log.addQuest(quest1,false);
@@ -748,10 +791,11 @@ var crafty = function() {
 		}
 
 		var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard,BOSS");
-		house.setImage("/static/castle.png");
+		house.setImage("/static/graycastle.png","/static/castle.png");
 		house.setScene("Castle",state.check_boss_unlocked,null);
 		house.x = 620;
 		house.y = 0;
+		house.checkHouses();
 
 
 		var canvas = document.getElementById('mycanvas');
@@ -761,12 +805,12 @@ var crafty = function() {
 		
 		Mainplayer.Player();
 		Mainplayer.respawn();
+		//Mainplayer.stop().animate("walk_right", 10, -1);
 
 		var player2 = Crafty.e("2D,  Canvas, player,Collision,npc1,NPC,Solid");
 			player2.attr({ x: 150, y: 100, z: 1});
 			player2.setNpcData(quest1,getDialogData1);
 			player2.putMark();
-
 
 		var player3 = Crafty.e("2D,  Canvas, player,Collision,npc2,NPC,Solid");
 			player3.attr({ x: 400, y: 450, z: 1});
@@ -782,6 +826,10 @@ var crafty = function() {
 			player5.attr({ x: 150, y: 450, z: 1});
 			player5.setNpcData(quest4,getDialogData4);
 			player5.bind("getQuest",player5.putMark);
+
+
+
+		//Mainplayer.mayMove = true;
 
 		if(state.checkUnlockedCVQuest())
 		{
@@ -807,6 +855,12 @@ var crafty = function() {
 		player1.attr({ x: 150, y: 280, z: 1});
 		player1.Player();
 
+
+		var control = Crafty.e("2D,Canvas,Image").attr({ x: player1.x-45, y: player1.y-100, z: 1});
+		//control.attach(player1);
+		control.image("/static/mainControler.png");
+		player1.attach(control);
+
 		var player2 = Crafty.e("2D,  Canvas, player,Collision,npc1,NPC,Solid,AI");
 			player2.attr({ x: 650, y: 300, z: 1});
 			player2.setNpcData(null,getDialogIntro);
@@ -817,10 +871,7 @@ var crafty = function() {
 				
 			});
 
-
-		
 		Crafty.pause(true);
-
 
 		var fence  = Crafty.e("2D, Canvas,Image,Collision,setCollision,Solid");
 		fence.setImage("/static/fence.png");
@@ -836,7 +887,6 @@ var crafty = function() {
 		$("#submitButton").show();
 		$("#submitButton").html("start");
 
-
 		start = function()
 		{
 			$("#submitButton").html("submit");
@@ -845,9 +895,6 @@ var crafty = function() {
 		}
 
 		document.getElementById("submitButton").onclick = start;
-
-
-
 	});
 
 
@@ -997,12 +1044,12 @@ var crafty = function() {
 			this.isExit = false;
 		},
 
-		showEnter:function()
+		showEnter:function(str)
 		{
 			this.w = 80;  
 			this.h = 40;
 			this.text("Enter");
-			this.text('<div  style="margin-top:20px; text-align:center;">'+"Enter");
+			this.text('<div  style="margin-top:20px; text-align:center;">'+str);
 			this.isShown = true;
 			this.isHouse = true;
 			this.isNpc = false;

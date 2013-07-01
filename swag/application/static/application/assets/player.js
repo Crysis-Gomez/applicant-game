@@ -159,6 +159,7 @@ Crafty.c('Player',
 	Player:function(func)
 	{
 		this.collisionFunction = func;
+		this.direc;
 		this.requires("SpriteAnimation")
 		 .animate("walk_left",6,1,8)
 		 .animate("walk_right",6,2,8)
@@ -167,7 +168,6 @@ Crafty.c('Player',
 		 .bind('EnterFrame', function()
 		 {
 		 	if(!this.mayMove)this.stopMovement();
-
 		 })
 		
 		
@@ -178,6 +178,7 @@ Crafty.c('Player',
 				this.dirX = direction.x;
 				this.dirY = direction.y;
 				if(this.update)this.update();
+
 				//$("#alert-success").hide();
 
 				if (direction.x < 0)
@@ -206,10 +207,18 @@ Crafty.c('Player',
 				}
 			})
 
-		.bind('Moved',function()
+		.bind('Moved',function(e)
 		{
-
+		
 			if(!this.mayMove)return;
+			if(this.dirX == 0  && this.dirY == 0)
+			{	
+				if (!this.isPlaying("walk_right"))
+						this.stop().animate("walk_right", 10, -1);
+
+			} 
+
+
 			list = Crafty.map.search({_x: this.x, _y: this.y, _w: 40, _h: 40}, true);
 
 			if(this.update)this.update();
@@ -236,7 +245,16 @@ Crafty.c('Player',
 					if(!this.popUp.isShown)
 					{
 						this.house = list[enity];
-						this.popUp.showEnter();
+	
+						if(this.house.check())
+						{
+							this.popUp.showEnter("Enter");
+						}
+						else
+						{
+							this.popUp.showEnter("locked");
+						}
+						
 					}
 					return;
 				}
@@ -304,13 +322,13 @@ Crafty.c('Player',
 			{
 				if(quest_log.x  <= -150)
 				{
-					quest_log.Up();
-					this.mayMove = false;
+					//quest_log.Up();
+					//this.mayMove = false;
 				}
 				else if(quest_log.x >=  10)
 				{
-					quest_log.Out();
-					this.mayMove = true;
+					//quest_log.Out();
+					//this.mayMove = true;
 				}
 
 			}
@@ -329,10 +347,12 @@ Crafty.c("RightControls",
     init: function()
     {
         this.requires('Multiway');
+
     },
     
     rightControls: function(speed)
     {
+
         this.multiway(speed, {UP_ARROW: -90, DOWN_ARROW: 90, RIGHT_ARROW: 0, LEFT_ARROW: 180})
         return this;
     }

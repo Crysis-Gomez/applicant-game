@@ -118,6 +118,12 @@ Crafty.scene("BlockGame", function ()
         }
       }
 
+      if(this.levelNumber < (window.block_levels.length-1))
+      {
+          hud =  Crafty.e('2D,DOM,Text,Destroy').attr({ x: SCREEN_WIDTH*0.5 - 50, y: 100, z: 1 , w:100}).text("Level: " + (this.levelNumber+1)+" of "+(window.block_levels.length-1));
+      }
+    
+     
       this.mayStart = true; 
     },
 

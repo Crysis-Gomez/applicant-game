@@ -150,6 +150,7 @@ function sendContactInfo()
          }
      });
 
+    document.getElementById("id_email").blur();
     document.getElementById("submitButton").blur();
 }
 
@@ -348,7 +349,40 @@ function sendFiles()
 }
 
 $(document).ready(function()
-{
+{ 
+
+   $("#id_links").keydown(function() {
+        if (event.keyCode == 13) 
+        { 
+
+            addLink();
+            return false;
+         }
+    });
+
+
+     $("#id_name").keydown(function() {
+        if (event.keyCode == 13) 
+        { 
+
+           $("#id_email").focus();
+            return false;
+         }
+    });
+
+    $("#id_email").keydown(function() {
+        if (event.keyCode == 13) 
+        { 
+
+           sendContactInfo();
+            return false;
+         }
+    });
+
+
+
+
+
     $('#myModal').on('shown', function () {
 
       if(document.getElementById("contact_form") !== null ){
@@ -358,8 +392,6 @@ $(document).ready(function()
         }
       }
       
-
-
 
       if(!document.getElementById("id_answer"))return;
 
