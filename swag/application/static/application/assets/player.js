@@ -71,7 +71,6 @@ Crafty.c('Player',
 		}
 	},
 
-
 	buildingCollision:function()
 	{
 		if(this.y <= this.house.y+10)
@@ -103,7 +102,6 @@ Crafty.c('Player',
 	enterCollisionSolid:function(e)
 	{
 		this.collidedObject = e[0].obj;
-
 		 if(this.collidedObject.has("Building"))
 		 {
 		 	this.house = e[0].obj;
@@ -305,7 +303,13 @@ Crafty.c('Player',
 
 				if(this.popUp.isWarp)
 				{
+					for (var i = 0; i < quest_log.array.length; i++) 
+					{
+						quest_log.array[i].visible = false;
+					};
+					
 					Crafty.scene(this.machine.startGame);
+
 				}
 
 				if(this.popUp.isExit)

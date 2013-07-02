@@ -91,7 +91,7 @@ function submitMeeting()
 }
 
 
-function updateGame(property,value)
+function updateGame(property,value,func)
 {
     window.state.update(property, value);
     var game = window.game.crafty.pause(false);
@@ -121,6 +121,10 @@ function updateGame(property,value)
       $("#addLink").hide();
       $("#removeLink").hide();
 
+      if (typeof func != 'undefined')
+      {
+        func();
+      }
     
     });
 }
@@ -203,6 +207,18 @@ function checkURL(str) {
 }
 
 
+function finishGame()
+{
+
+    $('#myModal').modal('show');
+    $("#model-header-text").html("Mission Complete");
+    $("#model-body-text").html("Thank you submitting all of the documents, we`ll contact you soon.");
+    $("#model-body-text").show();
+    $("#submitButton").show();
+    $("#submitButton").html("start");
+
+}
+
 
 function submitAnswer()
 {
@@ -219,7 +235,8 @@ function submitAnswer()
           text = response.player['result'];
           if(text == 'Thanks for submitting')
           {
-            updateGame('answered', 'True')
+            updateGame('answered', 'True',finishGame);
+
           }
           else  showError(replaceText(text));
 

@@ -39,12 +39,19 @@ var crafty = function() {
 	
 	var houses;
 
-	
+
+	function showQuestlog()
+	{
+		for (var i = 0; i < quest_log.array.length; i++) 
+		{
+			quest_log.array[i].visible = true;
+		};
+	}
+
 	function generateWorld()
 	{
 		generateObjects();
 	}
-
 
 	function createHouse()
 	{
@@ -224,11 +231,7 @@ var crafty = function() {
 			this.check = check;
 			this.questDone = quest;
 
-			if(this.check === null){
-			
-				return;
-			}
-
+			if(this.check === null)return;
 			if(!this.check())this.image(this.grayImage);
 
 			this.bind("CheckBuilding",function()
@@ -499,13 +502,11 @@ var crafty = function() {
 			distance = Math.pow(this.posX - this.x,2) + Math.pow(this.posY - this.y,2);
 			distance = Math.sqrt(distance);
 			this.walk(distance,this.posX,this.posY);
-
 		},
 
 
 		walkToLead:function()
 		{
-
 			distance = Math.pow(this.posX - this.x,2) + Math.pow(this.posY - this.y,2);
 			distance = Math.sqrt(distance);
 			
@@ -598,8 +599,6 @@ var crafty = function() {
 			}
 
 		},
-
-
 	});
 
 	Crafty.c("Dialog",
@@ -631,8 +630,8 @@ var crafty = function() {
 					if(this.DialogText.length != this.DataText.length)
 					{
 						this.DialogText += this.DataText[this.TextIndex];
-						if(this.DialogText.length == this.DataText.length)this.text('<div style="margin-top:12px;">' + this.DialogText  + '<div style="margin-top:10px;">'  +"Enter to continue");
-						else this.text('<div style="margin-top:12px;">' + this.DialogText  + '<div style="margin-top:10px;">');
+						if(this.DialogText.length == this.DataText.length)this.text('<div style="margin-top:12px; font-size:15px;">' + this.DialogText  + '<div style="margin-top:10px;">'  +"Enter to continue");
+						else this.text('<div style="margin-top:12px; font-size:15px;">' + this.DialogText  + '<div style="margin-top:10px;">');
 						this.TextIndex++;
 					}
 					else this.finished = true;
@@ -709,7 +708,7 @@ var crafty = function() {
 	Crafty.scene("loading", function () 
 	{
         //load takes an array of assets and a callback when complete
-        Crafty.load(["/static/sign1.png", "/static/goal.png","/static/mainControler.png", "/static/controls.png","/static/controls2.png", "/static/spriteSheet.png" ,"/static/Sprite.png","/static/house.png","/static/Sprite2.png","/static/house2.png","/static/house3.png","/static/house4.png","/static/house5.png","/static/castle.png","/static/background.png","/static/background2.png","/static/fence.png","/static/checkmark.png","/static/grayhouse2.png","/static/checkmark2.png"], function ()
+        Crafty.load(["/static/sign1.png","/static/table.png", "/static/goal.png","/static/mainControler.png", "/static/controls.png","/static/controls2.png", "/static/spriteSheet.png" ,"/static/Sprite.png","/static/house.png","/static/Sprite2.png","/static/house2.png","/static/house3.png","/static/house4.png","/static/house5.png","/static/castle.png","/static/background.png","/static/background2.png","/static/fence.png","/static/checkmark.png","/static/grayhouse2.png","/static/checkmark2.png"], function ()
         {
 
        		 if('{{game.get_Intro}}' == 'False')Crafty.scene("Intro"); //when everything is loaded, run the main scene
@@ -730,7 +729,6 @@ var crafty = function() {
 		$('#model-body-text').hide();
 
 
-		
 
 		if(!state.checklog())
 		{
@@ -744,6 +742,8 @@ var crafty = function() {
 				//info = Crafty.e("Infolog,Persist");
 				quest_log = Crafty.e("Questlog,Persist")
 				.attr({ x: -150, y: 100, z: 1});
+				quest_log._element.setAttribute('id','quest_log');
+
 				quest1 = Crafty.e("Quest,Persist");
 				quest2 = Crafty.e("Quest,Persist");
 				quest3 = Crafty.e("Quest,Persist");
@@ -790,7 +790,7 @@ var crafty = function() {
 			}
 		}
 
-		var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard,BOSS");
+		var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard,BOSS,Solid");
 		house.setImage("/static/graycastle.png","/static/castle.png");
 		house.setScene("Castle",state.check_boss_unlocked,null);
 		house.x = 620;
@@ -829,7 +829,7 @@ var crafty = function() {
 
 
 
-		//Mainplayer.mayMove = true;
+		showQuestlog();
 
 		if(state.checkUnlockedCVQuest())
 		{
@@ -883,7 +883,7 @@ var crafty = function() {
 
 		$('#myModal').modal('show');
 		$("#model-header-text").html("Spil work applicant game");
-		$("#model-body-text").html("Welcome to Spiltopia dear player, Your current goal is to solve these challenges in Spiltopia")
+		$("#model-body-text").html("Welcome to Spiltopia dear player, Your current goal is to solve these challenges in Spiltopia");
 		$("#submitButton").show();
 		$("#submitButton").html("start");
 
@@ -891,6 +891,7 @@ var crafty = function() {
 		{
 			$("#submitButton").html("submit");
 			$('#myModal').modal('hide');
+			document.getElementById("submitButton").blur();
 			Crafty.pause(false);
 		}
 
@@ -901,6 +902,8 @@ var crafty = function() {
 	Crafty.scene("BuildingSkills", function()
 	{
 		generateIndoors("Test");
+		showQuestlog();
+
 		if(state.checkMayUploadSkills() && !state.check_skills())
 		{
 			craftyTriggers(SKILL,null);
@@ -914,6 +917,7 @@ var crafty = function() {
 	Crafty.scene("BuildingLink", function()
 	{
 		generateIndoors("TestGame");
+		showQuestlog();
 		if(state.checkMayUploadLink() && !state.check_link())
 		{
 			craftyTriggers(LINK,null);
@@ -927,6 +931,7 @@ var crafty = function() {
 	Crafty.scene("BuildingMotivation", function()
 	{
 		generateIndoors("RotateGame");
+		showQuestlog();
 		if(state.checkMayUploadMotivation() && !state.check_motivation())
 		{
 			craftyTriggers(MOTIVATION,null);
@@ -940,6 +945,7 @@ var crafty = function() {
 	Crafty.scene("BuildingCV", function()
 	{
 		generateIndoors("BlockGame");
+		showQuestlog();
 		if(state.checkMayUploadCV() && !state.check_cv())
 		{
 			craftyTriggers(UPLOAD,null);
@@ -953,6 +959,7 @@ var crafty = function() {
 	{
 
 		profile = Crafty.e("Profile");
+		showQuestlog();
 		profile.bind("SHOW",function()
 		{
 			this.showProfile();
@@ -985,7 +992,7 @@ var crafty = function() {
 		.attr({x:0, y:500, w:900, h:0}).css({"font": "10pt Arial", "color": "#000", "text-align": "left","border-radius": "20px"});
 		dialog.alpha = 0.8;
 
-		var player2 = Crafty.e("2D,  Canvas, boss,Collision,npc,NPC")
+		var player2 = Crafty.e("2D,  Canvas, boss,Collision,npc,NPC,Solid")
 		.attr({ x: 200, y: 244, z: 1})
 		.setNpcData(null,getDialogData6);
 
@@ -1036,7 +1043,7 @@ var crafty = function() {
 			this.w = 80;  
 			this.h = 40;
 			this.text("Enter");
-			this.text('<div  style="margin-top:20px; text-align:center;">'+"Talk");
+			this.text('<div  style="margin-top:20px; font-size:15px; text-align:center;">'+"Talk");
 			this.isShown = true;
 			this.isHouse = false;
 			this.isNpc = true;
@@ -1049,7 +1056,7 @@ var crafty = function() {
 			this.w = 80;  
 			this.h = 40;
 			this.text("Enter");
-			this.text('<div  style="margin-top:20px; text-align:center;">'+str);
+			this.text('<div  style="margin-top:20px; font-size:15px; text-align:center;">'+str);
 			this.isShown = true;
 			this.isHouse = true;
 			this.isNpc = false;
@@ -1057,13 +1064,12 @@ var crafty = function() {
 			this.isExit = false;
 		},
 
-
 		showWarp:function()
 		{
 			this.w = 80;  
 			this.h = 40;
 			this.text("Enter");
-			this.text('<div  style="margin-top:20px; text-align:center;">'+"Warp");
+			this.text('<div  style="margin-top:20px; font-size:15px; text-align:center;">'+"Warp");
 			this.isShown = true;
 			
 			this.isHouse = false;
@@ -1072,14 +1078,12 @@ var crafty = function() {
 			this.isExit = false;
 		},
 
-
-
 		showExit:function()
 		{
 			this.w = 80;  
 			this.h = 40;
 			this.text("Enter");
-			this.text('<div  style="margin-top:20px; text-align:center;">'+"Exit");
+			this.text('<div  style="margin-top:20px; font-size:15px; text-align:center;">'+"Exit");
 			this.isShown = true;
 			
 			this.isHouse = false;
@@ -1087,7 +1091,6 @@ var crafty = function() {
 			this.isWarp = false;
 			this.isExit = true;
 		},
-
 
 		hide:function()
 		{
@@ -1155,7 +1158,6 @@ var crafty = function() {
 
 		getProfile:function()
 		{
-
 			$.ajax({
 			  url: "/getprofile/{{game.uid}}/",
 			  dataType: 'jsonp',

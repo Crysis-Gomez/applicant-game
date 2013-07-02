@@ -42,6 +42,11 @@ class Times(admin.TabularInline):
 class Instance(admin.TabularInline):
     extra = 0
     model = models.GameInstance
+
+
+class Answer(admin.TabularInline):
+    extra = 0
+    model = models.PlayerQuestion
     #formset = MyFormSet
 
 
@@ -94,7 +99,7 @@ class PortfolioLinksAdmin(admin.ModelAdmin):
 class GameInstanceAdmin(admin.ModelAdmin):
     list_filter = ['vacancy', 'player_unlocked_boss']
     list_display = ('name', 'has_cv', 'has_motivation', 'player_unlocked_boss', 'has_links', 'has_rated_skills')
-    inlines = [CV, Motivation, Link, Skill]
+    inlines = [CV, Motivation, Link, Skill,Answer]
 
 
 class MeetingAdmin(admin.ModelAdmin):

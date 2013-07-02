@@ -41,10 +41,11 @@ def index(request):
 
 
 def get_client_ip(request):
-    if 'HTTP_X_FORWARDED_FOR' in request.META:
-        ip = request.META.get('HTTP_X_FORWARDED_FOR').split(',')[-1].strip()
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
     else:
-        ip = request.META.get('REMOTE_ADDR', None)
+        ip = request.META.get('REMOTE_ADDR')
 
     print ip
     return ip
@@ -184,6 +185,8 @@ def play(request, unique_id):
 
     context.update({'skill': skillForm})
 
+    _ip = get_client_ip(request)
+
     #print sys.argv[-1]
 
 
@@ -215,10 +218,11 @@ def process_answer(request, unique_id):
     if request.method == "POST":
         ans = Answer(request.POST)
         if ans.is_valid():
-            player_question, created = PlayerQuestion.objects.get_or_create(game_instance=game, question=game.vacancy.question)
-            player_question.answer = ans.cleaned_data['answer']
-            player_question.save()
-            process_second_mail(request, game)
+            print  "test"
+            # player_question, created = PlayerQuestion.objects.get_or_create(game_instance=game, question=game.vacancy.question)
+            # player_question.answer = ans.cleaned_data['answer']
+            #player_question.save()
+            #process_second_mail(request, game)
         else:
             upload_state['success'] = json.dumps(ans.errors)
 

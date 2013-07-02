@@ -5,7 +5,7 @@ var state = function()
 	this.has_cv = '{{ game.has_cv }}';
 	this.has_motivation = '{{game.has_motivation}}';
 	this.has_links = '{{game.has_links}}';
-	this.has_skills = '{{game.has_rated_skills}}'
+	this.has_skills = '{{game.has_rated_skills}}';
 
 	this.unLockedCVQuest = '{{game.player_cv_unlockedQuest}}';
 	this.mayUploadCV = false;
@@ -30,7 +30,7 @@ var state = function()
 	this.boss_unlocked = '{{game.player_unlocked_boss}}';
 	this.answered = '{{game.get_answer}}';
 
-	this.ip = '{{ip}}'
+	this.ip = '{{ip}}'; 
 
 	var check_UnlockedSkillsQuest = function()
 	{

@@ -16,7 +16,7 @@ Crafty.c("Questlog",{
 
 		init:function(){
 			var that = this;
-			this.addComponent("2D, DOM,Color");
+			this.addComponent("2D, DOM,Color2");
 			this.x = 500;
 			this.y = 0;
 			this.w = 150;  
@@ -35,6 +35,7 @@ Crafty.c("Questlog",{
 			this.marginY = 30;
 			this.infoLogHeight = 100;
 			this.css({"border-radius": "15px"});
+
 
 			this.bind('EnterFrame', function() {
 
@@ -170,7 +171,7 @@ Crafty.c("Questlog",{
 	{
 
 		init:function(){
-			this.addComponent("2D, DOM,Color,Text,Image");
+			this.addComponent("2D, DOM,Color2,Text,Image");
 			this.x = 200;
 			this.y = 0;
 			this.w = 300;  
@@ -183,6 +184,8 @@ Crafty.c("Questlog",{
 			this.questlog = null;
 			this.questID = 0;
 			this.npc = null;
+	
+
 			this._element.setAttribute("id","shadow");
 
 			// var newdiv = document.createElement('img');
@@ -243,7 +246,7 @@ Crafty.c("Questlog",{
 		showText:function()
 		{
 
-			this.text('<div style="margin-left:-80px; margin-top: 15px;" >' + this.name); //+ '<div style="margin-left:100px;">' + this.completed);
+			this.text('<div style="margin-left:-80px; margin-top: 5px; font-size:15px;" >' + this.name); //+ '<div style="margin-left:100px;">' + this.completed);
 			if(this.completed)this.image("/static/checkmark.png");
 			else this.image("/static/checkmark2.png");
 		

@@ -254,16 +254,6 @@ function uploadSkills()
 function uploadAnswer()
 {
 	
-	$('#myModal').modal({
-        backdrop: false,
-        keyboard: false
-    }).css({
-    	'height':function(){
-    		return 400;
-    	},
-
-	});
-
 	document.getElementById("id_answer").style.display = 'block';
 	document.getElementById("question_form").style.display = 'block';
 	document.getElementById("question").style.display = 'block';
@@ -289,7 +279,7 @@ function craftyTriggers(str,npc)
 	switch(str)
 	{
 		case UPLOAD:
-
+				
 		return [true,uploadCV()]
 
 		 case CONTACT:
