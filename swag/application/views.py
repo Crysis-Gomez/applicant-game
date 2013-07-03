@@ -51,9 +51,6 @@ def get_client_ip(request):
     print ip
     return ip
 
-def show_choice(request):
-
-    return render_to_response('choice.html')
 
 def start_game(request, slug):
     _vacancy = Vacancy.objects.get(slug=slug)

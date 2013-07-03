@@ -8,6 +8,7 @@ Crafty.scene("TestGame", function ()
      n2:null,
      n3:null,
      n4:null,
+     feedBack:null,
 
   	getNumber:function(number)
     {
@@ -86,7 +87,6 @@ Crafty.scene("TestGame", function ()
     {
         Crafty.background('rgb(249, 223, 125)');
 
-        // console.log(state.ip)
         $('#ips').show();
            
    	    n1 = this.convert(95);
@@ -96,10 +96,19 @@ Crafty.scene("TestGame", function ()
 
         console.log(n1,n2,n3,n4);
      
-
         var IPAddress = Crafty.e("2D, DOM,Text,CheckValue");
         IPAddress.text('<div style="font-size:15px;">'+"The IP address of this computer is 95.67.102.58, but this computer works with a duodecimal system. Convert the number and put it in the fields.The table below should help you");
         IPAddress._w = 500;
+        feedBack = Crafty.e("2D, DOM,Text");
+        feedBack.text('<div style="font-size:20px;">'+'');
+        feedBack._w = 350;
+        feedBack.x = SCREEN_WIDTH*0.5-feedBack._w*0.5;
+        feedBack.y = SCREEN_HEIGHT-20;
+        
+        feedBack.textColor('#FF0000');
+
+
+
         IPAddress.requires('Keyboard').bind('KeyDown', function ()
         {    
 
@@ -126,14 +135,17 @@ Crafty.c('CheckValue',
      var val3 = $('#ip3')[0].value;
      var val4 = $('#ip4')[0].value;
      
-
-
      if(val1 == n1 && val2 == n2 && val3 == n3 && val4 == n4)
      {
        state.linkMayUpload();
        $('#ips').hide();
        Crafty.scene("BuildingLink");
      }
+     else
+    {
+      feedBack.text('<div style="font-size:15px;">'+'You have insert an incorrect code, try again please');
+    }
+
   },
 
 })

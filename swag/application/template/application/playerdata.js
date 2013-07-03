@@ -94,7 +94,7 @@ function submitMeeting()
 function updateGame(property,value,func)
 {
     state.update(property, value);
-    var game = game.crafty.pause(false);
+    game.crafty.pause(false);
     quest_log.update();
     document.getElementById("success_div").innerHTML = "";
     
@@ -327,11 +327,6 @@ function submitlinks()
 
     document.getElementById("submitButton").blur();
 }
-
-// function showUploadedItem (source)
-// {
-//       return true;
-// }
 
 function restartCrafty()
 {

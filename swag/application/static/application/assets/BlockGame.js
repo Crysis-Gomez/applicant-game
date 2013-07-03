@@ -138,15 +138,12 @@ Crafty.scene("BlockGame", function ()
       Crafty.background('rgb(249, 223, 125)');
       this.loadLevel();  
 
-      controls = Crafty.e("2D,Image,Canvas");
+      var controls = Crafty.e("2D,Image,Canvas");
       image =  controls.image("/static/controls.png");
       controls.x = SCREEN_WIDTH*0.5 - image._w*0.5;
       controls.y = SCREEN_HEIGHT - image._h;
       image.alpha = 0.7;
 
-
-
-      //controls.setImage("/static/controls.png");
     }
   }
 
@@ -440,7 +437,6 @@ Crafty.c('PlayerCharacter',
       this.endGame();
       return;
     }
-
 
     if(tile.obj == null)
     {
