@@ -7,6 +7,7 @@ from application.models import Vacancy
 from application.models import CvDocument
 from application.models import MotivationLetter
 from application.form import LetterForm
+from application.form import Job_Description
 from application.models import Meeting
 from application.models import PortfolioLink
 from application.models import SkillSet
@@ -35,6 +36,7 @@ from django.db import IntegrityError
 
 def index(request):
     vacancies = Vacancy.objects.all().order_by('title')
+
     return render_to_response('list_vacancies.html', {
         'vacancies': vacancies
     })
@@ -50,6 +52,9 @@ def get_client_ip(request):
     print ip
     return ip
 
+def show_choice(request):
+
+    return render_to_response('choice.html')
 
 def start_game(request, slug):
     _vacancy = Vacancy.objects.get(slug=slug)
@@ -60,6 +65,7 @@ def start_game(request, slug):
     game_instance.vacancy = _vacancy
     game_instance.save()
     return HttpResponseRedirect(reverse('play', args=(instance_id,)))
+    # return HttpResponseRedirect(reverse('choice'))
 
 
 def statejs(request, unique_id):
@@ -377,18 +383,16 @@ def process_motivation_letter(request, unique_id):
     return render(request, "results_template.js", upload_state, content_type=RequestContext(request))
 
 
-
 def process_first_mail(request, game):
 
     subject = game.vacancy.title
     message = game.vacancy.mail_text
     link = get_current_path(request)
     link = sys.argv[-1]+link['current_path']
-    link2 = link
-    link = link.replace("uploadcontact", "game")
-    link2= link2.replace("uploadcontact", "getprofile")
-    message = message.replace("link1", "http://"+link)
-    message = message.replace("link2", "http://"+link2)
+    game_link = link.replace("uploadcontact", "game")
+    profile_link = link.replace("uploadcontact", "getprofile")
+    message = message.replace("link1", "http://" + game_link)
+    message = message.replace("link2", "http://" + profile_link)
     send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
     [game.player_email], fail_silently=False)
 

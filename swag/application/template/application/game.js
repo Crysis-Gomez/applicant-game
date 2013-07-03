@@ -5,7 +5,8 @@ var HOUSE_HEIGHT = 10;
 var OFFSET = 120;
 var SCREEN_WIDTH = 900;
 var SCREEN_HEIGHT = 600;
-var dialog; 
+var dialog;
+var houses;
 	
 var crafty = function() {
 
@@ -36,10 +37,6 @@ var crafty = function() {
 		 door:[5,0]
     });
 
-	
-	var houses;
-
-
 	function showQuestlog()
 	{
 		for (var i = 0; i < quest_log.array.length; i++) 
@@ -66,7 +63,7 @@ var crafty = function() {
       	{
             currentIndoor[x] = new Array();
       	}
-      	index = 0;
+      	var index = 0;
         for (var x = 0; x < HOUSE_HEIGHT; x++)
         {
           for (var y = 0; y < HOUSE_WIDTH; y++)
@@ -79,10 +76,9 @@ var crafty = function() {
        return currentIndoor;
 	}
 
-
 	function generateIndoors(game)
 	{
-		indoor = createHouse();
+		var indoor = createHouse();
 		for (x = 0; x < HOUSE_WIDTH; x++)
 		{
 			for (y = 0; y < HOUSE_HEIGHT; y++)
@@ -132,7 +128,8 @@ var crafty = function() {
 		Crafty.background('rgb(0, 0, 0)');
 	}
 
-	function generateObjects(){
+	function generateObjects()
+	{
 		houses = new Array();
 		for (i = 0; i < 31; i++)
 		{
@@ -207,8 +204,8 @@ var crafty = function() {
 		setImage:function(str)
 		{
 
-			im = this.image(str);
-			poly1 = new Crafty.polygon([0+this.offsetX,0+this.offsetY],[im._w-this.offsetX,0+this.offsetY],[im._w-this.offsetX,im._h-this.offsetY],[0+this.offsetX,im._h-this.offsetY]);
+			var im = this.image(str);
+			var poly1 = new Crafty.polygon([0+this.offsetX,0+this.offsetY],[im._w-this.offsetX,0+this.offsetY],[im._w-this.offsetX,im._h-this.offsetY],[0+this.offsetX,im._h-this.offsetY]);
 			this.collision(poly1);
 			im._z = -1;
 		},
@@ -247,11 +244,11 @@ var crafty = function() {
 			this.normalImage = normalImage;
 			this.grayImage = grayImage;
 
-			 m = this.image(normalImage);
-			_width = m._w;
-			_heigth = m._h;	
+			var m = this.image(normalImage);
+			var _width = m._w;
+			var _heigth = m._h;	
 	
-			poly1 = new Crafty.polygon([0+this.offsetX,0+this.offsetY],[_width-this.offsetX,0+this.offsetY],[_width-this.offsetX,_heigth-this.offsetY],[0+this.offsetX,_heigth-this.offsetY]);
+			var poly1 = new Crafty.polygon([0+this.offsetX,0+this.offsetY],[_width-this.offsetX,0+this.offsetY],[_width-this.offsetX,_heigth-this.offsetY],[0+this.offsetX,_heigth-this.offsetY]);
 			this.collision(poly1);
 			m._z = -1;
 
@@ -360,27 +357,13 @@ var crafty = function() {
 		init:function()
 		{
 			this.requires("Canvas, 2D");
-			// this.bind("Draw", function(obj) 
-			// {
-   //          	this.drawLines(obj.ctx);
-   //     		});
 		},
 
 		checkHouses:function()
 		{
-			// var canvas = document.getElementById('mycanvas');
-			
-			// canvas.width = Crafty.viewport.width;
-			// canvas.height = Crafty.viewport.height;
-			// canvas.style.position = 'absolute';
-			// canvas.style.left = "0px";
-			// canvas.style.top = "0px";
-			// Crafty.stage.elem.appendChild(canvas);
-			// $("#mycanvas").show();
-			// ctx = canvas.getContext('2d');
-			 var count = 0;
-			
-			// ctx.strokeStyle = "rgb(0,0,200)";
+
+			var count = 0;
+		
 			for (var i = 0; i < houses.length; i++)
 			{
 				if(houses[i].questDone == true)count++;
@@ -393,24 +376,6 @@ var crafty = function() {
 				unlockBoss();
 				this.image(this.normalImage);
 			}
-			// 		ctx.beginPath();
-		 //        	ctx.moveTo(this.x+this.w*0.5, this.y+this.h*0.5);
-		 //        	ctx.lineTo(houses[i].x+houses[i]._w*0.5, houses[i].y+houses[i]._h*0.5);
-		 //        	ctx.closePath();
-		 //        	ctx.stroke();
-		 //        }
-		 //        else
-		 //        {
-		 //       		count++;
-		 //        }
-			// };
-
-			// if(count == houses.length && this.locked)
-			// {
-			// 	this.locked = false;
-			// 	state.update('boss_unlocked','True')
-			// 	unlockBoss();
-			// }
 		},
 
 		update:function()
@@ -499,7 +464,7 @@ var crafty = function() {
 
 		walkToPosition:function()
 		{
-			distance = Math.pow(this.posX - this.x,2) + Math.pow(this.posY - this.y,2);
+			var distance = Math.pow(this.posX - this.x,2) + Math.pow(this.posY - this.y,2);
 			distance = Math.sqrt(distance);
 			this.walk(distance,this.posX,this.posY);
 		},
@@ -507,10 +472,10 @@ var crafty = function() {
 
 		walkToLead:function()
 		{
-			distance = Math.pow(this.posX - this.x,2) + Math.pow(this.posY - this.y,2);
+			var distance = Math.pow(this.posX - this.x,2) + Math.pow(this.posY - this.y,2);
 			distance = Math.sqrt(distance);
 			
-			distance2 = Math.pow(this.tar.x - this.x,2) + Math.pow(this.tar.y - this.y,2);
+			var distance2 = Math.pow(this.tar.x - this.x,2) + Math.pow(this.tar.y - this.y,2);
 			distance2 = Math.sqrt(distance2);
 
 			if(distance2  < 100)
@@ -531,7 +496,7 @@ var crafty = function() {
 		walkToTarget:function()
 		{
 			
-			distance = Math.pow(this.tar.x - this.x,2) + Math.pow(this.tar.y - this.y,2);
+			var distance = Math.pow(this.tar.x - this.x,2) + Math.pow(this.tar.y - this.y,2);
 			distance = Math.sqrt(distance);
 			this.walk(distance,this.tar.x,this.tar.y);
 		
@@ -553,11 +518,11 @@ var crafty = function() {
 
 			if(distance  > 45)
 			{
-				velocityX = (x - this.x);
-				velocityY = (y - this.y);
+				var velocityX = (x - this.x);
+				var velocityY = (y - this.y);
 
-				tempVelX = Math.abs(velocityX);
-				tempVelY = Math.abs(velocityY);
+				var tempVelX = Math.abs(velocityX);
+				var tempVelY = Math.abs(velocityY);
 
 				if(tempVelX > tempVelY)
 				{
@@ -616,7 +581,7 @@ var crafty = function() {
 
 		init:function()
 		{
-			this.addComponent("2D,Color2");
+			this.addComponent("2D,Color");
 			this.x = 0;
 			this.y = 0;
 			this.w = 900;  
@@ -710,12 +675,8 @@ var crafty = function() {
         //load takes an array of assets and a callback when complete
         Crafty.load(["/static/sign1.png","/static/table.png", "/static/goal.png","/static/mainControler.png", "/static/controls.png","/static/controls2.png", "/static/spriteSheet.png" ,"/static/Sprite.png","/static/house.png","/static/Sprite2.png","/static/house2.png","/static/house3.png","/static/house4.png","/static/house5.png","/static/castle.png","/static/background.png","/static/background2.png","/static/fence.png","/static/checkmark.png","/static/grayhouse2.png","/static/checkmark2.png"], function ()
         {
-
-       		 if('{{game.get_Intro}}' == 'False')Crafty.scene("Intro"); //when everything is loaded, run the main scene
-             else Crafty.scene("main");
-         	//Crafty.scene("main");
-
-             //$("#myModal").modal('show');
+       		 if('{{game.get_Intro}}' == 1)Crafty.scene("main"); //when everything is loaded, run the main scene
+             else Crafty.scene("Intro");
         });
     });
 
@@ -1200,7 +1161,6 @@ var crafty = function() {
 			{
 				this.addAttribute(state.get_links()[key],true);
 			}
-			
 		}
 	});
 

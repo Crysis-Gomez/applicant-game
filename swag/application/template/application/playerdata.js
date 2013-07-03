@@ -138,12 +138,12 @@ function sendContactInfo()
         },
          success:function(res)
          {
-            response = JSON.parse(res);
-            text = response.player['result'];
+            var response = JSON.parse(res);
+            var text = response.player['result'];
             if(text == 'Thanks for submitting')
             {
-                name = replaceText(response.player['name']);
-                email =replaceText(response.player['email']);
+                var name = replaceText(response.player['name']);
+                var email =replaceText(response.player['email']);
                 text = response.player['result'];
                 updateGame('player_name', name);
                 updateGame('player_email', email);
@@ -162,20 +162,20 @@ function replaceText(string)
 { 
 
     
-    tempText = string.replace(/([&;.*+?^=!:${}()|[\]\/\\])/g,"");
+    var tempText = string.replace(/([&;.*+?^=!:${}()|[\]\/\\])/g,"");
     tempText = tempText.replace(/quot/g,"");
     tempText = tempText.replace('__all__','');
     
     if(tempText.indexOf(", ") !== -1)
     {
-       textArray = tempText.split(", ");
+       var textArray = tempText.split(", ");
 
       for (var i = 0; i < textArray.length; i++) 
       {
           textArray[i] = capitaliseFirstLetter(textArray[i]);
       };
 
-      finaltext  = "";
+      var finaltext  = "";
 
       for (var i = 1; i < textArray.length; i++) 
       {
@@ -231,8 +231,8 @@ function submitAnswer()
         success:function(res)
         {
 
-          response = JSON.parse(res);
-          text = response.player['result'];
+          var response = JSON.parse(res);
+          var text = response.player['result'];
           if(text == 'Thanks for submitting')
           {
             updateGame('answered', 'True',finishGame);
@@ -256,8 +256,8 @@ function submitSkills()
 
         success:function(res)
         {
-          response = JSON.parse(res);
-          skills = response.player['skills'];
+          var response = JSON.parse(res);
+          var skills = response.player['skills'];
           window.state.skills = skills;
           updateGame('has_skills','True');
         }
@@ -278,10 +278,10 @@ function addLink()
 
 function removeLink()
 {
-    list = $("#linkList")[0];
+    var list = $("#linkList")[0];
     if(list.children.length > 0)
     {
-    	child = list.children[list.children.length -1];
+    	var child = list.children[list.children.length -1];
     	list.removeChild(child); 	
     }  		
 }
@@ -350,11 +350,11 @@ function sendFiles()
 
          success:function(res)
          {
-            response = JSON.parse(res);
-            text = response.player['result'];
+            var response = JSON.parse(res);
+            var  text = response.player['result'];
             if(text == 'Thanks for submitting')
             {
-                name = replaceText(response.player['name']);
+                var name = replaceText(response.player['name']);
                 text = response.player['result'];
                 updateGame('has_cv', 'True')
             }

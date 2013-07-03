@@ -1,8 +1,13 @@
 Crafty.scene("TestGame", function ()
 {
-  // state.linkMayUpload();
-  // Crafty.scene("BuildingLink")
+ 
+  
   Game = {
+
+     n1:null,
+     n2:null,
+     n3:null,
+     n4:null,
 
   	getNumber:function(number)
     {
@@ -26,7 +31,7 @@ Crafty.scene("TestGame", function ()
 
     checkNumber:function(number)
     {
-      if(number  == 10 || number  == 11  || number  == 12)
+      if(number > 9 && number <12)
       {
       	 number = this.getNumber(number);
       }
@@ -37,39 +42,39 @@ Crafty.scene("TestGame", function ()
 
     getbasedNumber:function(number)
     {
-  
-        str = "";
-        baseNumber = parseInt(number/12);
-        number2 = number % 12;
-     	  baseNumber = this.checkNumber(baseNumber);
-        return [baseNumber,number2]
+      
+        var baseNumber = 12
+        var newNumber = parseInt(number/baseNumber);
+        number2 = number % baseNumber;
+     	  newNumber = this.checkNumber(newNumber);
+        return [newNumber,number2]
 
     },
 
     convert:function(number)
     {
-        array  = new Array();
+        var numList  = new Array();
+        var str = '';
+        var newNumber = this.getbasedNumber(number);
+        var finalNumber = this.checkNumber(newNumber[1]);
+        numList.push(finalNumber);
 
-        newNumber = this.getbasedNumber(number);
-        newNumber[1] = this.checkNumber(newNumber[1]);
-        array.push(newNumber[1]);
-
-        numberLenght = number.toString().length;
+        var numberLenght = number.toString().length;
        
         while (newNumber[0]  > 12)
         {
           newNumber = this.getbasedNumber(newNumber[0]);
           newNumber[1] = this.checkNumber(newNumber[1]);
-          array.push(newNumber[1]);
+          numList.push(newNumber[1]);
         }
-        array.push(newNumber[0]);
-        array.reverse();
+        numList.push(newNumber[0]);
+        numList.reverse();
 
-        if(array[0] === 0)array.splice(0,1);
+        if(numList[0] === 0)numList.splice(0,1);
 
-        for (var i = 0; i < array.length; i++) 
+        for (var i = 0; i < numList.length; i++) 
         {
-           str += array[i].toString();
+           str += numList[i].toString();
         };
 
         return str;
@@ -92,8 +97,8 @@ Crafty.scene("TestGame", function ()
         console.log(n1,n2,n3,n4);
      
 
-        IPAddress = Crafty.e("2D, DOM,Text,CheckValue");
-        IPAddress.text("The IP address of this computer is 95.67.102.58, but this computer works with a duodecimal system. Convert the number and put it in the fields.The table below should help you");
+        var IPAddress = Crafty.e("2D, DOM,Text,CheckValue");
+        IPAddress.text('<div style="font-size:15px;">'+"The IP address of this computer is 95.67.102.58, but this computer works with a duodecimal system. Convert the number and put it in the fields.The table below should help you");
         IPAddress._w = 500;
         IPAddress.requires('Keyboard').bind('KeyDown', function ()
         {    
@@ -116,11 +121,13 @@ Crafty.c('CheckValue',
 
   checkValue:function()
   {
-     val1 = $('#ip1')[0].value;
-     val2 = $('#ip2')[0].value;
-     val3 = $('#ip3')[0].value;
-     val4 = $('#ip4')[0].value;
+     var val1 = $('#ip1')[0].value;
+     var val2 = $('#ip2')[0].value;
+     var val3 = $('#ip3')[0].value;
+     var val4 = $('#ip4')[0].value;
      
+
+
      if(val1 == n1 && val2 == n2 && val3 == n3 && val4 == n4)
      {
        state.linkMayUpload();

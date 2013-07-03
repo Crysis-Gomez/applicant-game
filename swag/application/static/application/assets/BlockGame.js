@@ -39,7 +39,7 @@ Crafty.scene("BlockGame", function ()
 
     getLevel:function(levelNumber)
     {
-      currentLevel = new Array;
+      var currentLevel = new Array;
       //levelString = window.block_levels[levelNumber];
 
       if(typeof window.block_levels[levelNumber] == "string")
@@ -66,7 +66,7 @@ Crafty.scene("BlockGame", function ()
 
     loadLevel:function()
     {
-      currentLevel = this.getLevel(this.levelNumber);
+      var currentLevel = this.getLevel(this.levelNumber);
       Game.myArray = new Array(Game.map_grid.width);
       for (var x = 0; x < Game.map_grid.width; x++)
       {
@@ -120,7 +120,7 @@ Crafty.scene("BlockGame", function ()
 
       if(this.levelNumber < (window.block_levels.length-1))
       {
-          hud =  Crafty.e('2D,DOM,Text,Destroy').attr({ x: SCREEN_WIDTH*0.5 - 50, y: 100, z: 1 , w:100}).text("Level: " + (this.levelNumber+1)+" of "+(window.block_levels.length-1));
+         var hud =  Crafty.e('2D,DOM,Text,Destroy').attr({ x: SCREEN_WIDTH*0.5 - 50, y: 100, z: 1 , w:100}).text('<div style="font-size:15px;">'+"Level: " + (this.levelNumber+1)+" of "+(window.block_levels.length-1));
       }
     
      
@@ -255,7 +255,7 @@ Crafty.c('Block',
 
   resetPostionOnTile:function()
   {
-    tile = Game.myArray[this.onGridX][this.onGridY];
+    var tile = Game.myArray[this.onGridX][this.onGridY];
     tile.obj = null;
     this.onGridX = (this.x-Game.map_grid.offSetX) / Game.map_grid.tile.width;
     this.onGridY = (this.y-Game.map_grid.offSetY) / Game.map_grid.tile.height;
@@ -297,6 +297,8 @@ Crafty.c('PlayerCharacter',
   lastDirectionY:0,
   isMoving:false,
   gameEnded:false,
+  startCount:0,
+  endCount:0,
 
   init: function()
   {
@@ -383,19 +385,19 @@ Crafty.c('PlayerCharacter',
     {
         if(!this.isMoving)
         {
-           start = new Date().getTime();
+           this.startCount = new Date().getTime();
            this.checkMovement();
            this.isMoving = true;
         }
 
         if(this.isMoving)
         {
-          end = new Date().getTime();
-          current = end - start;
+          this.endCount = new Date().getTime();
+          current = this.endCount - this.startCount;
           if(current > 200)
           {
              this.checkMovement();
-             start = new Date().getTime();
+             this.startCount = new Date().getTime();
           }
         }
     }
@@ -424,8 +426,9 @@ Crafty.c('PlayerCharacter',
 
     if(this.gameEnded)return;
 
-    onGridX = (this.x-Game.map_grid.offSetX) / Game.map_grid.tile.width;
-    onGridY = (this.y-Game.map_grid.offSetY) / Game.map_grid.tile.height;
+    var  onGridX = (this.x-Game.map_grid.offSetX) / Game.map_grid.tile.width;
+    var  onGridY = (this.y-Game.map_grid.offSetY) / Game.map_grid.tile.height;
+    var tile = null;
 
     if(tile = Game.myArray[onGridX+this.lastDirectionX] === undefined)
     {

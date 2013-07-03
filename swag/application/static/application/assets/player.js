@@ -157,7 +157,6 @@ Crafty.c('Player',
 	Player:function(func)
 	{
 		this.collisionFunction = func;
-		this.direc;
 		this.requires("SpriteAnimation")
 		 .animate("walk_left",6,1,8)
 		 .animate("walk_right",6,2,8)
@@ -209,15 +208,14 @@ Crafty.c('Player',
 		{
 		
 			if(!this.mayMove)return;
-			if(this.dirX == 0  && this.dirY == 0)
+			//I did this because when a player hold the right key during the change of the scene it keeps animating
+			if(this.dirX == 0  && this.dirY == 0 && !this.isPlaying("walk_right"))
 			{	
-				if (!this.isPlaying("walk_right"))
-						this.stop().animate("walk_right", 10, -1);
-
+				this.stop().animate("walk_right", 10, -1);
 			} 
 
 
-			list = Crafty.map.search({_x: this.x, _y: this.y, _w: 40, _h: 40}, true);
+			var entities = Crafty.map.search({_x: this.x, _y: this.y, _w: 40, _h: 40}, true);
 
 			if(this.update)this.update();
 			
@@ -226,23 +224,23 @@ Crafty.c('Player',
 				this.isCollindingWithDoor = false;
 			}
 
-			for (enity in list)
+			for (entity in entities)
 			{
-				if(list[enity].has("NPC"))
+				if(entities[entity].has("NPC"))
 				{
 					if(!this.popUp.isShown)
 					{
-						this.npc = list[enity];
+						this.npc = entities[entity];
 						this.npc.player = this;
 						this.popUp.showTalk();
 					}
 					return;
 				}
-				if(list[enity].has("Building"))
+				if(entities[entity].has("Building"))
 				{
 					if(!this.popUp.isShown)
 					{
-						this.house = list[enity];
+						this.house = entities[entity];
 	
 						if(this.house.check())
 						{
@@ -258,22 +256,22 @@ Crafty.c('Player',
 				}
 
 
-				if(list[enity].has("Door"))
+				if(entities[entity].has("Door"))
 				{
 					if(!this.popUp.isShown)
 					{
-						this.door = list[enity];
+						this.door = entities[entity];
 						this.popUp.showExit();
 					}
 					return;
 				} 
 
 
-				if(list[enity].has("Machine"))
+				if(entities[entity].has("Machine"))
 				{
 					if(!this.popUp.isShown)
 					{
-						this.machine = list[enity];
+						this.machine = entities[entity];
 						this.popUp.showWarp();
 					}
 					return;

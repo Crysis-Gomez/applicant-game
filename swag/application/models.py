@@ -9,6 +9,7 @@ import json
 import datetime
 from django.utils import timezone
 from django.core.exceptions import ValidationError
+from django.utils.safestring import mark_safe
 
 
 class SkillSet(models.Model):
@@ -30,14 +31,20 @@ class Vacancy(models.Model):
     title = models.CharField(max_length=200)
     department = models.CharField(max_length=20)
     slug = models.SlugField(max_length=50, unique=True)
+    job_description_input = models.TextField(max_length=500)
+    job_description_output = models.TextField(max_length=500, editable=False)
     mail_text = models.TextField(max_length=500)
     mail_text2 = models.TextField(max_length=500)
     skill_sets = models.ManyToManyField(SkillSet)
     question = models.ForeignKey(Question, null=True, blank=False)
     pub_date = models.DateTimeField(auto_now=True, auto_now_add=True)
 
+    def save(self, *args, **kwargs):
+        self.job_description_output = mark_safe(self.job_description_input.replace("\n", "<br/>"))
+        super(Vacancy, self).save(*args, **kwargs)
+
     def was_published(self):
-        return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
+        return self.pub_date >= timezone.now()
 
     def __unicode__(self):
         return str(self.title)
@@ -69,8 +76,9 @@ class GameInstance(models.Model):
         return self.name()
 
     def get_Intro(self):
-
-        return self.player_finished_intro
+        if self.player_finished_intro is True:
+            return 1
+        return 0
 
     def get_answer(self):
         try:
@@ -228,7 +236,6 @@ class GameData(models.Model):
 
 class PortfolioLink(models.Model):
     links = models.URLField(max_length=200)
-    #entry = models.TextField(null=True, blank=True)
     game_instance = models.ForeignKey(GameInstance, editable=False)
 
     def get_link(self):
@@ -264,7 +271,7 @@ class MotivationLetter(models.Model):
 
     def clean(self):
         if not self.attachment and not self.entry:
-            raise ValidationError('Current field is empty')
+            raise ValidationError('You need to fill at least one field')
 
     def __unicode__(self):
         return str(self.title)

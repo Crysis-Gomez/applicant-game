@@ -1,11 +1,51 @@
 {%extends 'base.html'%}
 
+
 {%block content%}
+<script>
+ window.onload = function () {
+ 	{% for vacancy in vacancies %}
+		var button =  document.getElementById('{{vacancy.title}}');
+		button.addEventListener('click', function(){
+		    window.location.href = '{% url 'game' slug=vacancy.slug %}'
+		});
+ 	{%endfor%}
+ }
+
+</script>
+
 	<div class="page-header">
 	  <h1>Spil Games<small>vacancy list</small></h1>
 	</div>
+	
+
+	<div class="accordion" id="accordion2">
 	{% for vacancy in vacancies %}
-		<ul class="nav nav-pills nav-stacked"><a href="{% url 'game' slug=vacancy.slug %}">{{vacancy}}</a><p>{{vacancy.pub_date}}</p></ul>
+	
+
+	  <div class="accordion-group">
+	    <div class="accordion-heading">
+	      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href='#{{vacancy.id}}'>
+	        <p>{{vacancy.title}}</p>
+	        <p>{{vacancy.pub_date}}</p>
+	      </a>
+	    </div>
+	    <div id='{{vacancy.id}}' class="accordion-body collapse">
+	      <div class="accordion-inner">
+	         <p>{{vacancy.job_description_output|safe}}</p>
+	         
+	         <!-- <button id="normal"    type="button" class="btn btn-primary" onclick="removeLink()">Normal</button> -->
+			 <button id='{{vacancy.title}}' 	type="button" class="btn btn-primary" >Play game</button>
+
+	      </div>
+	    </div>
+	  </div>
 	{%endfor%}
 
+  
+	</div>
+
 {% endblock %}
+
+
+

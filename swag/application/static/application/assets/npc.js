@@ -13,7 +13,7 @@ var LEAD ="LEAD";
 
 function getDialogData1(state)
 {
- 	data ="";
+ 	var data ="";
   	if(!state.check_name())
   	{
 			data = ["Sandra: Hi I`m Sandra nice to meet you!",
@@ -53,7 +53,7 @@ function getDialogData1(state)
 
 function getDialogData2(state)
 {
- 	data ="";
+ 	var data ="";
 
  	if(!state.check_name())
  	{
@@ -83,7 +83,7 @@ function getDialogData2(state)
 
 function getDialogData3(state)
 {
- 	data ="";
+ 	var data ="";
 
  	if(!state.check_name())
  	{
@@ -112,7 +112,7 @@ function getDialogData3(state)
 
 function getDialogData4(state)
 {
- 	data ="";
+ 	var data ="";
 
  	if(!state.check_name())
  	{
@@ -142,7 +142,7 @@ function getDialogData4(state)
 
 function getDialogData5(state)
 {
- 	data ="";
+ 	var data ="";
 
  	if(!state.check_name())
  	{
@@ -159,7 +159,7 @@ function getDialogData5(state)
 
 function getDialogData6(state)
 {
- 	data ="";
+ 	var data ="";
 
  	if(!state.check_answered())
  	{
@@ -181,7 +181,8 @@ function getDialogData6(state)
 
 function getDialogIntro(state)
 {
-   	data="";
+   	var data="";
+   	
    	data = ["Sandra: Help,Help ......",
    		"Sandra: We have a problem! I have noticed that you want to apply for a job at Spil Games!!!",
 		"Sandra: Currently we have problems with our systems",

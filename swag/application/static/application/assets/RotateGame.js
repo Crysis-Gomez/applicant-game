@@ -59,15 +59,15 @@ Crafty.scene("RotateGame", function ()
 
     getLevel:function(levelNumber)
     {
-      currentLevel = new Array;
-      levelString = rotate_levels[levelNumber];
+      var currentLevel = new Array;
+      var levelString = rotate_levels[levelNumber];
       levelString = levelString.replace(/\r?\n|\r/g,'');
       
       for (var x = 0; x < Game.map_grid.width; x++)
       {
           currentLevel[x] = new Array();
       }
-      index = 0;
+      var index = 0;
        for (var x = 0; x < Game.map_grid.height; x++)
        {
           for (var y = 0; y < Game.map_grid.width; y++)
@@ -80,9 +80,9 @@ Crafty.scene("RotateGame", function ()
     },
 
     loadLevel:function(){
-      currentLevel = this.getLevel(this.levelNumber);
+      var currentLevel = this.getLevel(this.levelNumber);
       this.wallArray = new Array();
-      index = 0;
+      var index = 0;
       for (var x = 0; x < Game.map_grid.width; x++)
       {
         for (var y = 0; y < Game.map_grid.height; y++)
@@ -126,7 +126,7 @@ Crafty.scene("RotateGame", function ()
 
       if(this.levelNumber < (window.rotate_levels.length-1))
       {
-          hud =  Crafty.e('2D,DOM,Text,Destroy').attr({ x: SCREEN_WIDTH*0.5 - 50, y: 20, z: 1 , w:100}).text("Level: " + (this.levelNumber+1)+" of "+(window.rotate_levels.length-1));
+         var hud =  Crafty.e('2D,DOM,Text,Destroy').attr({ x: SCREEN_WIDTH*0.5 - 50, y: 20, z: 1 , w:100}).text('<div style="font-size:15px;">'+"Level: " + (this.levelNumber+1)+" of "+(window.rotate_levels.length-1));
       }
     
       this._wall =  Crafty.e('RotateWall2,Keyboard,Destroy').at(this.rotateMiddlePointX,this.rotateMiddlePointY);
@@ -137,7 +137,7 @@ Crafty.scene("RotateGame", function ()
       Crafty.background('rgb(249, 223, 125)');
       this.loadLevel();
       controls = Crafty.e("2D,Image,Canvas");
-      image =  controls.image("/static/controls2.png");
+      var image =  controls.image("/static/controls2.png");
       controls.x = SCREEN_WIDTH*0.5 - image._w*0.5;
       controls.y = SCREEN_HEIGHT - image._h;
       image.alpha = 0.7;
@@ -216,7 +216,7 @@ Crafty.c('RotateWall2',
 
   rotateObjectsLeft:function()
   {
-    count = 0;
+    var count = 0;
     for (var i = 0; i < Game.wallArray.length; i++)
     {
         tempWall =  Game.wallArray[i];
@@ -234,7 +234,7 @@ Crafty.c('RotateWall2',
   
   rotateObjectsRight:function()
   {
-    count = 0;
+    var count = 0;
      for (var i = 0; i < Game.wallArray.length; i++)
      {
         tempWall =  Game.wallArray[i];
@@ -254,7 +254,7 @@ Crafty.c('RotateWall2',
   {
     for (var i = 0; i < Game.wallArray.length; i++)
     {
-        tempWall =  Game.wallArray[i];
+        var tempWall =  Game.wallArray[i];
         tempWall.setUpDestinationLeft(this);
     };
   },
@@ -263,7 +263,7 @@ Crafty.c('RotateWall2',
   {
     for (var i = 0; i < Game.wallArray.length; i++)
     {
-        tempWall =  Game.wallArray[i];
+        var tempWall =  Game.wallArray[i];
         tempWall.setUpDestinationRight(this);
     };
   }
@@ -328,12 +328,9 @@ Crafty.c('RotateBall',
         Game.nextLevel();
       }
 
-      if(this.isFalling == true)
+      if(this.isFalling && this.has("Sign"))
       {
-        if(this.has("Sign"))
-        {
           this.updateSignPosition();
-        }
       }
 
     })
@@ -374,17 +371,17 @@ Crafty.c("RotateObject",
 
   rotate2dPointAboutOrigin:function(obj,angle)
   {
-     distX = this.x - obj.x;
-     distY = this.y - obj.y;
-     rx = distX * Math.cos(angle) - distY * Math.sin(angle);
-     ry = distY * Math.cos(angle) + distX * Math.sin(angle);
-     newX = rx + obj.x;
-     newY = ry + obj.y;
+     var distX = this.x - obj.x;
+     var  distY = this.y - obj.y;
+     var  rx = distX * Math.cos(angle) - distY * Math.sin(angle);
+     var ry = distY * Math.cos(angle) + distX * Math.sin(angle);
+     var  newX = rx + obj.x;
+     var  newY = ry + obj.y;
      newX = Math.round(newX*100)/100;
      newY = Math.round(newY*100)/100;
      this.x = newX;
      this.y = newY;
-     tempR = angle*180/Math.PI;
+     var tempR = angle*180/Math.PI;
      this.rotation += tempR;
      if(this.rotation > 89 || this.rotation < -89)
      {

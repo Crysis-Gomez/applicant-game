@@ -15,8 +15,8 @@ Crafty.c('Sign',
   move:function()
   {
 
-   if(this.moveDown)this.sign.y +=0.3;
-   else this.sign.y -= 0.3;
+    if(this.moveDown)this.sign.y +=0.3;
+    else this.sign.y -= 0.3;
 
     if(this.sign.y > this.maxPosition) this.moveDown = false;
     if(this.sign.y < this.minPosition) this.moveDown = true;
@@ -25,7 +25,7 @@ Crafty.c('Sign',
   setUpSign:function(string)
   {
     this.sign = Crafty.e("2D,Image,Canvas");
-    image = this.sign.image(string);
+    var image = this.sign.image(string);
     this.sign.x = this.x
     this.sign.y = this.y+40;
     this.sign.z = 1;
@@ -112,8 +112,8 @@ Crafty.c('putOnTile',
 
   putOnTile:function()
   {
-    onGridX = (this.x-Game.map_grid.offSetX) / Game.map_grid.tile.width;
-    onGridY = (this.y-Game.map_grid.offSetY) / Game.map_grid.tile.height;
+    var onGridX = (this.x-Game.map_grid.offSetX) / Game.map_grid.tile.width;
+    var onGridY = (this.y-Game.map_grid.offSetY) / Game.map_grid.tile.height;
     Game.myArray[onGridX][onGridY].obj = this;
 
     return this;
@@ -121,8 +121,8 @@ Crafty.c('putOnTile',
 
   removeFromTile:function()
   {
-    onGridX = (this.x-Game.map_grid.offSetX) / Game.map_grid.tile.width;
-    onGridY = (this.y-Game.map_grid.offSetY) / Game.map_grid.tile.height;
+    var onGridX = (this.x-Game.map_grid.offSetX) / Game.map_grid.tile.width;
+    var onGridY = (this.y-Game.map_grid.offSetY) / Game.map_grid.tile.height;
     Game.myArray[onGridX][onGridY].obj = null;
   }
 });
