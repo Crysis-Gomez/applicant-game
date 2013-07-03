@@ -109,7 +109,7 @@ Crafty.scene("TestGame", function ()
           }
         });
 
-      Crafty.e("2D, DOM,Image").attr({x:window.SCREEN_WIDTH*0.5-150, y:window.SCREEN_HEIGHT*0.5-150, w:900, h:0}).image("/static/table.png")
+      Crafty.e("2D, DOM,Image").attr({x:SCREEN_WIDTH*0.5-150, y:SCREEN_HEIGHT*0.5-150, w:900, h:0}).image("/static/table.png")
     },
   }
 

@@ -124,9 +124,9 @@ Crafty.scene("RotateGame", function ()
         }
       }
 
-      if(this.levelNumber < (window.rotate_levels.length-1))
+      if(this.levelNumber < (rotate_levels.length-1))
       {
-         var hud =  Crafty.e('2D,DOM,Text,Destroy').attr({ x: SCREEN_WIDTH*0.5 - 50, y: 20, z: 1 , w:100}).text('<div style="font-size:15px;">'+"Level: " + (this.levelNumber+1)+" of "+(window.rotate_levels.length-1));
+         var hud =  Crafty.e('2D,DOM,Text,Destroy').attr({ x: SCREEN_WIDTH*0.5 - 50, y: 20, z: 1 , w:100}).text('<div style="font-size:15px;">'+"Level: " + (this.levelNumber+1)+" of "+(rotate_levels.length-1));
       }
     
       this._wall =  Crafty.e('RotateWall2,Keyboard,Destroy').at(this.rotateMiddlePointX,this.rotateMiddlePointY);

@@ -93,9 +93,9 @@ function submitMeeting()
 
 function updateGame(property,value,func)
 {
-    window.state.update(property, value);
-    var game = window.game.crafty.pause(false);
-    window.quest_log.update();
+    state.update(property, value);
+    var game = game.crafty.pause(false);
+    quest_log.update();
     document.getElementById("success_div").innerHTML = "";
     
 
@@ -258,7 +258,7 @@ function submitSkills()
         {
           var response = JSON.parse(res);
           var skills = response.player['skills'];
-          window.state.skills = skills;
+          state.skills = skills;
           updateGame('has_skills','True');
         }
     })
@@ -336,7 +336,7 @@ function submitlinks()
 function restartCrafty()
 {
 
-    var game = window.game.crafty.init(900, 600);
+    var game = game.crafty.init(900, 600);
 }   
 
 function sendFiles()

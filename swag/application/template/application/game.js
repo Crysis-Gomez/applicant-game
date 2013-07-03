@@ -53,9 +53,9 @@ var crafty = function() {
 	function createHouse()
 	{
 		currentIndoor = new Array;
-		if(typeof window.indoor[0] == "string")
+		if(typeof indoor[0] == "string")
 		{
-			indoorString = window.indoor[0];
+			indoorString = indoor[0];
 			indoorString = indoorString.replace(/\r?\n|\r/g,'');
 		}
 	
@@ -70,6 +70,7 @@ var crafty = function() {
           {
               currentIndoor[x][y] = indoorString[index];
               index++;
+
           }
        }
 
@@ -633,7 +634,7 @@ var crafty = function() {
 
 			if(this.DataText == "Sandra: Welcome to the vacancy of ")
 			{
-				this.DataText += "{{game.vacancy}},"+ window.state.name() + "!";
+				this.DataText += "{{game.vacancy}},"+ state.name() + "!";
 				Crafty.trigger("getQuest");
 			}  
 
