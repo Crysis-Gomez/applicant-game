@@ -136,7 +136,7 @@ Crafty.scene("RotateGame", function ()
     {
       Crafty.background('rgb(249, 223, 125)');
       this.loadLevel();
-      controls = Crafty.e("2D,Image,Canvas");
+      var controls = Crafty.e("2D,Image,Canvas");
       var image =  controls.image("/static/controls2.png");
       controls.x = SCREEN_WIDTH*0.5 - image._w*0.5;
       controls.y = SCREEN_HEIGHT - image._h;

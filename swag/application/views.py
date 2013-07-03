@@ -7,7 +7,6 @@ from application.models import Vacancy
 from application.models import CvDocument
 from application.models import MotivationLetter
 from application.form import LetterForm
-from application.form import Job_Description
 from application.models import Meeting
 from application.models import PortfolioLink
 from application.models import SkillSet

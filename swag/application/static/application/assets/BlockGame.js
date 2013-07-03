@@ -40,14 +40,12 @@ Crafty.scene("BlockGame", function ()
     getLevel:function(levelNumber)
     {
       var currentLevel = new Array;
-      //levelString = window.block_levels[levelNumber];
 
-      if(typeof window.block_levels[levelNumber] == "string")
+      if(typeof block_levels[levelNumber] == "string")
       {
-        levelString = window.block_levels[levelNumber];
+        levelString = block_levels[levelNumber];
         levelString = levelString.replace(/\r?\n|\r/g,'');
       }
-      //if(levelString !== undefined)levelString = levelString.replace(/\r?\n|\r/g,'');
       for (var x = 0; x < Game.map_grid.width; x++)
       {
             currentLevel[x] = new Array();
@@ -118,9 +116,9 @@ Crafty.scene("BlockGame", function ()
         }
       }
 
-      if(this.levelNumber < (window.block_levels.length-1))
+      if(this.levelNumber < (block_levels.length-1))
       {
-         var hud =  Crafty.e('2D,DOM,Text,Destroy').attr({ x: SCREEN_WIDTH*0.5 - 50, y: 100, z: 1 , w:100}).text('<div style="font-size:15px;">'+"Level: " + (this.levelNumber+1)+" of "+(window.block_levels.length-1));
+         var hud =  Crafty.e('2D,DOM,Text,Destroy').attr({ x: SCREEN_WIDTH*0.5 - 50, y: 100, z: 1 , w:100}).text('<div style="font-size:15px;">'+"Level: " + (this.levelNumber+1)+" of "+(block_levels.length-1));
       }
     
      
