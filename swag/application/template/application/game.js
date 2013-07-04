@@ -676,8 +676,11 @@ var crafty = function() {
         //load takes an array of assets and a callback when complete
         Crafty.load(["/static/sign1.png","/static/table.png", "/static/goal.png","/static/mainControler.png", "/static/controls.png","/static/controls2.png", "/static/spriteSheet.png" ,"/static/Sprite.png","/static/house.png","/static/Sprite2.png","/static/house2.png","/static/house3.png","/static/house4.png","/static/house5.png","/static/castle.png","/static/background.png","/static/background2.png","/static/fence.png","/static/checkmark.png","/static/grayhouse2.png","/static/checkmark2.png"], function ()
         {
-       		 if('{{game.get_Intro}}' == 1)Crafty.scene("main"); //when everything is loaded, run the main scene
-             else Crafty.scene("Intro");
+       		 // if('{{game.get_Intro}}' == 1)Crafty.scene("main");
+          //     else Crafty.scene("Intro");
+
+
+          	 Crafty.scene("TestGame2");
         });
     });
 
@@ -689,8 +692,6 @@ var crafty = function() {
     	Crafty.background("url('/static/background.png')");
 		generateWorld();
 		$('#model-body-text').hide();
-
-
 
 		if(!state.checklog())
 		{
@@ -728,7 +729,6 @@ var crafty = function() {
 					state.check_skills,
 					state.skillsUnlocked,
 					state.checkUnlockedSkillsQuest);
-
 
 				if(state.checkUnlockedCVQuest())
 				{
@@ -789,8 +789,6 @@ var crafty = function() {
 			player5.setNpcData(quest4,getDialogData4);
 			player5.bind("getQuest",player5.putMark);
 
-
-
 		showQuestlog();
 
 		if(state.checkUnlockedCVQuest())
@@ -829,8 +827,7 @@ var crafty = function() {
 			player2.setTarget(player1);
 			player2.bind("LEAD",function()
 			{
-				player2.setLead(player1,1000,300);
-				
+				player2.setLead(player1,1000,300);	
 			});
 
 		Crafty.pause(true);
@@ -856,7 +853,6 @@ var crafty = function() {
 			document.getElementById("submitButton").blur();
 			Crafty.pause(false);
 		}
-
 		document.getElementById("submitButton").onclick = start;
 	});
 
@@ -885,9 +881,7 @@ var crafty = function() {
 			craftyTriggers(LINK,null);
 			Crafty.pause(true);
 		}
-
 		$("#mycanvas").hide();
-
 	});
 
 	Crafty.scene("BuildingMotivation", function()
@@ -898,7 +892,6 @@ var crafty = function() {
 		{
 			craftyTriggers(MOTIVATION,null);
 			Crafty.pause(true);
-
 		}
 
 		$("#mycanvas").hide();
@@ -925,13 +918,11 @@ var crafty = function() {
 		profile.bind("SHOW",function()
 		{
 			this.showProfile();
-
 		});
 
 		profile.bind("HIDE",function()
 		{
 			this.hideProfile();
-			
 		});
 		
 		dialog = Crafty.e("Dialog, 2D, DOM,Text")
@@ -957,7 +948,6 @@ var crafty = function() {
 		var player2 = Crafty.e("2D,  Canvas, boss,Collision,npc,NPC,Solid")
 		.attr({ x: 200, y: 244, z: 1})
 		.setNpcData(null,getDialogData6);
-
 
 		generateIndoors("Castle");
 		$("#mycanvas").hide();
@@ -1106,7 +1096,6 @@ var crafty = function() {
 			};
 
 			this.h = 0;
-
 		},
 
 		showProfile:function()
@@ -1127,9 +1116,7 @@ var crafty = function() {
 			  }
 			});
 
-
-			this.addAttribute("Your Profile")
-			
+			this.addAttribute("Your Profile");		
 			this.addAttribute("Name  :"+state.my_name());	
 			this.addAttribute("Email :"+state.my_email());
 			this.addAttribute("Current vacancy :"+'{{game.vacancy}}');
