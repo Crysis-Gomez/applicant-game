@@ -679,9 +679,12 @@ var crafty = function() {
        		 // if('{{game.get_Intro}}' == 1)Crafty.scene("main");
           //     else Crafty.scene("Intro");
 
+        //   	$('#myModal').modal('show');
+        //   	$("#modal-backdrop").css('background-color: green')
+        //   	console.log($("#modal-backdrop").css)
 
-          	 Crafty.scene("TestGame2");
-        });
+           	 Crafty.scene("TestGame2");
+         });
     });
 
     //automatically play the loading scene
@@ -859,7 +862,7 @@ var crafty = function() {
 
 	Crafty.scene("BuildingSkills", function()
 	{
-		generateIndoors("Test");
+		generateIndoors("TestGame2");
 		showQuestlog();
 
 		if(state.checkMayUploadSkills() && !state.check_skills())

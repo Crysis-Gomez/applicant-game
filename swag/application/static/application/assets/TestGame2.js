@@ -17,11 +17,16 @@ Crafty.scene("TestGame2", function ()
 
     player:null,
     blockArray:[],
-    myArray:Array,
+    myArray:[],
     pieceArray:[],
+    answerArray:[],
     levelNumber: 0,
     mayStart:false,
-    puzzle:"x="+"piece1"+"piece2"+":"+"piece3",
+    puzzle:"x="+"code1"+"code2 "+ ":"+" code3",
+    puzzletext:null,
+    answer:true,
+    operators:[],
+
    
     width: function()
     {
@@ -129,8 +134,22 @@ Crafty.scene("TestGame2", function ()
         ans.collision(poly1);
         ans.x = 150 *i+100;
         ans.y = 400;
+        Game.answerArray.push(ans);
       };
-    
+
+
+      for (var i = 0; i < this.pieceArray.length; i++) 
+      {
+        var piece = this.pieceArray[i];
+        Crafty.e('2D,Canvas,Color,Legend').attr({x:10,y:100*i+100,w:100}).setUp(piece.codeString,piece._color);
+      };
+
+      Crafty.e('2D,DOM,Text').attr({x:655,y:420,w:100}).text('<div style="font-size:15px;">'+"= "+ this.answer.toString());
+
+
+      this.operators.push(Crafty.e('2D,DOM,Text,Operator').attr({x:525,y:420,w:100}).text('<div style="font-size:20px;">'+":").setUp("?"));
+      this.operators.push(Crafty.e('2D,DOM,Text,Operator').attr({x:375,y:420,w:100}).text('<div style="font-size:15px;">'+"?").setUp(":"));
+
       this.mayStart = true; 
     },
 
@@ -156,9 +175,56 @@ Crafty.scene("TestGame2", function ()
     }
   }
 
+  // state.skillsMayUpload();
+  // Crafty.scene("BuildingSkills")
+
   Game.start();
 });
 
+
+Crafty.c('Operator',
+{
+    stringText:null,
+    
+    init:function()
+    {
+
+    },
+
+    setUp:function(str)
+    {
+       this.stringText = str;
+       return this;
+    }
+});
+
+
+
+Crafty.c('Legend',
+{
+    textComp:null,
+    
+    init:function()
+    {
+        this.textComp = Crafty.e('2D,DOM,Text');
+         this.attr({
+            w: 100 ,
+            h: 50
+        });
+    },
+
+    setUp:function(str,c)
+    {
+   
+        this.textComp.text('<div style="font-size:15px;">'+str);
+
+       
+        this.attach(this.textComp);
+        this.textComp.x = this.x+30;
+        this.textComp.y = this.y+20;
+        this.color(c);
+    }
+});
 
 
 Crafty.c('CodePuzzle',
@@ -214,6 +280,7 @@ Crafty.c('CodePuzzle',
 Crafty.c('PuzzleAnswer',
 {
   textComp:null,
+  stringText:"test",
 
   init:function()
   {
@@ -237,7 +304,34 @@ Crafty.c('PuzzleAnswer',
   updateText:function(str)
   {
     this.textComp.text(str);
-    console.log(str)
+    this.stringText = str;
+    this.check();
+
+  },
+
+  check:function()
+  {
+
+    if(Game.pieceArray.length == 1)
+    {
+
+      var b = 1;
+      var checkString = "x="+ Game.answerArray[0].stringText + Game.operators[0].stringText+  Game.answerArray[1].stringText+ Game.operators[1].stringText + Game.answerArray[2].stringText;
+      var test = eval(checkString);
+
+      console.log(test);
+
+      if(test == Game.answer)
+      {
+        console.log("hell Yeah");
+      }
+      else
+      {
+        console.log("your stupid!!!!");
+      }
+
+   }
+  
   }
 })
 
@@ -249,6 +343,9 @@ Crafty.c('Piece',
   isFalling:false,
   type:null,
   codeString:null,
+  onGridX:0,
+  onGridY:0,
+
   init:function()
   {
     this.requires('2D, Canvas, Grid, Color,Collision');
@@ -257,8 +354,8 @@ Crafty.c('Piece',
     
     this.onHit('PuzzleAnswer',function(e)
     {
-      console.log(this.codeString);
       e[0].obj.updateText(this.codeString);
+      Game.pieceArray.splice(e[0].obj,1);
 
       //e[0].obj.textComptext.text(this.codeString);
       this.destroy();
@@ -273,16 +370,19 @@ Crafty.c('Piece',
       {
         this.y -= this.gravity;
         this.isFalling = false;
+       
 
       }
 
+      this.resetPostionOnTile();
 
-      if(this.hit("Block"))
-      {
-        this.y -= this.gravity;
-        this.isFalling = false;
 
-      }
+      // if(this.hit("Block"))
+      // {
+      //   this.y -= this.gravity;
+      //   this.isFalling = false;
+
+      // }
 
       // if(this.y > 600)
       // {
@@ -299,13 +399,26 @@ Crafty.c('Piece',
     })
   },
 
+  resetPostionOnTile:function()
+  {
+    this.onGridX = (this.x-Game.map_grid.offSetX) / Game.map_grid.tile.width;
+    this.onGridY = (this.y-Game.map_grid.offSetY) / Game.map_grid.tile.height;
+
+    var tile = Game.myArray[this.onGridX][this.onGridY];
+    if(tile == null)return;
+    tile.obj = null;
+    this.onGridX = (this.x-Game.map_grid.offSetX) / Game.map_grid.tile.width;
+    this.onGridY = (this.y-Game.map_grid.offSetY) / Game.map_grid.tile.height;
+    Game.myArray[this.onGridX][this.onGridY].obj = this;
+  },
+
   setCode:function(index)
   {
     switch(index)
     {
 
       case 0:
-          this.codeString = "(b==1)?"
+          this.codeString = "(b==1)"
       break;
 
       case 1:
@@ -356,6 +469,7 @@ Crafty.c('CodePuzzle',
   lastDirectionY:0,
   gameEnded:false,
   indexCount:0,
+  moveArray:null,
 
   init: function()
   {
@@ -443,6 +557,7 @@ Crafty.c('CodePuzzle',
   moveBlockLeft:function()
   {
     var hasMoved =false;
+    this.moveArray = new Array();
 
     for (var i = 0; i < Game.blockArray.length; i++) 
     {
@@ -453,8 +568,25 @@ Crafty.c('CodePuzzle',
           var origin = (block.originPositionX-3)*Game.map_grid.tile.width+Game.map_grid.offSetX;
           if(block.x > origin)
           {
+            
+            this.onGridX = (block.x-Game.map_grid.offSetX) / Game.map_grid.tile.width;
+            this.onGridY = (block.y-Game.map_grid.offSetY) / Game.map_grid.tile.height;
+
+            var tile = Game.myArray[this.onGridX-1][this.onGridY];
+
+            if(tile.obj != null)
+            {
+              if(tile.obj.has('Piece'))
+              {
+                hasMoved = true;
+                this.moveArray.push(tile.obj);
+
+              }
+            }
+            
             block.x -= 32;
-            hasMoved = true;
+            block.resetPostionOnTile();
+            
           }
         }
 
@@ -466,13 +598,14 @@ Crafty.c('CodePuzzle',
   movePieces:function(amout)
   {
 
-    for (var i = 0; i < Game.pieceArray.length; i++) 
+    for (var i = 0; i < this.moveArray.length; i++) 
     {
-      var piece = Game.pieceArray[i];
+      var piece = this.moveArray[i];
       var pieceIndex = (piece.y - Game.map_grid.offSetY)/Game.map_grid.tile.height;
       if(pieceIndex == this.indexCount)
       {
-        piece.x += amout
+         piece.x += amout
+         piece.resetPostionOnTile();
       }
      
     };
@@ -482,7 +615,7 @@ Crafty.c('CodePuzzle',
   moveBlockRight:function()
   {
     var hasMoved =false;
- 
+    this.moveArray = new Array();
     for (var i = 0; i < Game.blockArray.length; i++) 
     {
         var block =  Game.blockArray[i];
@@ -492,8 +625,22 @@ Crafty.c('CodePuzzle',
           var origin = (block.originPositionX+3)*Game.map_grid.tile.width+Game.map_grid.offSetX;
           if(block.x < origin)
           {
+            this.onGridX = (block.x-Game.map_grid.offSetX) / Game.map_grid.tile.width;
+            this.onGridY = (block.y-Game.map_grid.offSetY) / Game.map_grid.tile.height;
+
+            var tile = Game.myArray[this.onGridX+1][this.onGridY];
+
+            if(tile.obj != null)
+            {
+              if(tile.obj.has('Piece'))
+              {
+                hasMoved = true;
+                this.moveArray.push(tile.obj);
+              }
+            }
+            
             block.x += 32;
-            hasMoved = true;
+            block.resetPostionOnTile();
           }
         }
 

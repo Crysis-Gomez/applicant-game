@@ -305,6 +305,8 @@ Crafty.c('Player',
 					{
 						quest_log.array[i].visible = false;
 					};
+
+					console.log(this.machine.startGame);
 					
 					Crafty.scene(this.machine.startGame);
 
