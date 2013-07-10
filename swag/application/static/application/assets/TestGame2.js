@@ -24,7 +24,7 @@ Crafty.scene("TestGame2", function ()
     mayStart:false,
     puzzle:"x="+"code1"+"code2 "+" code3",
     puzzletext:null,
-    levelNumber:2,
+    levelNumber:0,
     operators:[],
 
     getAnswer:function()
@@ -38,9 +38,27 @@ Crafty.scene("TestGame2", function ()
           return 10;
 
           case 2:
-          return 55;
+          return " Gamesawesome";
 
         }
+    },
+
+
+    getCodes:function()
+    {
+      switch(this.levelNumber)
+        {
+          case 0:
+          return "b = 1";
+
+          case 1:
+          return "";
+
+          case 2:
+          return "function('Spil Games'){ \n return str.code().code().code()\n}";
+
+        }
+
     },
 
     restart:function()
@@ -166,9 +184,10 @@ Crafty.scene("TestGame2", function ()
         Crafty.e('2D,Canvas,Color,Legend,Destroy').attr({x:10,y:100*i+100,w:170}).setUp(piece.codeString,piece._color);
       };
 
-      Crafty.e('2D,DOM,Text,Destroy').attr({x:655,y:420,w:100}).text('<div style="font-size:15px;">'+"= "+ this.getAnswer().toString());
+      Crafty.e('2D,DOM,Text,Destroy').attr({x:655,y:420,w:150}).text('<div style="font-size:15px;">'+"= "+ this.getAnswer().toString());
 
-
+      Crafty.e('2D,DOM,Text,Destroy').attr({x:50,y:400,w:150}).text('<div style="font-size:15px;">'+ this.getCodes());
+      
       this.operators.push(Crafty.e('2D,DOM,Text,Operator,Destroy').attr({x:525,y:420,w:100}).getOperator(0));
       this.operators.push(Crafty.e('2D,DOM,Text,Operator,Destroy').attr({x:375,y:420,w:100}).getOperator(1));
 
@@ -345,16 +364,29 @@ Crafty.c('PuzzleAnswer',
       {
 
        test = eval(checkString);
+       console.log(checkString);
       }
+
+
+      console.log(test);
        
       if(test == Game.getAnswer())
       {
+
         Crafty.trigger("Destroy");
+        if(Game.levelNumber ==2)
+        {
+          state.skillsMayUpload();
+          Crafty.scene("BuildingSkills");
+          return;
+        }
         Game.levelNumber +=1;
         Game.loadLevel();
+
       }
       else
       {
+        console.log("wrong");
         Crafty.trigger("Destroy");
         Game.loadLevel();
         
@@ -489,7 +521,7 @@ Crafty.c('Piece',
           {
 
             case 0:
-                this.codeString = ".split('Spil Games')";
+                this.codeString = ".split('Spil')";
             break;
 
             case 1:

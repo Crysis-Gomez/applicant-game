@@ -187,7 +187,7 @@ function getDialogIntro(state)
    		"Sandra: We have a problem! I have noticed that you want to apply for a job at Spil Games!!!",
 		"Sandra: Currently we have problems with our systems",
 		"Sandra: It`s has been taken over by the hiring manager!!",
-		"Sandra: Solve the problems and convenience the hiring manager that you can overcome these challenges!!",
+		"Sandra: Solve the problems and convince the hiring manager that you can overcome these challenges!!",
 		"Sandra: Follow Me pls",
 		 LEAD,
 		]  

@@ -1,6 +1,6 @@
 server {
         listen 80;
-        server_name     application.spilgames.com;
+        server_name     application.spilgames.com application.stg.spilgames.com;
         gzip            on;
         include         conf/defaults.conf;
         #Deny all remote IP's for now
