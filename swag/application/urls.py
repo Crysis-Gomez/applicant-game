@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, url
 # from django.views.generic import DetailView, ListView
-from application import views
+from swag.application import views
 
 # from polls.models import Poll
 # from django.utils import timezone

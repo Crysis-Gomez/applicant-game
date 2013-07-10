@@ -2,17 +2,17 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render_to_response
 from django.http import (HttpResponseRedirect, Http404, HttpResponse)
 from django.shortcuts import (render, get_object_or_404)
-from application.models import GameInstance
-from application.models import Vacancy
-from application.models import CvDocument
-from application.models import MotivationLetter
-from application.form import LetterForm
-from application.models import Meeting
-from application.models import PortfolioLink
-from application.models import SkillSet
-from application.models import PlayerSkill
-from application.models import Question
-from application.models import PlayerQuestion
+from .models import GameInstance
+from .models import Vacancy
+from .models import CvDocument
+from .models import MotivationLetter
+from .form import LetterForm
+from .models import Meeting
+from .models import PortfolioLink
+from .models import SkillSet
+from .models import PlayerSkill
+from .models import Question
+from .models import PlayerQuestion
 from form import ContactInformationForm
 from form import UploadFileForm
 from form import MeetingForm

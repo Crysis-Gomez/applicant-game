@@ -7,9 +7,9 @@ Replace this with more appropriate tests for your application.
 
 from django.test import TestCase
 import StringIO
-from application.models import Vacancy
-from application.models import (GameInstance, Applicationdocumentfiles,MotivationLetter)
-from application.form import UploadFileForm
+from .models import Vacancy
+from .models import (GameInstance, Applicationdocumentfiles,MotivationLetter)
+from .form import UploadFileForm
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.urlresolvers import reverse

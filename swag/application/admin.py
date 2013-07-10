@@ -1,5 +1,5 @@
 from django.contrib import admin
-from application import models
+from swag.application import models
 from django.forms.models import BaseInlineFormSet
 from django.utils.translation import ugettext_lazy as _
 

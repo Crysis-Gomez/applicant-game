@@ -32,12 +32,17 @@ Crafty.scene("TestGame2", function ()
         switch(this.levelNumber)
         {
           case 0:
-          return true;
+
+          return 14;
+
 
           case 1:
-          return 10;
+          return true;
 
           case 2:
+          return 10;
+
+          case 3:
           return " Gamesawesome";
 
         }
@@ -48,13 +53,17 @@ Crafty.scene("TestGame2", function ()
     {
       switch(this.levelNumber)
         {
+
           case 0:
+          return "";
+          
+          case 1:
           return "b = 1";
 
-          case 1:
+          case 2:
           return "";
 
-          case 2:
+          case 3:
           return "function('Spil Games'){ \n return str.code().code().code()\n}";
 
         }
@@ -75,12 +84,6 @@ Crafty.scene("TestGame2", function ()
     height: function()
     {
       return this.map_grid.height * this.map_grid.tile.height;
-    },
-
-    restart:function()
-    {
-      Crafty.trigger("Destroy");
-      this.loadLevel();
     },
 
     getLevel:function(levelNumber)
@@ -113,6 +116,7 @@ Crafty.scene("TestGame2", function ()
       var currentLevel = this.getLevel(this.levelNumber);
       this.blockArray = new Array();
       this.pieceArray = new Array();
+      Game.answerArray = new Array();
       Game.myArray = new Array(Game.map_grid.width);
       for (var x = 0; x < Game.map_grid.width; x++)
       {
@@ -167,15 +171,7 @@ Crafty.scene("TestGame2", function ()
       player = Crafty.e("CodePuzzle,Destroy");
 
 
-     for (var i = 1; i < 4; i++) 
-     {
-        var ans =  Crafty.e('PuzzleAnswer,putOnTile,Destroy');
-        var poly1 = new Crafty.polygon([0,0],[ans._w,0],[ans._w,ans._h],[0,ans._h]);
-        ans.collision(poly1);
-        ans.x = 150 *i+100;
-        ans.y = 400;
-        Game.answerArray.push(ans);
-      };
+     
 
 
       for (var i = 0; i < this.pieceArray.length; i++) 
@@ -187,9 +183,35 @@ Crafty.scene("TestGame2", function ()
       Crafty.e('2D,DOM,Text,Destroy').attr({x:655,y:420,w:150}).text('<div style="font-size:15px;">'+"= "+ this.getAnswer().toString());
 
       Crafty.e('2D,DOM,Text,Destroy').attr({x:50,y:400,w:150}).text('<div style="font-size:15px;">'+ this.getCodes());
+
+      Crafty.e('2D,DOM,Text,Destroy').attr({x:10,y:50,w:300}).text('<div style="font-size:15px;">' + "Try to make the sequence complete");
       
       this.operators.push(Crafty.e('2D,DOM,Text,Operator,Destroy').attr({x:525,y:420,w:100}).getOperator(0));
       this.operators.push(Crafty.e('2D,DOM,Text,Operator,Destroy').attr({x:375,y:420,w:100}).getOperator(1));
+
+
+     for (var i = 1; i < 4; i++) 
+     {
+        var ans =  Crafty.e('PuzzleAnswer,putOnTile,Destroy');
+        var poly1 = new Crafty.polygon([0,0],[ans._w,0],[ans._w,ans._h],[0,ans._h]);
+        ans.collision(poly1);
+        ans.x = 150 *i+100;
+        ans.y = 400;
+
+        if(Game.levelNumber == 0)
+        {
+          if(i == 1)
+          {
+            ans.updateText("10");
+          }
+          if(i == 3)
+          {
+            ans.updateText("2");
+          }
+        } 
+
+        Game.answerArray.push(ans);
+      };
 
       this.mayStart = true; 
     },
@@ -237,15 +259,20 @@ Crafty.c('Operator',
     {
       switch(Game.levelNumber)
       {
+
         case 0:
-              this.stringText = "?"
+              this.stringText = "+"
         break;
 
         case 1:
-              this.stringText = "%"
+              this.stringText = "?"
         break;
 
         case 2:
+              this.stringText = "%"
+        break;
+
+        case 3:
               this.stringText = ""
         break;
       }
@@ -256,15 +283,20 @@ Crafty.c('Operator',
     {
       switch(Game.levelNumber)
       {
+
         case 0:
-              this.stringText = ":"
+               this.stringText = "*"
         break;
 
         case 1:
-              this.stringText = "*"
+              this.stringText = ":"
         break;
 
         case 2:
+              this.stringText = "*"
+        break;
+
+        case 3:
               this.stringText = ""
         break;
       }
@@ -311,7 +343,7 @@ Crafty.c('Legend',
 Crafty.c('PuzzleAnswer',
 {
   textComp:null,
-  stringText:"test",
+  stringText:false,
 
   init:function()
   {
@@ -334,21 +366,25 @@ Crafty.c('PuzzleAnswer',
 
   updateText:function(str)
   {
+    console.log("updatingText");
     this.textComp.text(str);
     this.stringText = str;
-    return this.check();
-
   },
 
   check:function()
   {
-    if(Game.pieceArray.length == 1)
+    if(Game.pieceArray.length == 0)
     {
+
+      if(Game.answerArray[0] == undefined || Game.answerArray[1] == undefined ||  Game.answerArray[2] == undefined){
+        return;
+      }
       var b = 1;
       var test = "nothing";
       var checkString = "x="+ Game.answerArray[0].stringText + Game.operators[1].stringText+  Game.answerArray[1].stringText+ Game.operators[0].stringText + Game.answerArray[2].stringText;
       
-      if(Game.levelNumber == 2)
+      debugger;
+      if(Game.levelNumber == 3)
       {
         checkString = Game.answerArray[0].stringText + Game.operators[1].stringText+  Game.answerArray[1].stringText+ Game.operators[0].stringText + Game.answerArray[2].stringText;
         try
@@ -374,7 +410,7 @@ Crafty.c('PuzzleAnswer',
       {
 
         Crafty.trigger("Destroy");
-        if(Game.levelNumber ==2)
+        if(Game.levelNumber ==3)
         {
           state.skillsMayUpload();
           Crafty.scene("BuildingSkills");
@@ -416,8 +452,11 @@ Crafty.c('Piece',
     
     this.onHit('PuzzleAnswer',function(e)
     {
-      if(e[0].obj.updateText(this.codeString)) Game.pieceArray.splice(this,1);
+      e[0].obj.updateText(this.codeString);
+      Game.pieceArray.splice(this,1);
       this.destroy();
+      e[0].obj.check();
+     
     });
 
     this.bind('EnterFrame',function()
@@ -475,7 +514,21 @@ Crafty.c('Piece',
     switch(Game.levelNumber)
     {
 
-        case 0:
+       case 0:
+            switch(index)
+            {
+
+              case 0:
+                  this.codeString = "2";
+              break;
+
+            }
+
+        break;
+
+
+
+        case 1:
           switch(index)
           {
 
@@ -496,7 +549,7 @@ Crafty.c('Piece',
         break;
 
 
-        case 1:
+        case 2:
           switch(index)
           {
 
@@ -516,7 +569,7 @@ Crafty.c('Piece',
 
         break;
 
-        case 2:
+        case 3:
           switch(index)
           {
 

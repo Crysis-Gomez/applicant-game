@@ -2,14 +2,14 @@ from django import forms
 from django.db import models
 from django.forms import Textarea
 from django.forms import ModelForm
-from application.models import MotivationLetter
-from application.models import Meeting
-from application.models import PortfolioLink
-from application.models import SkillSet
-from application.models import Vacancy
-from application.models import PlayerSkill
-from application.models import Question
-from application.models import PlayerQuestion
+from . models import MotivationLetter
+from . models import Meeting
+from . models import PortfolioLink
+from . models import SkillSet
+from . models import Vacancy
+from . models import PlayerSkill
+from . models import Question
+from . models import PlayerQuestion
 
 
 class UploadFileForm(forms.Form):
