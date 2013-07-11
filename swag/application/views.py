@@ -280,8 +280,6 @@ def show_uploaded_file(request, filename):
 
 
 
-
-
 @csrf_exempt
 def process_links(request, unique_id):
     link_list = str(request.POST.get('list')).split(",")
@@ -489,12 +487,13 @@ def handle_uploaded_file(submitted_file, title, unique_id,request):
 
         response_data = json.dumps({'files': result})
 
-    if "application/json" in request.META['HTTP_ACCEPT_ENCODING']:
-            mimetype = 'application/json'
-    else:
-            mimetype = 'text/plain'
+    # if "application/json" in request.META['HTTP_ACCEPT_ENCODING']:
+    #         mimetype = 'application/json'
+    # else:
+    #         mimetype = 'text/plain'
 
-    return HttpResponse(response_data, mimetype=mimetype)
+    #return HttpResponse(response_data, mimetype=mimetype)
+    return HttpResponse(response_data)
 
 
 
