@@ -15,6 +15,7 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'application', ['SkillSet'])
 
+        #we put this application_documentfiles manually to make the database work
         db.create_table(u'application_documentfiles', (
             ('filename', self.gf('django.db.models.fields.CharField')(max_length=256L, primary_key=True)),
             ('data', self.gf('django.db.models.fields.TextField')(blank=True)),
@@ -22,14 +23,6 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'application', ['Documentfiles'])
 
-    #     class Applicationdocumentfiles(models.Model):
-    # filename = models.CharField(max_length=256L, primary_key=True)
-    # data = models.TextField(blank=True)
-    # size = models.IntegerField()
-    # class Meta:
-    #     db_table = 'ApplicationDocumentFiles'
-
-        # Adding model 'Question'
         db.create_table(u'application_question', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('title', self.gf('django.db.models.fields.CharField')(max_length=200)),
