@@ -6,7 +6,7 @@ PROJECT_ROOT = os.path.realpath(os.path.dirname(__file__))
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
-SOUTH_TESTS_MIGRATE = False
+#SOUTH_TESTS_MIGRATE = False
 
 USE_X_FORWARDED_HOST = True
 
@@ -18,7 +18,7 @@ MANAGERS = ADMINS
 
 
 DBS_OPTIONS = {
-    'table': 'ApplicationDocumentFiles',
+    'table': 'application_documentfiles',
     'base_url': '/ApplicationDocument/attachment/',
 }
 
