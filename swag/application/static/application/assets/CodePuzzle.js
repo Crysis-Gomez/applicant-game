@@ -35,7 +35,6 @@ Crafty.scene("CodePuzzle", function ()
 
           return 14;
 
-
           case 1:
           return true;
 
@@ -386,7 +385,6 @@ Crafty.c('PuzzleAnswer',
       var test = "nothing";
       var checkString = "x="+ Game.answerArray[0].stringText + Game.operators[1].stringText+  Game.answerArray[1].stringText+ Game.operators[0].stringText + Game.answerArray[2].stringText;
       
-      debugger;
       if(Game.levelNumber == 3)
       {
         checkString = Game.answerArray[0].stringText + Game.operators[1].stringText+  Game.answerArray[1].stringText+ Game.operators[0].stringText + Game.answerArray[2].stringText;

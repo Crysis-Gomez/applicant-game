@@ -43,8 +43,8 @@ var crafty = function() {
 		{
 			quest_log.array[i].visible = true;
 		};
+		quest_log.visible = true;
 	}
-
 
 
 	function generateWorld()
@@ -110,10 +110,11 @@ var crafty = function() {
 
 
 					 case "3":
-					 		Crafty.e("2D, Canvas,Image,Collision,machine,Machine,Solid")
+					 		var machine = Crafty.e("2D, Canvas,Image,Collision,machine,Machine,Solid")
 							.collision(new Crafty.polygon([0,0],[32,0],[32,32],[0,32]))
 							.attr({ x: x * TILE_SIZE+OFFSET, y: y * TILE_SIZE, z:-1 })
-							.startGame = game;
+							machine.startGame = game;
+							machine.shootParticle();
 					 break;
 
 					 case "4":
@@ -142,7 +143,7 @@ var crafty = function() {
 				{
 					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard,Solid")
 					house.setImage("/static/grayhouse2.png","/static/house2.png");
-					house.setScene("BuildingCV",state.checkUnlockedCVQuest,state.check_cv());
+					house.setScene("BuildingCV",state.check_cv(),"UNLOCK_BUILDING_ONE");
 					house.x = TILE_SIZE*i;
 					house.y = TILE_SIZE*j;
 					house.z = -1;
@@ -153,7 +154,7 @@ var crafty = function() {
 				{
 					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard,Solid");
 					house.setImage("/static/grayhouse3.png","/static/house3.png");
-					house.setScene("BuildingLink",state.checkUnlockedLinkQuest,state.check_link());
+					house.setScene("BuildingLink",state.check_link(),"UNLOCK_BUILDING_THREE");
 					house.x = TILE_SIZE*i;
 					house.y = TILE_SIZE*j;
 					house.z = -1;
@@ -164,7 +165,7 @@ var crafty = function() {
 				{
 					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard,Solid")
 					house.setImage("/static/grayhouse.png","/static/house.png");
-					house.setScene("BuildingMotivation",state.checkUnlockedMotivationQuest,state.check_motivation());
+					house.setScene("BuildingMotivation",state.check_motivation(),"UNLOCK_BUILDING_TWO");
 					house.x = TILE_SIZE*i;
 					house.y = TILE_SIZE*j;
 					house.z = -1;
@@ -188,7 +189,7 @@ var crafty = function() {
 				{
 					var house  = Crafty.e("2D, Canvas,Image,Collision,Building,house,SetSorting,Keyboard,Solid");
 					house.setImage("/static/grayhouse5.png","/static/house5.png");
-					house.setScene("BuildingSkills",state.checkUnlockedSkillsQuest,state.check_skills());
+					house.setScene("BuildingSkills",state.check_skills(),"UNLOCK_BUILDING_FOUR");
 					house.x = TILE_SIZE*i;
 					house.y = TILE_SIZE*j;
 					house.z = -1;
@@ -200,6 +201,56 @@ var crafty = function() {
 		}
 	}
 
+
+	Crafty.c('Machine',
+	{
+		particleOptions:{
+					maxParticles: 20,
+					size: 10,
+					sizeRandom: 4,
+					speed: 0.001,
+					speedRandom: 1.2,
+					// Lifespan in frames
+					lifeSpan: 29,
+					lifeSpanRandom: 7,
+					// Angle is calculated clockwise: 12pm is 0deg, 3pm is 90deg etc.
+					angle: 65,
+					angleRandom: 34,
+					startColour: [255, 247, 0, 1],
+					startColourRandom: [0, 0, 0, 0],
+					endColour: [255, 255, 255, 0],
+					endColourRandom: [60, 60, 60, 0],
+					// Only applies when fastMode is off, specifies how sharp the gradients are drawn
+					sharpness: 20,
+					sharpnessRandom: 10,
+					// Random spread from origin
+					spread: 10,
+					// How many frames should this last
+					duration: -1,
+					// Will draw squares instead of circle gradients
+					fastMode: false,
+					gravity: { x: 0, y: -0.05 },
+					// sensible values are 0-3
+					jitter: 0
+				},
+
+			init:function()
+			{
+				console.log(this.x);
+				
+			},
+
+			shootParticle:function()
+			{
+				var particles = Crafty.e("2D,Canvas,Particles").particles(this.particleOptions);
+				particles.x = this.x+this.w*0.5;
+				particles.y = this.y+this.h*0.5;
+			}
+			
+
+
+		
+	});
 
 
 	Crafty.c('setCollision',
@@ -218,28 +269,102 @@ var crafty = function() {
 	Crafty.c('Building',
 	{
 		sceneString:"",
-		check:null,
 		questDone:null,
 		offsetX:10,
 		offsetY:10,
 		normalImage:null,
+		locked:true,
 		grayImage:null,
+		particleOptions:{
+					maxParticles: 150,
+					size: 14,
+					sizeRandom: 4,
+					speed: 1,
+					speedRandom: 1.2,
+					// Lifespan in frames
+					lifeSpan: 29,
+					lifeSpanRandom: 7,
+					// Angle is calculated clockwise: 12pm is 0deg, 3pm is 90deg etc.
+					angle: 65,
+					angleRandom: 34,
+					startColour: [255, 247, 0, 1],
+					startColourRandom: [0, 0, 0, 0],
+					endColour: [255, 255, 255, 0],
+					endColourRandom: [60, 60, 60, 0],
+					// Only applies when fastMode is off, specifies how sharp the gradients are drawn
+					sharpness: 20,
+					sharpnessRandom: 10,
+					// Random spread from origin
+					spread: 20,
+					// How many frames should this last
+					duration: 10,
+					// Will draw squares instead of circle gradients
+					fastMode: false,
+					gravity: { x: 0, y: -0.1 },
+					// sensible values are 0-3
+					jitter: 0
+				},
 
-		setScene:function(str,check,quest)
+		setScene:function(scene,quest,string)
 		{
-			this.sceneString = str;
-			this.check = check;
+			this.sceneString = scene;
 			this.questDone = quest;
 
-			if(this.check === null)return;
-			if(!this.check())this.image(this.grayImage);
+			this.locked = !this.getType(string);
 
-			this.bind("CheckBuilding",function()
+			if(this.locked)
 			{
-				if(this.check === null)return;
-			    if(this.check())this.image(this.normalImage);
+				this.image(this.grayImage);
+			}
+
+			this.bind(string,function()
+			{
+				this.locked = false;
+				this.image(this.normalImage);
+				this.shootParticle();
 				
 			});
+
+			// this.bind("CheckBuilding",function()
+			// {
+			// 	//if(this.check === null)return;
+			//     //if(this.check())this.image(this.normalImage);
+				
+			// });
+		},
+
+		shootParticle:function()
+		{
+			var particles = Crafty.e("2D,Canvas,Particles").particles(this.particleOptions);
+			particles.x = this.x+this.w*0.5;
+			particles.y = this.y+this.h*0.5;
+		},
+
+		getType:function(string)
+		{
+			var tempBool = false;
+			switch(string)
+			{
+				case UNLOCK_BUILDING_ONE:
+					tempBool =  state.isCvBuildingUnlocked;
+				break;
+
+				case UNLOCK_BUILDING_TWO:
+					tempBool = state.isMotivationBuildingUnlocked;
+
+				break;
+
+				case UNLOCK_BUILDING_THREE:
+					tempBool = state.islinksBuildingUnlocked;
+				break;
+
+				case UNLOCK_BUILDING_FOUR:
+					tempBool = state.isSkillsBuildingUnlocked;
+				break;
+			}
+
+			if(tempBool == 'False')return false;
+			else if(tempBool == 'True')return true;
 		},
 
 		setImage:function(grayImage,normalImage)
@@ -257,24 +382,11 @@ var crafty = function() {
 
 		},
 
-		checkImage:function()
-		{
-			if(this.check === null)return;
-			if(this.check())this.image(this.normalImage);
-		},
 
 		enterBuilding:function()
 		{
-			if(this.check === null)
-			{
-				Crafty.scene(this.sceneString);
-				return;
-			}
-
-			if(this.check())
-			{
-				Crafty.scene(this.sceneString);
-			}
+		
+			Crafty.scene(this.sceneString);
 		}
 	});
  
@@ -297,6 +409,9 @@ var crafty = function() {
 		quest:null,
 		player:null,
 		mark:null,
+		buildingType:null,
+
+
 
 		init: function()
 		{
@@ -317,8 +432,9 @@ var crafty = function() {
 			}	
 	     },
 
-	     setNpcData:function(quest,func)
+	     setNpcData:function(quest,func,buildingType)
 	     {
+	     	this.buildingType = buildingType;
 	     	this.quest = quest;
 	     	this.dialogFunction = func;
 	     	if(this.quest === null)return;
@@ -327,7 +443,7 @@ var crafty = function() {
 
 	     putMark:function()
 	     {
-	     	if(this.quest.checkGotQuest())return;
+	     	if(this.buildingType == 'True')return;
 	     	this.mark = Crafty.e("2D, Canvas,mark,Mark");
 	     	this.mark.x = this.x ;
 	     	this.mark.y = this.y-25;
@@ -336,8 +452,9 @@ var crafty = function() {
 
 	     removeMark:function()
 	     {
-	     	this.mark.destroy();
-	     	state.update_unlockQuest(this.quest.id);
+
+	     	if(this.mark)this.mark.destroy();
+	     	//state.update_unlockQuest(this.quest.id);
 	     }
 	});
 
@@ -628,7 +745,7 @@ var crafty = function() {
 			{
 				if(trigger[1])
 				{
-					Crafty.trigger("CheckBuilding");
+					//Crafty.trigger("CheckBuilding");
 					this.nextDialog();
 				}
 				return true;
@@ -678,8 +795,11 @@ var crafty = function() {
         //load takes an array of assets and a callback when complete
         Crafty.load(["/static/sign1.png","/static/table.png", "/static/goal.png","/static/mainControler.png", "/static/controls.png","/static/controls2.png", "/static/spriteSheet.png" ,"/static/Sprite.png","/static/house.png","/static/Sprite2.png","/static/house2.png","/static/house3.png","/static/house4.png","/static/house5.png","/static/castle.png","/static/background.png","/static/background2.png","/static/fence.png","/static/checkmark.png","/static/grayhouse2.png","/static/checkmark2.png"], function ()
         {
-       		 if('{{game.get_Intro}}' == 1)Crafty.scene("main");
-             else Crafty.scene("Intro");
+       		 // if('{{game.get_Intro}}' == 1)Crafty.scene("main");
+          //    else Crafty.scene("Intro");
+
+
+             Crafty.scene("main");
 
         //   	$('#myModal').modal('show');
         //   	$("#modal-backdrop").css('background-color: green')
@@ -709,51 +829,37 @@ var crafty = function() {
 			{
 				//info = Crafty.e("Infolog,Persist");
 				quest_log = Crafty.e("Questlog,Persist")
-				.attr({ x: -150, y: 100, z: 1});
+				.attr({ x: 710, y: 100, z: 1});
 				quest_log._element.setAttribute('id','quest_log');
-
-				quest1 = Crafty.e("Quest,Persist");
-				quest2 = Crafty.e("Quest,Persist");
-				quest3 = Crafty.e("Quest,Persist");
-				quest4 = Crafty.e("Quest,Persist");
+	
+				quest1 = Crafty.e("Quest,Persist").attr({ x: 800, y: 450, z: 1});
+				quest2 = Crafty.e("Quest,Persist").attr({ x: 800, y: 450, z: 1});
+				quest3 = Crafty.e("Quest,Persist").attr({ x: 800, y: 450, z: 1});
+				quest4 = Crafty.e("Quest,Persist").attr({ x: 800, y: 450, z: 1});
 
 				quest1.addQuestInfo(1,"Cv","Need to upload your cv",
-					state.check_cv,
-					state.cvUnlocked,
-					state.checkUnlockedCVQuest);
+				state.check_cv,
+				state.cvUnlocked);
 
 				quest2.addQuestInfo(2,"Motivation","Need to upload your motivationLetter",
-					state.check_motivation,
-					state.motivationUnlocked,
-					state.checkUnlockedMotivationQuest);
+				state.check_motivation,
+				state.motivationUnlocked);
+				
 				quest3.addQuestInfo(3,"Links","Need to upload your links",
-					state.check_link,
-					state.linkUnlocked,
-					state.checkUnlockedLinkQuest);
+				state.check_link,
+				state.linkUnlocked,
+				state.checkUnlockedLinkQuest);
+				
 				quest4.addQuestInfo(4,"Skills","Need to upload your Skills",
-					state.check_skills,
-					state.skillsUnlocked,
-					state.checkUnlockedSkillsQuest);
+				state.check_skills,
+				state.skillsUnlocked);
 
-				if(state.checkUnlockedCVQuest())
-				{
-					quest_log.addQuest(quest1,false);
-				}
+				quest_log.addQuest(quest1);
+				quest_log.addQuest(quest2);
+				quest_log.addQuest(quest3);
+				quest_log.addQuest(quest4);
 
-				if(state.checkUnlockedMotivationQuest())
-				{
-					quest_log.addQuest(quest2,false);
-				}
 
-				if(state.checkUnlockedLinkQuest())
-				{
-					quest_log.addQuest(quest3,false);
-				}
-
-				if(state.checkUnlockedSkillsQuest())
-				{
-					quest_log.addQuest(quest4,false);
-				}
 			}
 		}
 
@@ -776,30 +882,37 @@ var crafty = function() {
 
 		var player2 = Crafty.e("2D,  Canvas, player,Collision,npc1,NPC,Solid");
 			player2.attr({ x: 150, y: 100, z: 1});
-			player2.setNpcData(quest1,getDialogData1);
+			player2.setNpcData(quest1,getDialogData1,state.isCvBuildingUnlocked);
 			player2.putMark();
 
 		var player3 = Crafty.e("2D,  Canvas, player,Collision,npc2,NPC,Solid");
 			player3.attr({ x: 400, y: 450, z: 1});
-			player3.setNpcData(quest2,getDialogData2);
+			player3.setNpcData(quest2,getDialogData2,state.isMotivationBuildingUnlocked);
 			player3.bind("getQuest",player3.putMark);
 
 		var player4 = Crafty.e("2D,  Canvas, player,Collision,npc3,NPC,Solid");
 			player4.attr({ x: 400, y: 100, z: 1})
-			player4.setNpcData(quest3,getDialogData3);
+			player4.setNpcData(quest3,getDialogData3,state.islinksBuildingUnlocked);
 			player4.bind("getQuest",player4.putMark);
 
 		var player5 = Crafty.e("2D,  Canvas, player,Collision,npc4,NPC,Solid");
 			player5.attr({ x: 150, y: 450, z: 1});
-			player5.setNpcData(quest4,getDialogData4);
+			player5.setNpcData(quest4,getDialogData4,state.isSkillsBuildingUnlocked);
 			player5.bind("getQuest",player5.putMark);
+
+		if(state.isCvBuildingUnlocked == 'True')
+		{
+			player3.putMark();
+			player4.putMark();
+			player5.putMark();
+		}
 
 		showQuestlog();
 
-		if(state.checkUnlockedCVQuest())
-		{
-			Crafty.trigger("getQuest");
-		}		
+		// if(state.checkUnlockedCVQuest())
+		// {
+		// 	Crafty.trigger("getQuest");
+		// }		
     });
 
 	Crafty.scene("Game2",function()
@@ -819,6 +932,63 @@ var crafty = function() {
 		player1.rightControls(2)
 		player1.attr({ x: 150, y: 280, z: 1});
 		player1.Player();
+
+		var totalQuest  = 0;
+		var questInterval = null;
+		var placeQuests = function()
+		{
+			quest_log.array[totalQuest].visible = true;
+			if(quest_log.array[totalQuest].x < 800)quest_log.array[totalQuest].x+=10;
+			else totalQuest++;
+			if(totalQuest > 3) clearInterval(questInterval)
+		}
+
+		if(!state.checklog())
+		{
+			dialog = Crafty.e("Dialog, 2D, DOM,Text")
+			.attr({x:0, y:500, w:900, h:0}).css({"font": "10pt Arial", "color": "#000", "text-align": "left","border-radius": "20px"});
+			dialog.alpha = 0.8;
+
+			if (typeof quest_log  === 'undefined') 
+			{
+				//info = Crafty.e("Infolog,Persist");
+				quest_log = Crafty.e("Questlog,Persist")
+				.attr({ x: 710, y: 100, z: 1});
+				quest_log._element.setAttribute('id','quest_log');
+				quest_log.bind(QUEST,function()
+				{
+					quest1 = Crafty.e("Quest,Persist");
+					quest2 = Crafty.e("Quest,Persist");
+					quest3 = Crafty.e("Quest,Persist");
+					quest4 = Crafty.e("Quest,Persist");
+
+					quest1.addQuestInfo(1,"Cv","Need to upload your cv",
+					state.check_cv,
+					state.cvUnlocked);
+
+					quest2.addQuestInfo(2,"Motivation","Need to upload your motivationLetter",
+					state.check_motivation,
+					state.motivationUnlocked);
+					
+					quest3.addQuestInfo(3,"Links","Need to upload your links",
+					state.check_link,
+					state.linkUnlocked,
+					state.checkUnlockedLinkQuest);
+					
+					quest4.addQuestInfo(4,"Skills","Need to upload your Skills",
+					state.check_skills,
+					state.skillsUnlocked);
+
+					quest_log.addQuest(quest1);
+					quest_log.addQuest(quest2);
+					quest_log.addQuest(quest3);
+					quest_log.addQuest(quest4);
+
+					questInterval = setInterval(placeQuests,10);
+					
+				});	
+			}
+		}
 
 
 		var control = Crafty.e("2D,Canvas,Image").attr({ x: player1.x-45, y: player1.y-100, z: 1});

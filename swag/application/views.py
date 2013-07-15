@@ -102,33 +102,33 @@ def playerdatajs(request, unique_id):
 
 
 @csrf_exempt
-def unlock_cv_quest(request, unique_id):
+def unlock_cv_building(request, unique_id):
     game = GameInstance.objects.get(uid=unique_id)
-    game.player_cv_unlockedQuest = True
+    game.cv_building_unlocked = True
     game.save()
     return HttpResponse('All went well')
 
 
 @csrf_exempt
-def unlock_motivation_quest(request, unique_id):
+def unlock_motivation_building(request, unique_id):
     game = GameInstance.objects.get(uid=unique_id)
-    game.player_motivation_unlockedQuest = True
+    game.motivation_building_unlocked = True
     game.save()
     return HttpResponse('All went well')
 
 
 @csrf_exempt
-def unlock_link_quest(request, unique_id):
+def unlock_skills_building(request, unique_id):
     game = GameInstance.objects.get(uid=unique_id)
-    game.player_link_unlockedQuest = True
+    game.skills_building_unlocked = True
     game.save()
     return HttpResponse('All went well')
 
 
 @csrf_exempt
-def unlock_skill_quest(request, unique_id):
+def unlock_links_building(request, unique_id):
     game = GameInstance.objects.get(uid=unique_id)
-    game.player_skill_unlockedQuest = True
+    game.links_building_unlocked = True
     game.save()
     return HttpResponse('All went well')
 

@@ -4,11 +4,10 @@ Crafty.c("Questlog",{
 		init:function(){
 			var that = this;
 			this.addComponent("2D, DOM,Color2");
-			this.x = 500;
 			this.y = 0;
 			this.w = 150;  
 			this.h = 200;   
-			// this.color("#fff");
+			this.color("#fff");
 			this.array = [];
 			//this.infolog = info;
 			this.popUp = false;
@@ -21,6 +20,7 @@ Crafty.c("Questlog",{
 			this.marginX = 5;
 			this.marginY = 30;
 			this.infoLogHeight = 100;
+			this.alpha = 0.5;
 			this.css({"border-radius": "15px"});	
 		},
 
@@ -84,20 +84,20 @@ Crafty.c("Questlog",{
 			this.attachAllQuests();
 		},
 
-		addQuest:function(quest,condition)
+		addQuest:function(quest)
 		{
 			this.detachAllQuests();
 			this.array.push(quest);
-			quest.x = 100;
+			//quest.x = 100;
 			quest.y = this.y + this.marginY*this.array.length;
 			quest.h = 30;
 			quest.z =1;
 			quest.questlog = this;
-			quest.unlock();
+
 			this.show();
 			quest.isSelected = false;
-			if(quest.npc !== null) quest.npc.removeMark();
-			if(condition) sendQuest(quest.questID);
+			// if(quest.npc !== null) quest.npc.removeMark();
+			// if(condition) sendQuest(quest.questID);
 		}
 	});
 
@@ -106,7 +106,7 @@ Crafty.c("Questlog",{
 
 		init:function(){
 			this.addComponent("2D, DOM,Color2,Text,Image");
-			this.x = 200;
+			this.x = 50;
 			this.y = 0;
 			this.w = 300;  
 			this.h = 500;   
@@ -118,6 +118,7 @@ Crafty.c("Questlog",{
 			this.questlog = null;
 			this.questID = 0;
 			this.npc = null;
+			this.visible = false;
 
 			this._element.setAttribute("id","shadow");
 

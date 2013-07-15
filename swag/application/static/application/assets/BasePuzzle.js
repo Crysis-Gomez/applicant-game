@@ -1,7 +1,6 @@
 Crafty.scene("BasePuzzle", function ()
 {
  
-  
   Game = {
 
      n1:null,
@@ -38,7 +37,6 @@ Crafty.scene("BasePuzzle", function ()
       }
 
       return number;
-
     },
 
     getbasedNumber:function(number)

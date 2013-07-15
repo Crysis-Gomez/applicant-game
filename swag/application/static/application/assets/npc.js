@@ -9,6 +9,11 @@ var PROFILE = "PROFILE";
 var EXIT = "EXIT";
 var QUESTION  = "QUESTION";
 var LEAD ="LEAD";
+var UNLOCK_BUILDING_ONE =   "UNLOCK_BUILDING_ONE";
+var UNLOCK_BUILDING_TWO =   "UNLOCK_BUILDING_TWO";
+var UNLOCK_BUILDING_THREE = "UNLOCK_BUILDING_THREE";
+var UNLOCK_BUILDING_FOUR =  "UNLOCK_BUILDING_FOUR";
+
 
 
 function getDialogData1(state)
@@ -22,25 +27,18 @@ function getDialogData1(state)
 								  "Sandra: Welcome to the vacancy of ", 
 								  "Sandra: Next thing you need to do is to upload your C.V.",
 								  "Sandra: But you need to fix the machine in the first building",
-								   QUEST,
-								  "Sandra: Press L, so you can see the quest log.",
+								   UNLOCK_BUILDING_ONE,
 								  "Sandra: Good luck."];
 	}
-	else if(!state.checkUnlockedCVQuest())
-	{
-		data = ["Sandra: Welcome back " + state.name(),
-				  "Sandra: Welcome to the vacancy of ",
-				  "Sandra: Next thing you need to do is to upload your C.V.",
-				  "Sandra: But you need to fix the machine in the first building",
-				   QUEST,
-				  "Sandra: Press L, so you can see the quest log.",
-				  "Sandra: Good luck."];
-	}
-
 	else if(!state.check_cv())
 	{
+
 		data = ["Sandra: Welcome back " + state.name(),
-				"Sandra: Time to upload your C.V man!"];
+		  "Sandra: Welcome to the vacancy of ",
+		  "Sandra: Next thing you need to do is to upload your C.V.",
+		  "Sandra: But you need to fix the machine in the first building",
+		  UNLOCK_BUILDING_ONE,
+		  "Sandra: Good luck."];
 	}
 	else
 	{ 
@@ -59,17 +57,12 @@ function getDialogData2(state)
  	{
  		data = ["Maria: pls sumbit your name and e-mail at Sandra and your first task"];
  	}
-	else if(!state.check_motivation() && !state.checkUnlockedMotivationQuest())
+	else if(!state.check_motivation())
 	{
 		 	data = ["Maria: Hi " + state.name(),
 					"Maria: you can upload your motivation letter at the other building",
-					 QUEST,
+					 UNLOCK_BUILDING_TWO,
 					"Maria: Good luck."];
-	}
-	else if(!state.check_motivation() && state.checkUnlockedMotivationQuest())
-	{
-		data = ["Maria: Hi " + state.name(),
-		"Maria: Time upload your motivation man"];
 	}
 	else
 	{
@@ -89,17 +82,12 @@ function getDialogData3(state)
  	{
  		data = ["Sharron: pls sumbit your name and e-mail at Sandra and your first task"];
  	}
-	else if(!state.check_link() && !state.checkUnlockedLinkQuest())
+	else if(!state.check_link())
 	{
 		 	data = ["Sharron: Hi " + state.name(),
 					"Sharron: you can upload your links at the other building",
-					 QUEST,
+					 UNLOCK_BUILDING_THREE,
 					"Sharron: Good luck."];
-	}
-	else if(!state.check_motivation() && state.checkUnlockedLinkQuest())
-	{
-		data = ["Sharron: Hi " + state.name(),
-		"Sharron: Time upload your links man"];
 	}
 	else
 	{
@@ -118,17 +106,12 @@ function getDialogData4(state)
  	{
  		data = ["Vera: pls sumbit your name and e-mail at Sandra and your first task"];
  	}
-	else if(!state.check_skills() && !state.checkUnlockedSkillsQuest())
+	else if(!state.check_skills())
 	{
 		 	data = ["Vera: Hi " + state.name(),
 					"Vera: you can upload your skills at the other building",
-					 QUEST,
+					 UNLOCK_BUILDING_FOUR,
 					"Vera: Good luck."];
-	}
-	else if(!state.check_skills() && state.checkUnlockedSkillsQuest())
-	{
-		data = ["Vera: Hi " + state.name(),
-		"Vera: Time upload your links man"];
 	}
 	else
 	{
@@ -188,6 +171,8 @@ function getDialogIntro(state)
 		"Sandra: Currently we have problems with our systems",
 		"Sandra: It`s has been taken over by the hiring manager!!",
 		"Sandra: Solve the problems and convince the hiring manager that you can overcome these challenges!!",
+		"Sandra: Here are your objectives",
+		QUEST,
 		"Sandra: Follow Me pls",
 		 LEAD,
 		]  
@@ -300,8 +285,8 @@ function craftyTriggers(str,npc)
 		 return [true,uploadSkills()]
 
 		 case QUEST:
-		 		
-		 return [true,addQuest(npc)];
+		 		Crafty.trigger(QUEST);
+		 return [true,true];
 
 		 case PROFILE:
 		 		Crafty.trigger("SHOW");
@@ -318,6 +303,26 @@ function craftyTriggers(str,npc)
 		 case LEAD:
 		 		Crafty.trigger("LEAD");
 		 return [true,true];
+
+		 case UNLOCK_BUILDING_ONE:
+		 		sendBuilding(0);
+		 		Crafty.trigger(UNLOCK_BUILDING_ONE);
+		 return[true,true];
+
+		 case UNLOCK_BUILDING_TWO:
+		 		sendBuilding(1);
+		 		Crafty.trigger(UNLOCK_BUILDING_TWO);
+		 return[true,true];
+
+		 case UNLOCK_BUILDING_THREE:
+		 		sendBuilding(2);
+		 		Crafty.trigger(UNLOCK_BUILDING_THREE);
+		 return[true,true];
+
+		 case UNLOCK_BUILDING_FOUR:
+				 sendBuilding(3);
+		 		Crafty.trigger(UNLOCK_BUILDING_FOUR);
+		 return[true,true];
 
 	}
 

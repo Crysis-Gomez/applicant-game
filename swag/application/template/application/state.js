@@ -1,51 +1,42 @@
 var state = function() 
 {
-	this.player_name = '{{ game.player_name }}';
-	this.email = '{{ game.player_email }}';
-	this.has_cv = '{{ game.has_cv }}';
+	this.player_name 	= '{{ game.player_name }}';
+	this.email 			= '{{ game.player_email }}';
+	this.has_cv 		= '{{ game.has_cv }}';
 	this.has_motivation = '{{game.has_motivation}}';
-	this.has_links = '{{game.has_links}}';
-	this.has_skills = '{{game.has_rated_skills}}';
+	this.has_links 		= '{{game.has_links}}';
+	this.has_skills 	= '{{game.has_rated_skills}}';
 
-	this.unLockedCVQuest = '{{game.player_cv_unlockedQuest}}';
-	this.mayUploadCV = false;
+	
+	this.mayUploadCV 			= false;
+	this.MayUploadMotivation 	= false;
+	this.MayUploadLink 			= false;
+	this.MayUploadSkills 		= false;
+	
+	this.cvBuildingUnlocked         = '{{game.cv_building_unlocked}}';
+	this.motivationBuildingUnlocked = '{{game.motivation_building_unlocked}}';
+	this.skillsBuildingUnlocked 	= '{{game.skills_building_unlocked}}';
+	this.linksBuildingUnlocked 		= '{{game.links_building_unlocked}}';
+	
 
-	this.unLockedMotivationQuest = '{{game.player_motivation_unlockedQuest}}';
-	this.MayUploadMotivation = false;
-
-	this.unLockedLinkQuest = '{{game.player_link_unlockedQuest}}';
-	this.MayUploadLink = false;
-
-	this.unLockedSkillsQuest = '{{game.player_skill_unlockedQuest}}';
-	this.MayUploadSkills = false;
-
-	this.id = '{{game.uid}}';
-	this.skills = {{skills|safe}};
-	this.playerLinks = {{links|safe}};
-	this.question = {{question|safe}};
+	this.id 			= '{{game.uid}}';
+	this.skills 		= {{skills|safe}};
+	this.playerLinks 	= {{links|safe}};
+	this.question 		= {{question|safe}};
 		
-	this.playerPositionx = 100;
-	this.playerPositiony = 200;///django shit doen.
-	this.has_quest_log = false;
-	this.boss_unlocked = '{{game.player_unlocked_boss}}';
-	this.answered = '{{game.get_answer}}';
+	this.playerPositionx 	= 100;
+	this.playerPositiony 	= 200;///django shit doen.
+	this.has_quest_log 		= false;
+	this.boss_unlocked 		= '{{game.player_unlocked_boss}}';
+	this.answered 			= '{{game.get_answer}}';
 
 	this.ip = '{{ip}}'; 
 
-	var check_UnlockedSkillsQuest = function()
-	{
-		var my_val = false;
-		if(unLockedSkillsQuest == 'True')
-		{
-			my_val = true;
-		}
-		return my_val;
-	}
 
-	var skills_Unlocked = function()
-	{
-		 unLockedSkillsQuest = 'True';
-	}
+	// var skills_Unlocked = function()
+	// {
+	// 	 unLockedSkillsQuest = 'True';
+	// }
 
 	var skills_MayUpload = function()
 	{
@@ -59,23 +50,6 @@ var state = function()
 
 
 
-	///////////////////////////////////////////////
-
-	var check_UnlockedLinkQuest = function()
-	{
-		var my_val = false;
-		if(unLockedLinkQuest == 'True')
-		{
-			my_val = true;
-		}
-		return my_val;
-	}
-
-	var link_Unlocked = function()
-	{
-		 unLockedLinkQuest = 'True';
-	}
-
 	var link_MayUpload = function()
 	{
 		MayUploadLink = true;
@@ -87,20 +61,6 @@ var state = function()
 	}
 //////////////////////////////////////////
 
-	var check_UnlockedMotivationQuest = function()
-	{
-		var my_val = false;
-		if(unLockedMotivationQuest == 'True')
-		{
-			my_val = true;
-		}
-		return my_val;
-	}
-
-	var motivation_Unlocked = function()
-	{
-		 unLockedMotivationQuest = 'True';
-	}
 
 	var motivation_MayUpload = function()
 	{
@@ -112,15 +72,6 @@ var state = function()
 		return MayUploadMotivation;
 	}
 /////////////////////////////////////////////
-	var check_UnlockedCVQuest = function()
-	{
-		var my_val = false;
-		if(unLockedCVQuest == 'True')
-		{
-			my_val = true;
-		}
-		return my_val;
-	}
 
 	var cv_Unlocked = function()
 	{
@@ -270,33 +221,33 @@ var state = function()
 		setPosition:setPosition,
 		checklog:check_log,
 		setlog:set_log,
-		
-		checkUnlockedCVQuest:check_UnlockedCVQuest,
+
+
+		isCvBuildingUnlocked:cvBuildingUnlocked,          
+		isMotivationBuildingUnlocked:motivationBuildingUnlocked,
+		isSkillsBuildingUnlocked:skillsBuildingUnlocked,
+		islinksBuildingUnlocked:linksBuildingUnlocked,
+
 		cvUnlocked:cv_Unlocked,
 		cvMayUpload:cv_MayUpload,
 		checkMayUploadCV:check_MayUploadCV,
 
-		checkUnlockedMotivationQuest:check_UnlockedMotivationQuest,
-		motivationUnlocked:motivation_Unlocked,
 		motivationMayUpload:motivation_MayUpload,
 		checkMayUploadMotivation:check_MayUploadMotivation,
 
-		checkUnlockedLinkQuest:check_UnlockedLinkQuest,
-		linkUnlocked:link_Unlocked,
 		linkMayUpload:link_MayUpload,
 		checkMayUploadLink:check_MayUploadLink,
 		skills:skills,
 		playerLinks:playerLinks,
 
-
-		checkUnlockedSkillsQuest:check_UnlockedSkillsQuest,
-		skillsUnlocked:skills_Unlocked,
 		skillsMayUpload:skills_MayUpload,
 		checkMayUploadSkills:check_MayUploadSkills,
 		boss_unlocked:boss_unlocked,
 		check_boss_unlocked:check_boss_unlocked,
 		update_unlockQuest: update_unlockQuest,
 		ip:ip,
+
+
 
 		get_skills: function() 
 		{

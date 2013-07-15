@@ -31,6 +31,38 @@ Crafty.c('Player',
 	mayStop:false,
 	mayMove:true,
 
+
+
+	particleOptions:{
+					maxParticles: 150,
+					size: 14,
+					sizeRandom: 4,
+					speed: 1,
+					speedRandom: 1.2,
+					// Lifespan in frames
+					lifeSpan: 29,
+					lifeSpanRandom: 7,
+					// Angle is calculated clockwise: 12pm is 0deg, 3pm is 90deg etc.
+					angle: 65,
+					angleRandom: 34,
+					startColour: [255, 247, 0, 1],
+					startColourRandom: [0, 0, 0, 0],
+					endColour: [255, 255, 255, 0],
+					endColourRandom: [60, 60, 60, 0],
+					// Only applies when fastMode is off, specifies how sharp the gradients are drawn
+					sharpness: 20,
+					sharpnessRandom: 10,
+					// Random spread from origin
+					spread: 20,
+					// How many frames should this last
+					duration: 10,
+					// Will draw squares instead of circle gradients
+					fastMode: false,
+					gravity: { x: 0, y: -0.1 },
+					// sensible values are 0-3
+					jitter: 0
+				},
+
 	init:function()
 	{
 		this.popUp = Crafty.e("PopUp");
@@ -171,6 +203,9 @@ Crafty.c('Player',
 		.bind("NewDirection",
 			function (direction)
 			{
+
+
+				
 				if(!this.mayMove)return;
 				this.dirX = direction.x;
 				this.dirY = direction.y;
@@ -242,14 +277,15 @@ Crafty.c('Player',
 					{
 						this.house = entities[entity];
 	
-						if(this.house.check())
-						{
-							this.popUp.showEnter("Enter");
-						}
-						else
-						{
-							this.popUp.showEnter("locked");
-						}
+						// if(this.house.check())
+						// {
+							if(!this.house.locked)this.popUp.showEnter("Enter");
+							else this.popUp.showEnter("locked");
+						// }
+						// else
+						// {
+						// 	this.popUp.showEnter("locked");
+						// }
 						
 					}
 					return;
@@ -289,6 +325,7 @@ Crafty.c('Player',
 
 			if (this.isDown('ENTER'))
 			{
+
 				if(this.popUp.isHouse)
 				{
 					this.enterHouse();
@@ -297,17 +334,17 @@ Crafty.c('Player',
 				if(this.popUp.isNpc || dialog.inConversation)
 				{
 					this.npc.startDialog();
+					this.npc.removeMark();
 				}
 
 				if(this.popUp.isWarp)
 				{
+					quest_log.visible = false;
 					for (var i = 0; i < quest_log.array.length; i++) 
 					{
 						quest_log.array[i].visible = false;
 					};
-
-					console.log(this.machine.startGame);
-					
+		
 					Crafty.scene(this.machine.startGame);
 
 				}

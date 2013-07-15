@@ -5,10 +5,17 @@
 <script>
  window.onload = function () {
  	{% for vacancy in vacancies %}
-		var button =  document.getElementById('{{vacancy.title}}');
+		var button =  document.getElementById("'{{vacancy.title}}'+'1'");
 		button.addEventListener('click', function(){
 		    window.location.href = '{% url 'game' slug=vacancy.slug %}'
 		});
+
+		var button =  document.getElementById("'{{vacancy.title}}'+'2'");
+		button.addEventListener('click', function(){
+		    window.location.href = '{% url 'game' slug=vacancy.slug %}'
+		});
+
+
  	{%endfor%}
  }
 
@@ -32,11 +39,10 @@
 	    </div>
 	    <div id='{{vacancy.id}}' class="accordion-body collapse">
 	      <div class="accordion-inner">
-	      	<button id='{{vacancy.title}}' 	type="button" class="btn btn-primary" >Play game</button>
+	      	<button id="'{{vacancy.title}}'+'1'"	type="button" class="btn btn-primary" >Play game</button>
 	         <p>{{vacancy.job_description_output|safe}}</p>
 	         
-	         <!-- <button id="normal"    type="button" class="btn btn-primary" onclick="removeLink()">Normal</button> -->
-			 <button id='{{vacancy.title}}' 	type="button" class="btn btn-primary" >Play game</button>
+			<button id="'{{vacancy.title}}'+'2'" 	type="button" class="btn btn-primary" >Play game</button>
 
 	      </div>
 	    </div>

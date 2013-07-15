@@ -361,7 +361,12 @@ function sendFiles()
 }
 
 $(document).ready(function()
-{ 
+{
+
+  $('.modal').modal({
+            show: false,
+            keyboard: false,
+    }); 
 
    $("#id_links").keydown(function() {
         if (event.keyCode == 13) 
@@ -390,9 +395,6 @@ $(document).ready(function()
             return false;
          }
     });
-
-
-
 
 
     $('#myModal').on('shown', function () {
@@ -446,22 +448,22 @@ function getUrl(value)
 
   switch(value)
   {
+    case 0:
+    return "/cvbuilding/{{game.uid}}/";
+    
     case 1:
-    return "/cvquest/{{game.uid}}/";
+    return "/motivationbuilding/{{game.uid}}/";
     
     case 2:
-    return "/motivationquest/{{game.uid}}/";
+    return "/linkbuilding/{{game.uid}}/";
     
     case 3:
-    return "/linkquest/{{game.uid}}/";
-    
-    case 4:
-    return "/skillquest/{{game.uid}}/";
+    return "/skillbuilding/{{game.uid}}/";
   }
 
 }
 
-function sendQuest(id)
+function sendBuilding(id)
 {
     var urlString = getUrl(id);
    
