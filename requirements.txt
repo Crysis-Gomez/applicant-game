@@ -6,3 +6,4 @@ django-admin-bootstrapped==0.4
 django-database-storage==0.1.2
 passlib==1.6.1
 wsgiref==0.1.2
+django_nose

@@ -154,6 +154,7 @@ INSTALLED_APPS = (
 
     'swag.application',
     'south',
+    'django_nose',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -192,3 +193,4 @@ try:
 except ImportError:
     pass
 
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
