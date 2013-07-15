@@ -1,4 +1,6 @@
 *.log
 *.pot
 *.pyc
+virtualenv
+*.egg-info
 local_settings.py
