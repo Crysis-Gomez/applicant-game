@@ -126,7 +126,7 @@ MIDDLEWARE_CLASSES = (
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'urls'
+ROOT_URLCONF = 'swag.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'wsgi.application'
@@ -152,8 +152,9 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 
-    'application',
+    'swag.application',
     'south',
+    'django_nose',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -192,3 +193,4 @@ try:
 except ImportError:
     pass
 
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'

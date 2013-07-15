@@ -10,7 +10,7 @@ urlpatterns = patterns('',
     # url(r'^$', 'swag.views.home', name='home'),
 
     # url(r'^swag/', include('swag.foo.urls')),
-    url(r'^', include('application.urls')),
+    url(r'^', include('swag.application.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
