@@ -1,4 +1,4 @@
-Crafty.scene("TestGame", function ()
+Crafty.scene("BasePuzzle", function ()
 {
  
   

@@ -1,4 +1,4 @@
-Crafty.scene("TestGame2", function ()
+Crafty.scene("CodePuzzle", function ()
 {
   Game = {
   // This defines our grid's size and the size of each of its tiles
@@ -116,6 +116,7 @@ Crafty.scene("TestGame2", function ()
       var currentLevel = this.getLevel(this.levelNumber);
       this.blockArray = new Array();
       this.pieceArray = new Array();
+      this.operators = new Array();
       Game.answerArray = new Array();
       Game.myArray = new Array(Game.map_grid.width);
       for (var x = 0; x < Game.map_grid.width; x++)
@@ -257,6 +258,7 @@ Crafty.c('Operator',
 
     getTypeTwo:function()
     {
+       console.log(Game.levelNumber);
       switch(Game.levelNumber)
       {
 
@@ -281,6 +283,7 @@ Crafty.c('Operator',
 
     getTypeOne:function()
     {
+      console.log(Game.levelNumber);
       switch(Game.levelNumber)
       {
 
