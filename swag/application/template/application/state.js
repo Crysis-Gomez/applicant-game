@@ -33,11 +33,6 @@ var state = function()
 	this.ip = '{{ip}}'; 
 
 
-	// var skills_Unlocked = function()
-	// {
-	// 	 unLockedSkillsQuest = 'True';
-	// }
-
 	var skills_MayUpload = function()
 	{
 		MayUploadSkills = true;
@@ -47,8 +42,6 @@ var state = function()
 	{
 		return MayUploadSkills;
 	}
-
-
 
 	var link_MayUpload = function()
 	{
@@ -194,6 +187,49 @@ var state = function()
 		return boolChecker(answered);
 	}
 
+	var update_cv_building = function()
+	{
+		cvBuildingUnlocked = 'True';
+	}
+
+	var update_motivation_building = function()
+	{
+		motivationBuildingUnlocked = 'True';
+	}
+
+	var update_skills_building = function()
+	{
+		skillsBuildingUnlocked = 'True';
+	}
+
+	var update_links_building = function()
+	{
+		linksBuildingUnlocked = 'True';
+	}
+
+
+
+
+	var get_cv_building = function()
+	{
+		return cvBuildingUnlocked;
+	}
+
+	var get_motivation_building = function()
+	{
+		return motivationBuildingUnlocked;
+	}
+
+	var get_skills_building = function()
+	{
+		return skillsBuildingUnlocked;
+	}
+
+	var get_links_building = function()
+	{
+		return linksBuildingUnlocked;
+	}
+
 
 	return {
 		getState: function() { init() },
@@ -223,10 +259,16 @@ var state = function()
 		setlog:set_log,
 
 
-		isCvBuildingUnlocked:cvBuildingUnlocked,          
-		isMotivationBuildingUnlocked:motivationBuildingUnlocked,
-		isSkillsBuildingUnlocked:skillsBuildingUnlocked,
-		islinksBuildingUnlocked:linksBuildingUnlocked,
+		isCvBuildingUnlocked:get_cv_building,          
+		isMotivationBuildingUnlocked:get_motivation_building,
+		isSkillsBuildingUnlocked:get_skills_building,
+		islinksBuildingUnlocked:get_links_building,
+		
+		update_cv:update_cv_building,
+		update_motivation:update_motivation_building,
+		update_skills:update_skills_building,
+		update_links:update_links_building,
+
 
 		cvUnlocked:cv_Unlocked,
 		cvMayUpload:cv_MayUpload,

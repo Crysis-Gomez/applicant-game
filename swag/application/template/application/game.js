@@ -342,24 +342,24 @@ var crafty = function() {
 
 		getType:function(string)
 		{
-			var tempBool = false;
+			var tempBool = 'False';
 			switch(string)
 			{
 				case UNLOCK_BUILDING_ONE:
-					tempBool =  state.isCvBuildingUnlocked;
+					tempBool =  state.isCvBuildingUnlocked();
 				break;
 
 				case UNLOCK_BUILDING_TWO:
-					tempBool = state.isMotivationBuildingUnlocked;
+					tempBool = state.isMotivationBuildingUnlocked();
 
 				break;
 
 				case UNLOCK_BUILDING_THREE:
-					tempBool = state.islinksBuildingUnlocked;
+					tempBool = state.islinksBuildingUnlocked();
 				break;
 
 				case UNLOCK_BUILDING_FOUR:
-					tempBool = state.isSkillsBuildingUnlocked;
+					tempBool = state.isSkillsBuildingUnlocked();
 				break;
 			}
 
@@ -443,7 +443,7 @@ var crafty = function() {
 
 	     putMark:function()
 	     {
-	     	if(this.buildingType == 'True')return;
+	     	if(this.buildingType() == 'True')return;
 	     	this.mark = Crafty.e("2D, Canvas,mark,Mark");
 	     	this.mark.x = this.x ;
 	     	this.mark.y = this.y-25;
@@ -795,11 +795,11 @@ var crafty = function() {
         //load takes an array of assets and a callback when complete
         Crafty.load(["/static/sign1.png","/static/table.png", "/static/goal.png","/static/mainControler.png", "/static/controls.png","/static/controls2.png", "/static/spriteSheet.png" ,"/static/Sprite.png","/static/house.png","/static/Sprite2.png","/static/house2.png","/static/house3.png","/static/house4.png","/static/house5.png","/static/castle.png","/static/background.png","/static/background2.png","/static/fence.png","/static/checkmark.png","/static/grayhouse2.png","/static/checkmark2.png"], function ()
         {
-       		 // if('{{game.get_Intro}}' == 1)Crafty.scene("main");
-          //    else Crafty.scene("Intro");
+       		 if('{{game.get_Intro}}' == 1)Crafty.scene("main");
+             else Crafty.scene("Intro");
 
 
-             Crafty.scene("main");
+             //Crafty.scene("main");
 
         //   	$('#myModal').modal('show');
         //   	$("#modal-backdrop").css('background-color: green')
@@ -900,7 +900,7 @@ var crafty = function() {
 			player5.setNpcData(quest4,getDialogData4,state.isSkillsBuildingUnlocked);
 			player5.bind("getQuest",player5.putMark);
 
-		if(state.isCvBuildingUnlocked == 'True')
+		if(state.isCvBuildingUnlocked() == 'True')
 		{
 			player3.putMark();
 			player4.putMark();

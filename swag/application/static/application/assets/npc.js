@@ -306,21 +306,25 @@ function craftyTriggers(str,npc)
 
 		 case UNLOCK_BUILDING_ONE:
 		 		sendBuilding(0);
+		 		state.update_cv();
 		 		Crafty.trigger(UNLOCK_BUILDING_ONE);
 		 return[true,true];
 
 		 case UNLOCK_BUILDING_TWO:
 		 		sendBuilding(1);
+		 		state.update_motivation();
 		 		Crafty.trigger(UNLOCK_BUILDING_TWO);
 		 return[true,true];
 
 		 case UNLOCK_BUILDING_THREE:
 		 		sendBuilding(2);
+		 		state.update_links();
 		 		Crafty.trigger(UNLOCK_BUILDING_THREE);
 		 return[true,true];
 
 		 case UNLOCK_BUILDING_FOUR:
 				 sendBuilding(3);
+				 state.update_skills();
 		 		Crafty.trigger(UNLOCK_BUILDING_FOUR);
 		 return[true,true];
 
