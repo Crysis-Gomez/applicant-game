@@ -5,35 +5,26 @@ Crafty.c('Sign',
   minPosition:null,
   offset:5,
   moveDown:false,
-
+  signImage:null,
 
   init:function()
   {
     
   },
 
-  move:function()
-  {
-
-    if(this.moveDown)this.sign.y +=0.3;
-    else this.sign.y -= 0.3;
-
-    if(this.sign.y > this.maxPosition) this.moveDown = false;
-    if(this.sign.y < this.minPosition) this.moveDown = true;
-  },
-
   setUpSign:function(string)
   {
     this.sign = Crafty.e("2D,Image,Canvas");
-    var image = this.sign.image(string);
+    this.signImage = this.sign.image(string);
     this.sign.x = this.x
     this.sign.y = this.y+40;
     this.sign.z = 1;
     this.attach(this.sign);
-    this.bind("EnterFrame",this.move);
-    this.maxPosition = this.sign.y+this.offset;
-    this.minPosition = this.sign.y;
-    this.moveDown = true;
+  },
+
+  rotateImage:function(degrees)
+  {
+    this.signImage.rotation += degrees;
   },
 
   updateSignPosition:function()
@@ -48,10 +39,8 @@ Crafty.c('Sign',
   {
     this.unbind("EnterFrame");
     this.sign.destroy();
-  
   }
-
-})
+});
 
 
 Crafty.c('Win',
@@ -137,4 +126,30 @@ Crafty.c('Destroy',
           this.destroy();
        })
     }
-})
+});
+
+
+Crafty.c('Key',
+{
+  unlockDoor:false,
+
+  init: function() 
+  {
+    this.requires('2D, Canvas, Grid, Color,Collision');
+    this.color('rgb(100,149,237)');
+    this.onHit('block',function(e)
+    {
+        if(!this.unlockDoor)
+        {
+          Crafty.trigger("unlockDoor");
+          this.unlockDoor = true;
+          if(this.has('Sign'))
+          {
+            this.removeSign();
+            this.removeComponent('Sign');
+          }
+        }
+    });
+
+  },
+});

@@ -19,12 +19,14 @@ Crafty.scene("RotateGame", function ()
     blockArray:[],
     balArray:Array,
     wallArray:Array,
+    goal:null,
     _wall:null,
     levelNumber: 0,
     ball:null,
     helper:null,
     rotateMiddlePointX:5,
     rotateMiddlePointY:5,
+    degrees:0,
    
     width: function()
     {
@@ -112,11 +114,11 @@ Crafty.scene("RotateGame", function ()
                 this.wallArray.push(this.helper = Crafty.e('BallHelper,Destroy').at(x, y,0 ));
               break;
 
-
               case "4":
-                  var goal = Crafty.e('Goal,Sign,Destroy').at(x, y,0);
+                  goal = Crafty.e('Goal,Sign,Destroy').at(x, y,0);
                   goal.setUpSign("/static/goal.png");
                   this.wallArray.push(goal);
+
               break;
 
               default:
@@ -148,7 +150,6 @@ Game.start();
 
 });
 
-
 Crafty.c('RotateWall2',
 {
   rotateLeft:false,
@@ -157,8 +158,8 @@ Crafty.c('RotateWall2',
   init: function() 
   {
     this.requires('2D, Canvas, Grid,Keyboard');
-    this.bind('KeyDown',function(e){
-
+    this.bind('KeyDown',function(e)
+    {
       if(e.key == 82)
       {
         Game.restart();
@@ -172,20 +173,19 @@ Crafty.c('RotateWall2',
         if(Game.helper.isFalling)return;
       }
 
-
       if(e.key == 83)
       {
         state.motivationMayUpload();
         Crafty.scene("BuildingMotivation");
-
       }
 
       if(e.key == 37 && this.mayRotate)
       {
-         this.rotateLeft = true;
-         this.rotateRight = false;
-         this.setDestinationLeft();
-         this.mayRotate = false;
+       this.rotateLeft = true;
+       this.rotateRight = false;
+       this.setDestinationLeft();
+       this.mayRotate = false;
+       Game.degrees = -90;
       }
 
       if(e.key == 39 && this.mayRotate)
@@ -194,6 +194,7 @@ Crafty.c('RotateWall2',
         this.rotateLeft = false;
         this.setDestinationRight();
         this.mayRotate = false;
+        Game.degrees = 90;
       }
     });
 
@@ -277,8 +278,7 @@ Crafty.c('Goal',
     this.requires('2D, Canvas, Grid, Color,RotateObject');
     this.color('rgb(249, 223, 125)');
   }
-})
-
+});
 
 Crafty.c('BallHelper',
 {
@@ -330,7 +330,7 @@ Crafty.c('RotateBall',
 
       if(this.isFalling && this.has("Sign"))
       {
-          this.updateSignPosition();
+        this.updateSignPosition();
       }
 
     })
@@ -387,9 +387,12 @@ Crafty.c("RotateObject",
      {
         this.locked = true;
         this.lockPosition();
+
         if(this.has("Sign"))
         {
           this.updateSignPosition();
+          goal.rotateImage(Game.degrees);
+          Game.degrees = 0;
         }
      }
   }
@@ -403,5 +406,4 @@ Crafty.c('RotateWall',
     this.requires('2D, Canvas, Grid, Color,RotateObject');
     this.color('rgb(20, 125, 40)');
   },
-
 });

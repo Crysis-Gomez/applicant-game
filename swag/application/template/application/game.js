@@ -31,10 +31,11 @@ var crafty = function() {
 
     Crafty.sprite(TILE_SIZE, "/static/Sprite2.png",
     {
-		 tiles:[0,0],
-		 wall:[1,0],
-		 machine:[2,0],
-		 door:[5,0]
+		tiles:[0,0],
+		wall:[1,0],
+		machine:[2,0],
+		door:[5,0],
+		key:[8,0],
     });
 
 	function showQuestlog()
@@ -795,11 +796,11 @@ var crafty = function() {
         //load takes an array of assets and a callback when complete
         Crafty.load(["/static/sign1.png","/static/table.png", "/static/goal.png","/static/mainControler.png", "/static/controls.png","/static/controls2.png", "/static/spriteSheet.png" ,"/static/Sprite.png","/static/house.png","/static/Sprite2.png","/static/house2.png","/static/house3.png","/static/house4.png","/static/house5.png","/static/castle.png","/static/background.png","/static/background2.png","/static/fence.png","/static/checkmark.png","/static/grayhouse2.png","/static/checkmark2.png"], function ()
         {
-       		 if('{{game.get_Intro}}' == 1)Crafty.scene("main");
-             else Crafty.scene("Intro");
+       		 // if('{{game.get_Intro}}' == 1)Crafty.scene("main");
+          //    else Crafty.scene("Intro");
 
 
-             //Crafty.scene("main");
+             	Crafty.scene("RotateGame");
 
         //   	$('#myModal').modal('show');
         //   	$("#modal-backdrop").css('background-color: green')
@@ -940,7 +941,12 @@ var crafty = function() {
 			quest_log.array[totalQuest].visible = true;
 			if(quest_log.array[totalQuest].x < 800)quest_log.array[totalQuest].x+=10;
 			else totalQuest++;
-			if(totalQuest > 3) clearInterval(questInterval)
+			if(totalQuest > 3)
+			{
+				quest_log.visible = true;
+				clearInterval(questInterval)
+
+			} 
 		}
 
 		if(!state.checklog())
@@ -954,6 +960,7 @@ var crafty = function() {
 				//info = Crafty.e("Infolog,Persist");
 				quest_log = Crafty.e("Questlog,Persist")
 				.attr({ x: 710, y: 100, z: 1});
+				quest_log.visible = false;
 				quest_log._element.setAttribute('id','quest_log');
 				quest_log.bind(QUEST,function()
 				{

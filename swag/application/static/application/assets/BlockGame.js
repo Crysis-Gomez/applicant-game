@@ -20,6 +20,7 @@ Crafty.scene("BlockGame", function ()
     myArray:Array,
     levelNumber: 0,
     mayStart:false,
+    particles:null,
    
     width: function()
     {
@@ -80,19 +81,12 @@ Crafty.scene("BlockGame", function ()
                 break;
 
                 case "2":
-                  Game.player =  Crafty.e('PlayerCharacter,putOnTile,Destroy').at(x, y,0);
+                    Game.player =  Crafty.e('PlayerCharacter,putOnTile,Destroy').at(x, y,0);
                 break;
 
                 case "3":
-                  if(this.levelNumber == 0)
-                  {
-                      Crafty.e('Key,putOnTile,key,Destroy,Sign').at(x, y,0).setUpSign("/static/goal.png");
-                  }
-                  else
-                  {
-                      Crafty.e('Key,putOnTile,key,Destroy').at(x, y,0);
-                  }
-                  
+
+                    Crafty.e('Key,putOnTile,key,Destroy').at(x, y,0);
                 break;
 
                 case "4":
@@ -178,42 +172,61 @@ Crafty.c('Tile',
 });
 
 
-Crafty.c('Key',
-{
-  unlockDoor:false,
 
-  init: function() 
-  {
-    this.requires('2D, Canvas, Grid, Color,Collision');
-    this.color('rgb(100,149,237)');
-    this.onHit('block',function(e)
-    {
-        if(!this.unlockDoor)
-        {
-          Crafty.trigger("unlockDoor");
-          this.unlockDoor = true;
-          if(this.has('Sign'))
-          {
-            this.removeSign();
-            this.removeComponent('Sign');
-          }
-
-        }
-    });
-
-  },
-});
 
 Crafty.c('GameDoor',
 {
+  locked:true,
+
+  particleOptions:{
+          maxParticles: 20,
+          size: 10,
+          sizeRandom: 4,
+          speed: 0.001,
+          speedRandom: 1.2,
+          // Lifespan in frames
+          lifeSpan: 29,
+          lifeSpanRandom: 7,
+          // Angle is calculated clockwise: 12pm is 0deg, 3pm is 90deg etc.
+          angle: 65,
+          angleRandom: 34,
+          startColour: [255, 200, 0, 1],
+          startColourRandom: [0, 0, 0, 0],
+          endColour: [255, 255, 255, 0],
+          endColourRandom: [60, 60, 60, 0],
+          // Only applies when fastMode is off, specifies how sharp the gradients are drawn
+          sharpness: 20,
+          sharpnessRandom: 10,
+          // Random spread from origin
+          spread: 10,
+          // How many frames should this last
+          duration: -1,
+          // Will draw squares instead of circle gradients
+          fastMode: false,
+          gravity: { x: 0, y: -0.05 },
+          // sensible values are 0-3
+          jitter: 0
+        },
+
+
+  shootParticle:function()
+  {
+    particles = Crafty.e("2D,Canvas,Particles").particles(this.particleOptions);
+    particles.x = this.x+this.w*0.5;
+    particles.y = this.y+this.h*0.5;
+  },
+
   init: function() 
   {
     this.requires('2D, Canvas, Grid, Color');
     this.color('rgb(139,69,19)');
     this.bind("unlockDoor",function()
     {
-      this.removeFromTile();
-      this.destroy();
+      this.locked = false;
+      //this.removeFromTile();
+      this.shootParticle();
+      this.visible =false;
+      //this.destroy();
 
     })
   },
@@ -409,6 +422,7 @@ Crafty.c('PlayerCharacter',
 
   endGame:function()
   {
+    particles.destroy();
     this.checkGameComplete();
     Crafty.trigger("Destroy");
     Game.nextLevel();
@@ -444,6 +458,13 @@ Crafty.c('PlayerCharacter',
     }
     else
     {
+
+      if(tile.obj.has('GameDoor'))
+      {
+          this.endGame();
+          return;
+      }
+
       if(tile.obj.has('block'))
       {
         
