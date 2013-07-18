@@ -136,7 +136,7 @@ Crafty.scene("RotateGame", function ()
 
     start: function()
     {
-      Crafty.background('rgb(249, 223, 125)');
+      Crafty.background("url('/static/blockbackground.png')");
       this.loadLevel();
       var controls = Crafty.e("2D,Image,Canvas");
       var image =  controls.image("/static/controls2.png");
@@ -275,8 +275,7 @@ Crafty.c('Goal',
 {
   init:function()
   {
-    this.requires('2D, Canvas, Grid, Color,RotateObject');
-    this.color('rgb(249, 223, 125)');
+    this.requires('2D, Canvas, Grid,RotateObject');
   }
 });
 
@@ -286,8 +285,8 @@ Crafty.c('BallHelper',
   isFalling:false,
   init:function()
   {
-    this.requires('2D, Canvas, Grid, Color,Collision,RotateObject');
-    this.color('rgb(246, 50, 40)');
+    this.requires('2D, Canvas, Grid,Image,Collision,RotateObject');
+    this.image('/static/block.png');
     this.bind('EnterFrame',function()
     {
       this.y += this.gravity;
@@ -308,8 +307,8 @@ Crafty.c('RotateBall',
   isFalling:false,
   init:function()
   {
-    this.requires('2D, Canvas, Grid, Color,Collision,RotateObject');
-    this.color('rgb(0,0,128)');
+    this.requires('2D, Canvas, Grid, Image,Collision,RotateObject');
+    this.image('/static/blockplayer.png');
     this.bind('EnterFrame',function()
     {
       this.y += this.gravity;
@@ -403,7 +402,7 @@ Crafty.c('RotateWall',
 {
   init: function()
   {
-    this.requires('2D, Canvas, Grid, Color,RotateObject');
-    this.color('rgb(20, 125, 40)');
+    this.requires('2D, Canvas, Grid,Image,RotateObject');
+    this.image("/static/blockwall.png");
   },
 });
