@@ -11,10 +11,10 @@ from django.core.exceptions import ImproperlyConfigured
 try:
     import pyodbc
 except ImportError:
-  raise ImproperlyConfigured, "Could not load pyodbc dependency.\
-    \nSee http://code.google.com/p/pyodbc/"
+  raise ImproperlyConfigured, "Could not load pyodbc dependency.\\nSee http://code.google.com/p/pyodbc/"
 
 REQUIRED_FIELDS = ('db_table', 'fname_column', 'blob_column', 'size_column', 'base_url')
+
 
 class DatabaseStorage(Storage):
     """
@@ -62,60 +62,53 @@ that returns an image as result.
         self.DATABASE_NAME = settings.DATABASE_NAME
         self.DATABASE_USER = settings.DATABASE_USER
         self.DATABASE_PASSWORD = settings.DATABASE_PASSWORD
-        self.DATABASE_HOST = settings.DATABASE_HOST
-        
-        self.connection = pyodbc.connect('DRIVER=%s;SERVER=%s;DATABASE=%s;UID=%s;PWD=%s'%(self.DATABASE_ODBC_DRIVER,self.DATABASE_HOST,self.DATABASE_NAME,
-                                                                                          self.DATABASE_USER, self.DATABASE_PASSWORD) )
+        self.DATABASE_HOST = settings.DATABASE_HOST 
+        self.connection = pyodbc.connect('DRIVER=%s;SERVER=%s;DATABASE=%s;UID=%s;PWD=%s' % (self.DATABASE_ODBC_DRIVER, self.DATABASE_HOST, self.DATABASE_NAME, self.DATABASE_USER, self.DATABASE_PASSWORD))
         self.cursor = self.connection.cursor()
 
     def _open(self, name, mode='rb'):
-        """Open a file from database. 
-        
+        """Open a file from database.
         @param name filename or relative path to file based on base_url. path should contain only "/", but not "\". Apache sends pathes with "/".
         If there is no such file in the db, returs None
         """
-        
-        assert mode == 'rb', "You've tried to open binary file without specifying binary mode! You specified: %s"%mode
+        assert mode == 'rb', "You've tried to open binary file without specifying binary mode! You specified: %s" % mode
 
-        row = self.cursor.execute("SELECT %s from %s where %s = '%s'"%(self.blob_column,self.db_table,self.fname_column,name) ).fetchone()
+        row = self.cursor.execute("SELECT %s from %s where %s = '%s'" % (self.blob_column, self.db_table, self.fname_column, name)).fetchone()
         if row is None:
             return None
         inMemFile = StringIO.StringIO(row[0])
         inMemFile.name = name
         inMemFile.mode = mode
-        
         retFile = File(inMemFile)
         return retFile
 
     def _save(self, name, content):
         """Save 'content' as file named 'name'.
-        
-        @note '\' in path will be converted to '/'. 
+        @note '\' in path will be converted to '/'.
         """
-        
+
         name = name.replace('\\', '/')
         binary = pyodbc.Binary(content.read())
         size = len(binary)
-        
+
         #todo: check result and do something (exception?) if failed.
         if self.exists(name):
-            self.cursor.execute("UPDATE %s SET %s = ?, %s = ? WHERE %s = '%s'"%(self.db_table,self.blob_column,self.size_column,self.fname_column,name), 
-                                 (binary, size)  )
+            self.cursor.execute("UPDATE %s SET %s = ?, %s = ? WHERE %s = '%s'" % (self.db_table, self.blob_column, self.size_column, self.fname_column, name), (binary, size))
         else:
-            self.cursor.execute("INSERT INTO %s VALUES(?, ?, ?)"%(self.db_table), (name, binary, size)  )
+            self.cursor.execute("INSERT INTO %s VALUES(?, ?, ?)" % (self.db_table), (name, binary, size))
         self.connection.commit()
         return name
 
     def exists(self, name):
-        row = self.cursor.execute("SELECT %s from %s where %s = '%s'"%(self.fname_column,self.db_table,self.fname_column,name)).fetchone()
+        row = self.cursor.execute("SELECT %s from %s where %s = '%s'" % (self.fname_column, self.db_table, self.fname_column, name)).fetchone()
         return row is not None
-    
+
     def get_available_name(self, name):
         return name
 
     def delete(self, name):
         if self.exists(name):
-            self.cursor.execute("DELETE FROM %s WHERE %s = '%s'"%(self.db_table,self.fname_column,name))
+            self.cursor.execute("DELETE FROM %s WHERE %s = '%s'" % (self.db_table, self.fname_column, name))
             self.connection.commit()
 
     def url(self, name):
@@ -124,7 +117,7 @@ that returns an image as result.
         return urlparse.urljoin(self.base_url, name).replace('\\', '/')
 
     def size(self, name):
-        row = self.cursor.execute("SELECT %s from %s where %s = '%s'" %(self.size_column, self.db_table, self.fname_column, name)).fetchone()
+        row = self.cursor.execute("SELECT %s from %s where %s = '%s'" % (self.size_column, self.db_table, self.fname_column, name)).fetchone()
         if row is None:
             return 0
         else:

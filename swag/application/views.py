@@ -220,11 +220,10 @@ def process_answer(request, unique_id):
     if request.method == "POST":
         ans = Answer(request.POST)
         if ans.is_valid():
-            print  "test"
-            # player_question, created = PlayerQuestion.objects.get_or_create(game_instance=game, question=game.vacancy.question)
-            # player_question.answer = ans.cleaned_data['answer']
-            #player_question.save()
-            #process_second_mail(request, game)
+            player_question, created = PlayerQuestion.objects.get_or_create(game_instance=game, question=game.vacancy.question)
+            player_question.answer = ans.cleaned_data['answer']
+            player_question.save()
+            process_second_mail(request, game)
         else:
             upload_state['success'] = json.dumps(ans.errors)
 
@@ -510,7 +509,6 @@ def process_upload(request, unique_id):
         upload_success = handle_uploaded_file(request.FILES['document'], form.cleaned_data['title'], unique_id,request)
         upload_state['success'] = 'Thanks for submitting'
     else:
-        print(form.errors)
         upload_state['success'] = json.dumps(form.errors)
 
 

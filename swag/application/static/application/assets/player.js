@@ -30,6 +30,7 @@ Crafty.c('Player',
 	count:0,
 	mayStop:false,
 	mayMove:true,
+	isMoving:false,
 
 
 
@@ -204,14 +205,13 @@ Crafty.c('Player',
 			function (direction)
 			{
 
+				if(!this.mayMove)return;
 
 				
-				if(!this.mayMove)return;
 				this.dirX = direction.x;
 				this.dirY = direction.y;
 				if(this.update)this.update();
 
-				//$("#alert-success").hide();
 
 				if (direction.x < 0)
 				{
@@ -233,7 +233,7 @@ Crafty.c('Player',
 					if (!this.isPlaying("walk_down"))
 						this.stop().animate("walk_down", 10, -1);
 				}
-				if(!direction.x && !direction.y)
+				if(!direction.x && !direction.y  && !this.isMoving)
 				{
 					this.stop();
 				}
@@ -241,7 +241,7 @@ Crafty.c('Player',
 
 		.bind('Moved',function(e)
 		{
-		
+			
 			if(!this.mayMove)return;
 			//I did this because when a player hold the right key during the change of the scene it keeps animating
 			if(this.dirX == 0  && this.dirY == 0 && !this.isPlaying("walk_right"))
@@ -249,6 +249,7 @@ Crafty.c('Player',
 				this.stop().animate("walk_right", 10, -1);
 			} 
 
+			this.isMoving = true;
 
 			var entities = Crafty.map.search({_x: this.x, _y: this.y, _w: 40, _h: 40}, true);
 
@@ -323,6 +324,7 @@ Crafty.c('Player',
 		.requires('Keyboard').bind('KeyDown', function ()
 		{ 
 
+
 			if (this.isDown('ENTER'))
 			{
 
@@ -359,6 +361,16 @@ Crafty.c('Player',
 			
 		.bind('KeyUp', function (e)
 		{
+
+
+			// if(e.key == 38 || e.key == 39 || e.key == 37 || e.key == 40 )
+			// {
+			// 	this.isMoving = false;
+			// 	console.log("poepie");
+			// 	this.stop();
+			// }
+					
+			
 			if (e.key == 76 && !Crafty.isPaused())
 			{
 				if(quest_log.x  <= -150)

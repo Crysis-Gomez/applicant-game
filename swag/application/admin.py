@@ -4,7 +4,6 @@ from django.forms.models import BaseInlineFormSet
 from django.utils.translation import ugettext_lazy as _
 
 
-
 class GameFinishedFilter(admin.SimpleListFilter):
     title = _("finished")
 
@@ -99,7 +98,7 @@ class PortfolioLinksAdmin(admin.ModelAdmin):
 class GameInstanceAdmin(admin.ModelAdmin):
     list_filter = ['vacancy', 'player_unlocked_boss']
     list_display = ('name', 'has_cv', 'has_motivation', 'player_unlocked_boss', 'has_links', 'has_rated_skills')
-    inlines = [CV, Motivation, Link, Skill,Answer]
+    inlines = [CV, Motivation, Link, Skill, Answer]
 
 
 class MeetingAdmin(admin.ModelAdmin):
@@ -109,6 +108,7 @@ class MeetingAdmin(admin.ModelAdmin):
     def vacancy(self, obj):
         return obj.vacancy
     list_display = ('vacancy', 'dateID')
+
 
 class PlayerSkillAdmin(admin.ModelAdmin):
     list_display = ('score', 'skill', 'game_instance')

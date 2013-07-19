@@ -129,7 +129,7 @@ Crafty.scene("BlockGame", function ()
 
     start: function() 
     {
-      Crafty.background('rgb(249, 223, 125)');
+      Crafty.background('rgb(255, 255, 255)');
       this.loadLevel();  
 
       var controls = Crafty.e("2D,Image,Canvas");
@@ -190,7 +190,7 @@ Crafty.c('GameDoor',
           // Angle is calculated clockwise: 12pm is 0deg, 3pm is 90deg etc.
           angle: 65,
           angleRandom: 34,
-          startColour: [255, 200, 0, 1],
+          startColour: [200, 200, 200, 1],
           startColourRandom: [0, 0, 0, 0],
           endColour: [255, 255, 255, 0],
           endColourRandom: [60, 60, 60, 0],
