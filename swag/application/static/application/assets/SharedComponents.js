@@ -16,7 +16,8 @@ Crafty.c('Sign',
   {
     this.sign = Crafty.e("2D,Image,Canvas");
     this.signImage = this.sign.image(string);
-    this.sign.x = this.x
+    var dif = this.signImage.w -  this._w;
+    this.sign.x = this.x-dif*0.5;
     this.sign.y = this.y+40;
     this.sign.z = 1;
     this.attach(this.sign);
@@ -135,19 +136,13 @@ Crafty.c('Key',
 
   init: function() 
   {
-    this.requires('2D, Canvas, Grid, Color,Collision');
-    this.color('rgb(100,149,237)');
+    this.requires('2D, Canvas, Grid,Image,Collision');
     this.onHit('block',function(e)
     {
         if(!this.unlockDoor)
         {
           Crafty.trigger("unlockDoor");
           this.unlockDoor = true;
-          if(this.has('Sign'))
-          {
-            this.removeSign();
-            this.removeComponent('Sign');
-          }
         }
     });
 

@@ -113,6 +113,7 @@ Crafty.scene("BlockGame", function ()
       if(this.levelNumber < (block_levels.length-1))
       {
          var hud =  Crafty.e('2D,DOM,Text,Destroy').attr({ x: SCREEN_WIDTH*0.5 - 50, y: 100, z: 1 , w:100}).text('<div style="font-size:15px;">'+"Level: " + (this.levelNumber+1)+" of "+(block_levels.length-1));
+	hud.textColor('#FFFFFF');
       }
     
      
@@ -129,13 +130,17 @@ Crafty.scene("BlockGame", function ()
 
     start: function() 
     {
+<<<<<<< HEAD
       Crafty.background('rgb(255, 255, 255)');
+=======
+      Crafty.background("url('/static/blockbackground.png')");
+>>>>>>> 3cb35912485a3343a1f08a10d4c617b306db5ba0
       this.loadLevel();  
 
       var controls = Crafty.e("2D,Image,Canvas");
       image =  controls.image("/static/controls.png");
       controls.x = SCREEN_WIDTH*0.5 - image._w*0.5;
-      controls.y = SCREEN_HEIGHT - image._h;
+      controls.y = SCREEN_HEIGHT - image._h-40;
       image.alpha = 0.7;
 
     }
@@ -149,8 +154,10 @@ Crafty.c('GameWall',
 {
   init: function()
   {
-    this.requires('2D, Canvas, Grid, Color');
-    this.color('rgb(20, 125, 40)');
+    this.requires('2D, Canvas, Grid,Image');
+    this.image("/static/blockwall.png");
+    
+    //this.color('rgb(20, 125, 40)');
   },
 });
 
@@ -218,8 +225,8 @@ Crafty.c('GameDoor',
 
   init: function() 
   {
-    this.requires('2D, Canvas, Grid, Color');
-    this.color('rgb(139,69,19)');
+    this.requires('2D, Canvas, Grid,Image');
+    this.image("/static/blockdoor.png");
     this.bind("unlockDoor",function()
     {
       this.locked = false;
@@ -250,8 +257,8 @@ Crafty.c('Block',
 
   init: function() 
   {
-    this.requires('2D, Canvas, Grid, Color,Collision');
-    this.color('rgb(0,0,128)');
+    this.requires('2D, Canvas, Grid, Image,Collision');
+    this.image("/static/block.png");
   },
 
   moveBlock:function()
@@ -310,8 +317,8 @@ Crafty.c('PlayerCharacter',
 
   init: function()
   {
-    this.requires('Actor,Color,Keyboard,Delay');
-    this.color('rgb(0, 0, 0)');
+    this.requires('Actor,Keyboard,Delay,Image');
+    this.image("/static/blockplayer.png");
     this.bind('EnterFrame',function(e)
     {
         this.timeMovement();

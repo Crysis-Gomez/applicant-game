@@ -6409,6 +6409,7 @@ Crafty.extend({
 	*/
 	keyboardDispatch: function (e) {
 		// Use a Crafty-standard event object to avoid cross-browser issues
+        console.log(e.type);
 		var original = e,
 			evnt = {},
 			props = "char charCode keyCode type shiftKey ctrlKey metaKey timestamp".split(" ");
