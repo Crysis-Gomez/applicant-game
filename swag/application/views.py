@@ -31,6 +31,11 @@ from django.core.mail import BadHeaderError
 from django.core.mail import send_mail
 from django.forms.models import inlineformset_factory
 from django.db import IntegrityError
+from premailer import transform
+from django.core.mail import EmailMultiAlternatives
+from lxml import html
+from django.template import Context,loader
+from django.core.mail import EmailMessage
 
 
 def index(request):
@@ -188,10 +193,9 @@ def play(request, unique_id):
     context.update({'skill': skillForm})
 
     _ip = get_client_ip(request)
-
     #print sys.argv[-1]
 
-
+    print "template"
     form = UploadFileForm(initial={'title': 'cv'})
     context.update({
         'game': game,
@@ -277,7 +281,6 @@ def show_uploaded_file(request, filename):
     if content_encoding:
         response['Content-Encoding'] = content_encoding
     return response
-
 
 
 @csrf_exempt
@@ -377,18 +380,38 @@ def process_motivation_letter(request, unique_id):
     return render(request, "results_template.js", upload_state, content_type=RequestContext(request))
 
 
-def process_first_mail(request, game):
 
-    subject = game.vacancy.title
-    message = game.vacancy.mail_text
+
+
+def process_first_mail(request, game):
+    subject, from_email, to = game.vacancy.title, settings.DEFAULT_FROM_EMAIL, game.player_email
+    headers = {'Reply-To': 'Don`t relpy to this mail'}
     link = get_current_path(request)
     link = sys.argv[-1]+link['current_path']
     game_link = link.replace("uploadcontact", "game")
-    profile_link = link.replace("uploadcontact", "getprofile")
-    message = message.replace("link1", "http://" + game_link)
-    message = message.replace("link2", "http://" + profile_link)
-    send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
-    [game.player_email], fail_silently=False)
+    game_link = game_link
+    ctx = Context({'link': game_link, 'vacancy': game.vacancy.title}, autoescape=False)
+
+    body_template = 'mail.html'
+    body_template = loader.get_template(body_template)
+    body = body_template.render(ctx)
+    test = loader.get_template('htmltemplate.html')
+    html_content = transform(test.render(ctx))
+
+
+    # msg = EmailMultiAlternatives(subject, text_content, from_email, [to])#
+    # msg.attach_alternative(html_content, "text/html")
+    # msg.send()
+    #html_content = '<p>This is an <strong>important</strong> message.</p>'
+    #profile_link = link.replace("uploadcontact", "getprofile")
+    #message = message.replace("link1", "http://" + game_link)
+    msg = EmailMultiAlternatives(subject, body, from_email, [to])
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
+    #EmailMessage(subject, body, from_email, [to], headers).send()
+    #message = message.replace("link2", "http://" + profile_link)
+    #send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
+    #[game.player_email], fail_silently=False)
 
 
 def process_second_mail(request, game):
@@ -430,7 +453,7 @@ def get_current_path(request):
 def handle_uploaded_motivation(submitted_file, title, unique_id):
     game = GameInstance.objects.get(uid=unique_id)
     name = "{name}-{title}".format(name=game.player_name, title=title)
-    motivation_letter,created = MotivationLetter.objects.get_or_create(game_instance=game)
+    motivation_letter, created = MotivationLetter.objects.get_or_create(game_instance=game)
 
     motivation_letter.game_instance = game
     motivation_letter.title = name
@@ -438,7 +461,6 @@ def handle_uploaded_motivation(submitted_file, title, unique_id):
     motivation_letter.attachment = submitted_file
     motivation_letter.save()
     return True
-
 
 
 @csrf_exempt
@@ -459,8 +481,7 @@ def process_motivation_upload(request, unique_id):
     return render(request, "results_template.js", upload_state, content_type="text/html")
 
 
-
-def handle_uploaded_file(submitted_file, title, unique_id,request):
+def handle_uploaded_file(submitted_file, title, unique_id, request):
 
     game = GameInstance.objects.get(uid=unique_id)
     name = "{name}-{title}".format(name=game.player_name, title=title)
