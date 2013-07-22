@@ -174,33 +174,14 @@
 {% if game.has_cv == False %}
 
 
-<form enctype="multipart/form-data" method="post" name="myform" class='form-horizontal'
-    id="cv_form">
+<form enctype="multipart/form-data" method="post" name="myform" id="cv_form">
 
-    <!-- <fieldset>
-        <legend> Upload your cv </legend>
-    <div class="control-group">
-        
-        <label for="id_document" class="control-label">Document:</label>
-        <div class="controls">
-            <input id="id_document" name="document" type="file">    
-        </div>
-    </div>
-    
-    <div class='form-actions'>
-    <button type="button" id="cvButton" class="btn btn-primary" onclick="sendFiles()">Send CV</button>
+    {{form.as_table}}
 
-    </div>
-    </fieldset>
-    <input id="id_title" name="title" type="hidden" value="cv"> -->
-    
-    {{form}}
-    
+
     {% for error in form.errors %}
     {{error}}!
     {% endfor %}
-    <!-- <button type="button" class="btn btn-primary" id="cvButton" onclick="sendFiles()">Send CV</button> -->
-    
     
 </form>
 

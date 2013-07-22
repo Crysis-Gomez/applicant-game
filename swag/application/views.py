@@ -380,17 +380,14 @@ def process_motivation_letter(request, unique_id):
     return render(request, "results_template.js", upload_state, content_type=RequestContext(request))
 
 
-
-
-
 def process_first_mail(request, game):
     subject, from_email, to = game.vacancy.title, settings.DEFAULT_FROM_EMAIL, game.player_email
-    headers = {'Reply-To': 'Don`t relpy to this mail'}
     link = get_current_path(request)
     link = sys.argv[-1]+link['current_path']
     game_link = link.replace("uploadcontact", "game")
     game_link = game_link
-    ctx = Context({'link': game_link, 'vacancy': game.vacancy.title}, autoescape=False)
+    profile_link = game_link.replace("game", "getprofile")
+    ctx = Context({'introduction_mail': game.vacancy.introduction_mail, 'profile': profile_link, 'link': game_link, 'vacancy': game.vacancy.title}, autoescape=False)
 
     body_template = 'mail.html'
     body_template = loader.get_template(body_template)
@@ -398,28 +395,16 @@ def process_first_mail(request, game):
     test = loader.get_template('htmltemplate.html')
     html_content = transform(test.render(ctx))
 
-
-    # msg = EmailMultiAlternatives(subject, text_content, from_email, [to])#
-    # msg.attach_alternative(html_content, "text/html")
-    # msg.send()
-    #html_content = '<p>This is an <strong>important</strong> message.</p>'
-    #profile_link = link.replace("uploadcontact", "getprofile")
-    #message = message.replace("link1", "http://" + game_link)
     msg = EmailMultiAlternatives(subject, body, from_email, [to])
     msg.attach_alternative(html_content, "text/html")
     msg.send()
-    #EmailMessage(subject, body, from_email, [to], headers).send()
-    #message = message.replace("link2", "http://" + profile_link)
-    #send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
-    #[game.player_email], fail_silently=False)
 
 
 def process_second_mail(request, game):
 
     subject = game.vacancy.title
     message = game.vacancy.mail_text2
-    send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
-    [game.player_email], fail_silently=False)
+    send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [game.player_email], fail_silently=False)
 
 
 @csrf_exempt

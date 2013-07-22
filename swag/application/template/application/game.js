@@ -830,28 +830,28 @@ var crafty = function() {
 			{
 				//info = Crafty.e("Infolog,Persist");
 				quest_log = Crafty.e("Questlog,Persist")
-				.attr({ x: 710, y: 100, z: 1});
+				.attr({ x: 630, y: 100, z: 1});
 				quest_log._element.setAttribute('id','quest_log');
 	
-				quest1 = Crafty.e("Quest,Persist").attr({ x: 800, y: 450, z: 1});
-				quest2 = Crafty.e("Quest,Persist").attr({ x: 800, y: 450, z: 1});
-				quest3 = Crafty.e("Quest,Persist").attr({ x: 800, y: 450, z: 1});
-				quest4 = Crafty.e("Quest,Persist").attr({ x: 800, y: 450, z: 1});
+				quest1 = Crafty.e("Quest,Persist").attr({ x: 860, y: 450, z: 1});
+				quest2 = Crafty.e("Quest,Persist").attr({ x: 860, y: 450, z: 1});
+				quest3 = Crafty.e("Quest,Persist").attr({ x: 860, y: 450, z: 1});
+				quest4 = Crafty.e("Quest,Persist").attr({ x: 860, y: 450, z: 1});
 
-				quest1.addQuestInfo(1,"Cv","Need to upload your cv",
+				quest1.addQuestInfo(1,"Upload your curriculum vitae",
 				state.check_cv,
 				state.cvUnlocked);
 
-				quest2.addQuestInfo(2,"Motivation","Need to upload your motivationLetter",
+				quest2.addQuestInfo(2,"Upload your motivationletter",
 				state.check_motivation,
 				state.motivationUnlocked);
 				
-				quest3.addQuestInfo(3,"Links","Need to upload your links",
+				quest3.addQuestInfo(3,"Submit your reference links",
 				state.check_link,
 				state.linkUnlocked,
 				state.checkUnlockedLinkQuest);
 				
-				quest4.addQuestInfo(4,"Skills","Need to upload your Skills",
+				quest4.addQuestInfo(4,"Rate your programming skills",
 				state.check_skills,
 				state.skillsUnlocked);
 
@@ -939,7 +939,7 @@ var crafty = function() {
 		var placeQuests = function()
 		{
 			quest_log.array[totalQuest].visible = true;
-			if(quest_log.array[totalQuest].x < 800)quest_log.array[totalQuest].x+=10;
+			if(quest_log.array[totalQuest].x < 860)quest_log.array[totalQuest].x+=10;
 			else totalQuest++;
 			if(totalQuest > 3)
 			{
@@ -958,8 +958,9 @@ var crafty = function() {
 			if (typeof quest_log  === 'undefined') 
 			{
 				//info = Crafty.e("Infolog,Persist");
+
 				quest_log = Crafty.e("Questlog,Persist")
-				.attr({ x: 710, y: 100, z: 1});
+				.attr({ x: 630, y: 100, z: 1});
 				quest_log.visible = false;
 				quest_log._element.setAttribute('id','quest_log');
 				quest_log.bind(QUEST,function()
@@ -969,20 +970,20 @@ var crafty = function() {
 					quest3 = Crafty.e("Quest,Persist");
 					quest4 = Crafty.e("Quest,Persist");
 
-					quest1.addQuestInfo(1,"Cv","Need to upload your cv",
+					quest1.addQuestInfo(1,"Upload your curriculum vitae",
 					state.check_cv,
 					state.cvUnlocked);
 
-					quest2.addQuestInfo(2,"Motivation","Need to upload your motivationLetter",
+					quest2.addQuestInfo(2,"Upload your motivationLetter",
 					state.check_motivation,
 					state.motivationUnlocked);
 					
-					quest3.addQuestInfo(3,"Links","Need to upload your links",
+					quest3.addQuestInfo(3,"Submit your reference links",
 					state.check_link,
 					state.linkUnlocked,
 					state.checkUnlockedLinkQuest);
 					
-					quest4.addQuestInfo(4,"Skills","Need to upload your Skills",
+					quest4.addQuestInfo(4,"Rate your programming skills",
 					state.check_skills,
 					state.skillsUnlocked);
 

@@ -4,8 +4,7 @@ Crafty.c("Questlog",{
 		init:function(){
 			var that = this;
 			this.addComponent("2D, DOM,Color2");
-			this.y = 0;
-			this.w = 150;  
+			this.w = 260;  
 			this.h = 200;   
 			this.color("#fff");
 			this.array = [];
@@ -50,7 +49,7 @@ Crafty.c("Questlog",{
 
 		show:function()
 		{
-			this.attachAllQuests();
+			//this.attachAllQuests();
 			for (var i = 0; i < this.array.length; i++) 
 			{	
 				this.array[i].showText();
@@ -81,7 +80,7 @@ Crafty.c("Questlog",{
 			}
 
 			this.h = this.array.length*30 +100;
-			this.attachAllQuests();
+			//this.attachAllQuests();
 		},
 
 		addQuest:function(quest)
@@ -92,6 +91,7 @@ Crafty.c("Questlog",{
 			quest.y = this.y + this.marginY*this.array.length;
 			quest.h = 30;
 			quest.z =1;
+			// quest.x = this.x+10;
 			quest.questlog = this;
 
 			this.show();
@@ -106,11 +106,9 @@ Crafty.c("Questlog",{
 
 		init:function(){
 			this.addComponent("2D, DOM,Color2,Text,Image");
-			this.x = 50;
-			this.y = 0;
-			this.w = 300;  
+			this.w = 100;  
 			this.h = 500;   
-			this.name = "";
+			this.name = "asdasd";
 			this.textColor('#FFFF00');
 			this.checkFunction = null;
 			this.completed = false;
@@ -119,6 +117,7 @@ Crafty.c("Questlog",{
 			this.questID = 0;
 			this.npc = null;
 			this.visible = false;
+			this.checkImage  = null;
 
 			this._element.setAttribute("id","shadow");
 
@@ -131,10 +130,9 @@ Crafty.c("Questlog",{
 			else this.image("/static/checkmark2.png");
 		},
 
-		addQuestInfo:function(id,name,info,checkFunction,unlock,checkGotQuest)
+		addQuestInfo:function(id,name,checkFunction,unlock,checkGotQuest)
 		{
 			this.name = name;
-			this.info = info;
 			this.questID = id;
 			this.checkFunction = checkFunction;
 			this.completed = checkFunction();
@@ -144,9 +142,12 @@ Crafty.c("Questlog",{
 		},
 		showText:function()
 		{
-			this.text('<div style="margin-left:-80px; margin-top: 5px; font-size:15px;" >' + this.name); //+ '<div style="margin-left:100px;">' + this.completed);
-			if(this.completed)this.image("/static/checkmark.png");
-			else this.image("/static/checkmark2.png");
+
+			this.text('<div style="margin-left: -225px; margin-top: 5px; font-size:15px;">' + this.name); //+ '<div style="margin-left:100px;">' + this.completed);
+			if(this.completed)this.checkImage = this.image("/static/checkmark.png");
+			else this.checkImage = this.image("/static/checkmark2.png");
+			//this.x = 830;
+	
 
 		}
 	});

@@ -31,16 +31,16 @@ class Vacancy(models.Model):
     title = models.CharField(max_length=200)
     department = models.CharField(max_length=20)
     slug = models.SlugField(max_length=50, unique=True)
-    job_description_input = models.TextField(max_length=500)
+    job_description = models.TextField(max_length=500)
     job_description_output = models.TextField(max_length=500, editable=False)
-    introduction_mail = models.TextField(max_length=500)
-    finalization_mail = models.TextField(max_length=500)
-    skill_sets = models.ManyToManyField(SkillSet)
-    question = models.ForeignKey(Question, null=True, blank=False)
+    introduction_mail = models.TextField(max_length=500, help_text="fill in the introduction e-mail,which the user wil receive")
+    finalization_mail = models.TextField(max_length=500, help_text="fill in the final e-mail,which the user wil receive")
+    skill_sets = models.ManyToManyField(SkillSet, help_text="Select or create the skill, which you want to ask the player for his experience")
+    question = models.ForeignKey(Question, null=True, blank=False, help_text="Select or create a brainteaser which the player answers")
     pub_date = models.DateTimeField(auto_now=True, auto_now_add=True)
 
     def save(self, *args, **kwargs):
-        self.job_description_output = mark_safe(self.job_description_input.replace("\n", "<br/>"))
+        self.job_description_output = mark_safe(self.job_description.replace("\n", "<br/>"))
         super(Vacancy, self).save(*args, **kwargs)
 
     def was_published(self):

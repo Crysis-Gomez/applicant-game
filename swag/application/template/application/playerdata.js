@@ -43,18 +43,13 @@ function unlockBoss()
 
 function sendMotivation()
 {
+    $('#ajaxBusy').show();
     var uploadURL = "/uploadfilemotivation/{{game.uid}}/";
 
     if(isFreeFrom)uploadURL = "/uploadmotivation/{{game.uid}}/";
        
         $("#letter_form").ajaxSubmit({url:uploadURL, type: 'post',
 
-            uploadProgress: function(event, position, total, percentComplete) {
-            
-            $('#ajaxBusy').show();
-            
-            },
-            
             success:function(res)
             {
                 response = JSON.parse(res);
@@ -131,27 +126,27 @@ function updateGame(property,value,func)
         
 function sendContactInfo()
 {
+
+    $('#ajaxBusy').show();
+
     $("#contact_form").ajaxSubmit({url:'/uploadcontact/{{game.uid}}/', type: 'post',
 
-        uploadProgress: function(event, position, total, percentComplete) {
-          $('#ajaxBusy').show();
-        },
-         success:function(res)
-         {
-            var response = JSON.parse(res);
-            var text = response.player['result'];
-            if(text == 'Thanks for submitting')
-            {
-                var name = replaceText(response.player['name']);
-                var email =replaceText(response.player['email']);
-                text = response.player['result'];
-                updateGame('player_name', name);
-                updateGame('player_email', email);
+       success:function(res)
+       {
+          var response = JSON.parse(res);
+          var text = response.player['result'];
+          if(text == 'Thanks for submitting')
+          {
+              var name = replaceText(response.player['name']);
+              var email =replaceText(response.player['email']);
+              text = response.player['result'];
+              updateGame('player_name', name);
+              updateGame('player_email', email);
 
-            }
-            else showError(replaceText(text));
-            
-         }
+          }
+          else showError(replaceText(text));
+          
+       }
      });
 
     document.getElementById("id_email").blur();
@@ -222,11 +217,9 @@ function finishGame()
 
 function submitAnswer()
 {
-   $("#question_form").ajaxSubmit({url:'/answer/{{game.uid}}/', type: 'post',
+   $('#ajaxBusy').show();
 
-        uploadProgress: function(event, position, total, percentComplete) {
-          $('#ajaxBusy').show();
-        },
+   $("#question_form").ajaxSubmit({url:'/answer/{{game.uid}}/', type: 'post',
 
         success:function(res)
         {
@@ -248,11 +241,8 @@ function submitAnswer()
 
 function submitSkills() 
 {   
+    $('#ajaxBusy').show();
     $("#skill_form").ajaxSubmit({url:'/uploadskills/{{game.uid}}/', type: 'post',
-
-        uploadProgress: function(event, position, total, percentComplete) {
-          $('#ajaxBusy').show();
-        },
 
         success:function(res)
         {
@@ -336,13 +326,9 @@ function restartCrafty()
 
 function sendFiles()
 {
-
+    $('#ajaxBusy').show();
     $("#cv_form").ajaxSubmit({url:'/submitfile/{{game.uid}}/', type: 'post',
-        uploadProgress: function(event, position, total, percentComplete) {
-          $('#ajaxBusy').show();
-        },
-
-
+      
          success:function(res)
          {
             var response = JSON.parse(res);
@@ -368,7 +354,7 @@ $(document).ready(function()
             keyboard: false,
     }); 
 
-   $("#id_links").keydown(function() {
+   $("#id_links").keydown(function(event) {
         if (event.keyCode == 13) 
         { 
 
@@ -378,7 +364,7 @@ $(document).ready(function()
     });
 
 
-     $("#id_name").keydown(function() {
+     $("#id_name").keydown(function(event) {
         if (event.keyCode == 13) 
         { 
 
@@ -387,7 +373,7 @@ $(document).ready(function()
          }
     });
 
-    $("#id_email").keydown(function() {
+    $("#id_email").keydown(function(event) {
         if (event.keyCode == 13) 
         { 
 
