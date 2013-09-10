@@ -645,6 +645,12 @@ Crafty.c('CodePuzzle',
 
     this.bind('KeyUp', function (e)
     { 
+      if(e.key == 83)
+      {
+        skippedLevel(3);
+        state.skillsMayUpload();
+        Crafty.scene("BuildingSkills")
+      }
 
       if(e.key  == 39)
       {
@@ -701,12 +707,11 @@ Crafty.c('CodePuzzle',
 
         if(blockIndex == this.indexCount)
         {
-
-          block.color('rgb(128,0,0)');
+            block.selectImage();
         }
-        else
+         else
         {
-          block.color('rgb(0,0,128)');
+           block.deselectImage()
         }
 
     };

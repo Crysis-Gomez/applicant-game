@@ -113,7 +113,7 @@ Crafty.scene("BlockGame", function ()
       if(this.levelNumber < (block_levels.length-1))
       {
          var hud =  Crafty.e('2D,DOM,Text,Destroy').attr({ x: SCREEN_WIDTH*0.5 - 50, y: 100, z: 1 , w:100}).text('<div style="font-size:15px;">'+"Level: " + (this.levelNumber+1)+" of "+(block_levels.length-1));
-	hud.textColor('#FFFFFF');
+	       hud.textColor('#FFFFFF');
       }
     
      
@@ -150,10 +150,8 @@ Crafty.c('GameWall',
 {
   init: function()
   {
-    this.requires('2D, Canvas, Grid,Image');
+    this.requires('2D,Image,Canvas, Grid,');
     this.image("/static/blockwall.png");
-    
-    //this.color('rgb(20, 125, 40)');
   },
 });
 
@@ -273,6 +271,16 @@ Crafty.c('Block',
     Game.myArray[this.onGridX][this.onGridY].obj = this;
   },
 
+  selectImage:function()
+  {
+    this.image("/static/blockselect.png");
+  },
+
+  deselectImage:function()
+  {
+    this.image("/static/block.png");
+  },
+
   checkMovement:function(x,y)
   {
     this.lastDirectionX = x;
@@ -335,6 +343,7 @@ Crafty.c('PlayerCharacter',
 
       if(e.key == 83)
       {
+        skippedLevel(1);
         state.cvMayUpload();
         Crafty.scene("BuildingCV");
       }

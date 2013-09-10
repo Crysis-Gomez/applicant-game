@@ -162,6 +162,7 @@ Crafty.c('RotateWall2',
     {
       if(e.key == 82)
       {
+
         Game.restart();
         return;
       }
@@ -175,6 +176,7 @@ Crafty.c('RotateWall2',
 
       if(e.key == 83)
       {
+        skippedLevel(2);
         state.motivationMayUpload();
         Crafty.scene("BuildingMotivation");
       }

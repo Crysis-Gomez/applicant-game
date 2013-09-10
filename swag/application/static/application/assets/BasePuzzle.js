@@ -102,18 +102,23 @@ Crafty.scene("BasePuzzle", function ()
         feedBack._w = 350;
         feedBack.x = SCREEN_WIDTH*0.5-feedBack._w*0.5;
         feedBack.y = SCREEN_HEIGHT-20;
-        
         feedBack.textColor('#FF0000');
 
-
-
-        IPAddress.requires('Keyboard').bind('KeyDown', function ()
-        {    
-
+        IPAddress.requires('Keyboard').bind('KeyDown', function (e)
+        {   
           if (this.isDown('ENTER'))
           {
              this.checkValue();
           }
+
+          if(e.key == 83)
+          {
+            skippedLevel(4);
+            state.linkMayUpload();
+            $('#ips').hide();
+            Crafty.scene("BuildingLink");
+          }
+
         });
 
       Crafty.e("2D, DOM,Image").attr({x:SCREEN_WIDTH*0.5-150, y:SCREEN_HEIGHT*0.5-150, w:900, h:0}).image("/static/table.png")

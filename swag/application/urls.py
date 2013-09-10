@@ -31,6 +31,7 @@ urlpatterns = patterns(
     url(r'^answer/(?P<unique_id>\w+)/', views.process_answer, name='submit_answer'),
     url(r'^boss/(?P<unique_id>\w+)/', views.process_boss, name='submit_boss'),
     url(r'^intro/(?P<unique_id>\w+)/', views.process_intro, name='submit_intro'),
+    url(r'^skip/(?P<unique_id>\w+)/', views.process_skipped, name='skipped'),
 
 
     url(r'^uploadfilemotivation/(?P<unique_id>\w+)/', views.process_motivation_upload, name='submitmotivationfile'),

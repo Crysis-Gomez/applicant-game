@@ -66,7 +66,6 @@ def start_game(request, slug):
     game_instance.vacancy = _vacancy
     game_instance.save()
     return HttpResponseRedirect(reverse('play', args=(instance_id,)))
-    # return HttpResponseRedirect(reverse('choice'))
 
 
 def statejs(request, unique_id):
@@ -84,6 +83,23 @@ def statejs(request, unique_id):
         'ip': ip
     }
     return render(request, "state.js", context, content_type="application/javascript")
+
+
+@csrf_exempt
+def process_skipped(request, unique_id):
+    game = GameInstance.objects.get(uid=unique_id)
+    if request.method == 'POST':
+        index = request.POST.get('index')
+        if index == "1" and game.has_cv() is False:
+            game.cv_game_skipped = True
+        elif index == "2" and game.has_motivation() is False:
+            game.motivation_game_skipped = True
+        elif index == "3" and game.has_rated_skills() is False:
+            game.skill_game_skipped = True
+        elif index == "4" and game.has_links() is False:
+            game.links_game_skipped = True
+    game.save()
+    return HttpResponse('All went well')
 
 
 @csrf_exempt

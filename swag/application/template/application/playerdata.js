@@ -41,6 +41,24 @@ function unlockBoss()
   });
 }
 
+function skippedLevel(index)
+{
+  formdata = new FormData();
+  formdata.append('index',index);
+  $.ajax(
+  {
+        url: "/skip/" +state.get_id()+ "/",
+        type: "POST",
+        data: formdata,
+        processData: false,
+        contentType: false,
+        success: function (res)
+        {
+
+        }
+  });
+}
+
 function sendMotivation()
 {
     $('#ajaxBusy').show();

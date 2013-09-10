@@ -26,7 +26,6 @@ class Question(models.Model):
     def __unicode__(self):
         return self.title
 
-
 class Vacancy(models.Model):
     title = models.CharField(max_length=200)
     department = models.CharField(max_length=20)
@@ -69,6 +68,10 @@ class GameInstance(models.Model):
     player_unlocked_boss = models.BooleanField(default=False)
     player_name = models.CharField(max_length=50, blank=True)
     player_email = models.EmailField(max_length=100, blank=True)
+    cv_game_skipped = models.BooleanField(default=False)
+    motivation_game_skipped = models.BooleanField(default=False)
+    skill_game_skipped = models.BooleanField(default=False)
+    links_game_skipped = models.BooleanField(default=False)
 
     vacancy = models.ForeignKey(Vacancy)
 
