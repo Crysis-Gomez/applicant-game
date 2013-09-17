@@ -24,6 +24,7 @@ import uuid
 import json
 import mimetypes
 import sys
+import time
 from django.views.decorators.csrf import csrf_exempt
 from database_storage import DatabaseStorage
 from django.template import RequestContext
@@ -40,7 +41,6 @@ from django.core.mail import EmailMessage
 
 def index(request):
     vacancies = Vacancy.objects.all().order_by('title')
-
     return render_to_response('list_vacancies.html', {
         'vacancies': vacancies
     })
@@ -90,6 +90,7 @@ def process_skipped(request, unique_id):
     game = GameInstance.objects.get(uid=unique_id)
     if request.method == 'POST':
         index = request.POST.get('index')
+        print(game.has_rated_skills())
         if index == "1" and game.has_cv() is False:
             game.cv_game_skipped = True
         elif index == "2" and game.has_motivation() is False:
@@ -99,6 +100,29 @@ def process_skipped(request, unique_id):
         elif index == "4" and game.has_links() is False:
             game.links_game_skipped = True
     game.save()
+    return HttpResponse('All went well')
+
+
+@csrf_exempt
+def process_gameTime(request, unique_id):
+    game = GameInstance.objects.get(uid=unique_id)
+    if request.method == 'POST':
+        current_time = request.POST.get('time')
+        current_level = request.POST.get('level')
+
+        current_time = current_time.encode('ascii', 'ingore')
+        current_level = current_level.encode('ascii', 'ingore')
+
+        if current_level == "1" and game.get_cv_time() is None:
+            game.cv_game_time = current_time
+        elif current_level == "2" and game.get_motivation_time() is None:
+            game.motivation_game_time = current_time
+        elif current_level == "3" and game.get_skill_time() is None:
+            game.skill_game_time = current_time
+        elif current_level == "4" and game.get_links_time() is None:
+            game.links_game_time = current_time
+
+        game.save()
     return HttpResponse('All went well')
 
 

@@ -69,14 +69,31 @@ class GameInstance(models.Model):
     player_name = models.CharField(max_length=50, blank=True)
     player_email = models.EmailField(max_length=100, blank=True)
     cv_game_skipped = models.BooleanField(default=False)
+    cv_game_time = models.TimeField('completed', blank=True, null=True)
     motivation_game_skipped = models.BooleanField(default=False)
+    motivation_game_time = models.TimeField('completed', blank=True, null=True)
     skill_game_skipped = models.BooleanField(default=False)
+    skill_game_time = models.TimeField('completed', blank=True, null=True)
     links_game_skipped = models.BooleanField(default=False)
+    links_game_time = models.TimeField('completed', blank=True, null=True)
 
     vacancy = models.ForeignKey(Vacancy)
 
     def __unicode__(self):
         return self.name()
+
+    def get_cv_time(self):
+        return self.cv_game_time
+
+    def get_motivation_time(self):
+        return self.motivation_game_time
+
+    def get_skill_time(self):
+        return self.skill_game_time
+
+    def get_links_time(self):
+        return self.links_game_time
+
 
     def get_Intro(self):
         if self.player_finished_intro is True:

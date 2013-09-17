@@ -864,8 +864,6 @@ var crafty = function() {
 				quest_log.addQuest(quest2);
 				quest_log.addQuest(quest3);
 				quest_log.addQuest(quest4);
-
-
 			}
 		}
 

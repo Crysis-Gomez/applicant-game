@@ -8,6 +8,7 @@ Crafty.scene("BasePuzzle", function ()
      n3:null,
      n4:null,
      feedBack:null,
+     timer:null,
 
   	getNumber:function(number)
     {
@@ -122,6 +123,8 @@ Crafty.scene("BasePuzzle", function ()
         });
 
       Crafty.e("2D, DOM,Image").attr({x:SCREEN_WIDTH*0.5-150, y:SCREEN_HEIGHT*0.5-150, w:900, h:0}).image("/static/table.png")
+      game.timer = Crafty.e("Timer");
+      game.timer.startTicking();
     },
   }
 
@@ -142,6 +145,7 @@ Crafty.c('CheckValue',
      {
        state.linkMayUpload();
        $('#ips').hide();
+       game.timer.stopTicking(4);
        Crafty.scene("BuildingLink");
      }
      else

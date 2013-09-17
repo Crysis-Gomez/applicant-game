@@ -27,6 +27,7 @@ Crafty.scene("RotateGame", function ()
     rotateMiddlePointX:5,
     rotateMiddlePointY:5,
     degrees:0,
+    timer:null,
    
     width: function()
     {
@@ -55,6 +56,7 @@ Crafty.scene("RotateGame", function ()
       if(Game.levelNumber  == 5)
       {
         state.motivationMayUpload();
+        game.timer.stopTicking(2);
         Crafty.e("Win").setBuildingName("BuildingMotivation");
       }
     },
@@ -128,7 +130,8 @@ Crafty.scene("RotateGame", function ()
 
       if(this.levelNumber < (rotate_levels.length-1))
       {
-         var hud =  Crafty.e('2D,DOM,Text,Destroy').attr({ x: SCREEN_WIDTH*0.5 - 50, y: 20, z: 1 , w:100}).text('<div style="font-size:15px;">'+"Level: " + (this.levelNumber+1)+" of "+(rotate_levels.length-1));
+         var hud =  Crafty.e('2D,DOM,Text,Destroy').attr({ x: SCREEN_WIDTH*0.5 - 90, y: 50, z: 1 , w:180}).text('<div style="font-size:25px; text-shadow: 1px 1px 5px #73F707">'+"Level: " + (this.levelNumber+1)+" of "+(rotate_levels.length-1));
+        hud.textColor('#FFFFFF');
       }
     
       this._wall =  Crafty.e('RotateWall2,Keyboard,Destroy').at(this.rotateMiddlePointX,this.rotateMiddlePointY);
@@ -143,6 +146,8 @@ Crafty.scene("RotateGame", function ()
       controls.x = SCREEN_WIDTH*0.5 - image._w*0.5;
       controls.y = SCREEN_HEIGHT - image._h;
       image.alpha = 0.7;
+      game.timer = Crafty.e("Timer");
+      game.timer.startTicking();
     } 
 }  
 

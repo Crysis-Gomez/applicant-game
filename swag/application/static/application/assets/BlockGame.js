@@ -21,6 +21,7 @@ Crafty.scene("BlockGame", function ()
     levelNumber: 0,
     mayStart:false,
     particles:null,
+    timer:null,
    
     width: function()
     {
@@ -112,11 +113,10 @@ Crafty.scene("BlockGame", function ()
 
       if(this.levelNumber < (block_levels.length-1))
       {
-         var hud =  Crafty.e('2D,DOM,Text,Destroy').attr({ x: SCREEN_WIDTH*0.5 - 50, y: 100, z: 1 , w:100}).text('<div style="font-size:15px;">'+"Level: " + (this.levelNumber+1)+" of "+(block_levels.length-1));
+         var hud =  Crafty.e('2D,DOM,Text,Destroy').attr({ x: SCREEN_WIDTH*0.5 - 90, y: 50, z: 1 , w:180}).text('<div style="font-size:25px; text-shadow: 1px 1px 5px #73F707">'+"Level: " + (this.levelNumber+1)+" of "+(block_levels.length-1));
 	       hud.textColor('#FFFFFF');
       }
     
-     
       this.mayStart = true; 
     },
 
@@ -138,7 +138,8 @@ Crafty.scene("BlockGame", function ()
       controls.x = SCREEN_WIDTH*0.5 - image._w*0.5;
       controls.y = SCREEN_HEIGHT - image._h-40;
       image.alpha = 0.7;
-
+      game.timer = Crafty.e("Timer");
+      game.timer.startTicking();
     }
   }
 
@@ -156,13 +157,6 @@ Crafty.c('GameWall',
 });
 
 
-Crafty.c('Timer',{
-  init:function(){
-
-  }
-});
-
- 
 Crafty.c('Tile',
 {
   obj:null,
@@ -171,8 +165,6 @@ Crafty.c('Tile',
     this.requires('2D, Canvas, Grid');
   },
 });
-
-
 
 
 Crafty.c('GameDoor',
@@ -428,6 +420,7 @@ Crafty.c('PlayerCharacter',
     if(Game.levelNumber  == 3)
     {
       state.cvMayUpload();
+      game.timer.stopTicking(1);
       Crafty.e("Win").setBuildingName("BuildingCV");
     }
   },

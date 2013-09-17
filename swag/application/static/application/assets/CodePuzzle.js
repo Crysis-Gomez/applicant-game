@@ -26,6 +26,7 @@ Crafty.scene("CodePuzzle", function ()
     puzzletext:null,
     levelNumber:0,
     operators:[],
+    timer:null,
 
     getAnswer:function()
     {
@@ -227,7 +228,8 @@ Crafty.scene("CodePuzzle", function ()
     {
       Crafty.background('rgb(249, 223, 125)');
       this.loadLevel();
-
+      game.timer = Crafty.e("Timer");
+      game.timer.startTicking();
 
       // var controls = Crafty.e("2D,Image,Canvas");
       // image =  controls.image("/static/controls.png");
@@ -414,6 +416,7 @@ Crafty.c('PuzzleAnswer',
         if(Game.levelNumber ==3)
         {
           state.skillsMayUpload();
+          game.timer.stopTicking(3);
           Crafty.scene("BuildingSkills");
           return;
         }
@@ -634,12 +637,10 @@ Crafty.c('CodePuzzle',
   {
     this.requires('Keyboard,Delay');
     this.selectBlocks(this.indexCount);
-    //this.color('rgb(0, 0, 0)');
     this.indexCount = 0;
 
     this.requires('Keyboard').bind('KeyDown', function (e)
     { 
-
 
     })
 
@@ -649,7 +650,7 @@ Crafty.c('CodePuzzle',
       {
         skippedLevel(3);
         state.skillsMayUpload();
-        Crafty.scene("BuildingSkills")
+        Crafty.scene("BuildingSkills");
       }
 
       if(e.key  == 39)
@@ -672,29 +673,29 @@ Crafty.c('CodePuzzle',
       }
 
       this.selectBlocks(this.indexCount);
-
     });
-
   },
 
 
-  checkGameComplete:function()
-  {
-    if(Game.levelNumber  == 3)
-    {
-      // state.cvMayUpload();
-      // Crafty.e("Win").setBuildingName("BuildingCV");
-    }
-  },
+  // checkGameComplete:function()
+  // {
+  //   if(Game.levelNumber  == 3)
+  //   {
+  //     console.log("hereere");
+  //     game.timer.stopTicking(3);
+  //     state.skillsMayUpload();
+  //     Crafty.scene("BuildingSkills");
+  //   }
+  // },
 
-  endGame:function()
-  {
-    this.checkGameComplete();
-    Crafty.trigger("Destroy");
-    Game.nextLevel();
-    this.mayStart = false;
-    this.gameEnded = true;
-  },
+  // endGame:function()
+  // {
+  //   this.checkGameComplete();
+  //   Crafty.trigger("Destroy");
+  //   Game.nextLevel();
+  //   this.mayStart = false;
+  //   this.gameEnded = true;
+  // },
 
   selectBlocks:function(index)
   {

@@ -6,6 +6,7 @@ Crafty.c('Sign',
   offset:5,
   moveDown:false,
   signImage:null,
+  timer:null,
 
   init:function()
   {
@@ -68,7 +69,93 @@ Crafty.c('Win',
     {
       this.buildingName = str;
     }
-})
+});
+
+Crafty.c('Timer',{
+
+  currentSeconds:0,
+  timer:null,
+  seconds:"00",
+  minutes:"00",
+
+  init:function()
+  {
+    this.addComponent("2D, DOM,Color,Text,Delay");
+    this.textColor('#FFFFFF');
+    this.w = 500;
+    this.h = 50;
+    this.x = window.Crafty.canvas._canvas.clientWidth- 100;
+    this.y = 5;
+    this.text('<div style="margin-top:10px;font-size:40px">' + this.minutes +":"+this.seconds);
+
+  },
+
+  checkValues:function(val)
+  {
+      var valString = val + "";
+      if(valString.length < 2)
+      {
+          return "0" + valString;
+      }
+      else
+      {
+          return valString;
+      }
+  },
+
+  getGameMinute:function()
+  {
+    return this.minutes;
+  },
+
+  getGameSeconds:function()
+  {
+    return this.seconds;
+  },
+
+  countUp:function()
+  {
+      ++this.currentSeconds;
+      this.seconds  =  this.checkValues(this.currentSeconds%60);
+      this.minutes  = this.checkValues(parseInt(this.currentSeconds/60));
+      this.text('<div style="margin-top:10px;font-size:40px">' + this.minutes +":"+this.seconds);
+  },
+
+  sendTime:function(level)
+  {
+    formdata = new FormData();
+    var time = "00:"+this.getGameMinute()+":"+this.getGameSeconds()+"";
+    formdata.append('time',time);
+    formdata.append('level',level)
+    $.ajax(
+    {
+          url: "/gameTime/" +state.get_id()+ "/",
+          type: "POST",
+          data: formdata,
+          processData: false,
+          contentType: false,
+          success: function (res)
+          {
+
+          }
+    });
+  },
+
+  startTicking:function()
+  {
+    
+    var that = this;
+    this.timer = window.setInterval(function(e){ return that.countUp();
+
+    },1000);
+  },
+  stopTicking:function(level)
+  {
+    this.sendTime(level);
+    window.clearInterval(this.timer);
+  }
+
+});
 
 
 
