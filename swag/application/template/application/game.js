@@ -795,17 +795,17 @@ var crafty = function() {
 	{
         //load takes an array of assets and a callback when complete
         Crafty.load(["/static/block.png","/static/blockbackground.png","/static/blockdoor.png","/static/blockplayer.png",
-        			 "/static/blockwall.png","/static/sign1.png","/static/table.png", "/static/goal.png","/static/mainControler.png", 
+        			 "/static/blockwall.png","/static/table.png", "/static/goal.png","/static/mainControler.png", 
         			 "/static/controls.png","/static/controls2.png", "/static/spriteSheet.png" ,"/static/Sprite.png","/static/house.png",
         			 "/static/Sprite2.png","/static/house2.png","/static/house3.png","/static/house4.png","/static/house5.png","/static/castle.png",
         			 "/static/background.png","/static/background2.png","/static/fence.png","/static/checkmark.png","/static/grayhouse2.png",
-        			 "/static/checkmark2.png","/static/blockselect.png"], function ()
+        			 "/static/checkmark2.png","/static/blockselect.png","/static/sign2.png","/static/you.png","/static/Skip1.png","/static/Skip2.png","/static/bucket.png"], function ()
         {
        		 if('{{game.get_Intro}}' == 1)Crafty.scene("main");
              else Crafty.scene("Intro");
 
 
-             	//Crafty.scene("RotateGame");
+                Crafty.scene("CodePuzzle");
 
         //   	$('#myModal').modal('show');
         //   	$("#modal-backdrop").css('background-color: green')

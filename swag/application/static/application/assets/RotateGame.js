@@ -28,6 +28,7 @@ Crafty.scene("RotateGame", function ()
     rotateMiddlePointY:5,
     degrees:0,
     timer:null,
+    skipBox:null,
    
     width: function()
     {
@@ -56,7 +57,7 @@ Crafty.scene("RotateGame", function ()
       if(Game.levelNumber  == 5)
       {
         state.motivationMayUpload();
-        game.timer.stopTicking(2);
+        Game.timer.stopTicking(2);
         Crafty.e("Win").setBuildingName("BuildingMotivation");
       }
     },
@@ -103,7 +104,7 @@ Crafty.scene("RotateGame", function ()
               if(this.levelNumber == 0)
               {
                  this.wallArray.push(this.ball = Crafty.e('RotateBall,Destroy,Sign').at(x, y,0));
-                 this.ball.setUpSign("/static/sign1.png");
+                 this.ball.setUpSign("/static/you.png",true);
               }
               else
               {
@@ -146,8 +147,11 @@ Crafty.scene("RotateGame", function ()
       controls.x = SCREEN_WIDTH*0.5 - image._w*0.5;
       controls.y = SCREEN_HEIGHT - image._h;
       image.alpha = 0.7;
-      game.timer = Crafty.e("Timer");
-      game.timer.startTicking();
+      Game.timer = Crafty.e("Timer");
+      Game.timer.startTicking();
+      Game.skipBox = Crafty.e("2D,Canvas,WarningBox");
+      Game.skipBox.image("/static/Skip1.png");
+      Game.skipBox.place(SCREEN_WIDTH,SCREEN_HEIGHT);
     } 
 }  
 
@@ -179,29 +183,61 @@ Crafty.c('RotateWall2',
         if(Game.helper.isFalling)return;
       }
 
+       if(e.key == 13)
+      {
+        if(Game.skipBox.selectText(e.key))
+        {
+           skippedLevel(2);
+           state.motivationMayUpload();
+           Crafty.scene("BuildingMotivation");
+        }
+      }
+
       if(e.key == 83)
       {
-        skippedLevel(2);
-        state.motivationMayUpload();
-        Crafty.scene("BuildingMotivation");
+
+        Game.skipBox.showBox();
       }
 
       if(e.key == 37 && this.mayRotate)
       {
-       this.rotateLeft = true;
-       this.rotateRight = false;
-       this.setDestinationLeft();
-       this.mayRotate = false;
-       Game.degrees = -90;
+        if(Crafty.isPaused())
+        {
+          Game.skipBox.selectText(e.key);
+          return;
+        }
+
+         this.rotateLeft = true;
+         this.rotateRight = false;
+         this.setDestinationLeft();
+         this.mayRotate = false;
+         Game.degrees = -90;
+
+         if(Game.ball.has('Sign'))
+         {
+            Game.ball.removeSign();
+            Game.ball.removeComponent('Sign')
+         }
       }
 
       if(e.key == 39 && this.mayRotate)
       {
-        this.rotateRight = true;
-        this.rotateLeft = false;
-        this.setDestinationRight();
-        this.mayRotate = false;
-        Game.degrees = 90;
+          if(Crafty.isPaused())
+          {
+            Game.skipBox.selectText(e.key);
+            return;
+          }
+          this.rotateRight = true;
+          this.rotateLeft = false;
+          this.setDestinationRight();
+          this.mayRotate = false;
+          Game.degrees = 90;
+
+          if(Game.ball.has('Sign'))
+         {
+            Game.ball.removeSign();
+            Game.ball.removeComponent('Sign')
+         }
       }
     });
 

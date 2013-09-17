@@ -22,6 +22,7 @@ Crafty.scene("BlockGame", function ()
     mayStart:false,
     particles:null,
     timer:null,
+    skipBox:null,
    
     width: function()
     {
@@ -82,7 +83,7 @@ Crafty.scene("BlockGame", function ()
                 break;
 
                 case "2":
-                    Game.player =  Crafty.e('PlayerCharacter,putOnTile,Destroy').at(x, y,0);
+                    Game.player =  Crafty.e('PlayerCharacter,putOnTile,Destroy,Sign').at(x, y,0).setUpSign("/static/you.png",true);
                 break;
 
                 case "3":
@@ -93,7 +94,7 @@ Crafty.scene("BlockGame", function ()
                 case "4":
                   if(this.levelNumber == 0)
                   {
-                     Crafty.e('Block,putOnTile,block,Destroy,Sign').at(x, y,1).putOnTile().setUpSign("/static/sign1.png");
+                     Crafty.e('Block,putOnTile,block,Destroy,Sign').at(x, y,1).putOnTile().setUpSign("/static/sign2.png",true);
                   }
                   else
                   {
@@ -138,8 +139,12 @@ Crafty.scene("BlockGame", function ()
       controls.x = SCREEN_WIDTH*0.5 - image._w*0.5;
       controls.y = SCREEN_HEIGHT - image._h-40;
       image.alpha = 0.7;
-      game.timer = Crafty.e("Timer");
-      game.timer.startTicking();
+      Game.timer = Crafty.e("Timer");
+      Game.timer.startTicking();
+      Game.skipBox = Crafty.e("2D,Canvas,WarningBox");
+      Game.skipBox.image("/static/Skip1.png");
+      Game.skipBox.place(SCREEN_WIDTH,SCREEN_HEIGHT);
+      
     }
   }
 
@@ -328,6 +333,16 @@ Crafty.c('PlayerCharacter',
 
       if(!Game.mayStart)return;
 
+      if(e.key == 13)
+      {
+        if(Game.skipBox.selectText(e.key))
+        {
+           skippedLevel(1);
+           state.cvMayUpload();
+           Crafty.scene("BuildingCV");
+        }
+      }
+
       if(e.key == 82)
       {
         Game.restart();
@@ -335,18 +350,26 @@ Crafty.c('PlayerCharacter',
 
       if(e.key == 83)
       {
-        skippedLevel(1);
-        state.cvMayUpload();
-        Crafty.scene("BuildingCV");
+
+        Game.skipBox.showBox();
       }
 
       if(e.key  == 39)
       {
         this.lastDirectionX = 1;
+        if(Crafty.isPaused())
+        {
+          Game.skipBox.selectText(e.key);
+        }
+
       }
       if(e.key == 37)
       {
         this.lastDirectionX = -1;
+        if(Crafty.isPaused())
+        {
+          Game.skipBox.selectText(e.key);
+        }
       }
 
       if(e.key == 40)
@@ -400,6 +423,12 @@ Crafty.c('PlayerCharacter',
            this.startCount = new Date().getTime();
            this.checkMovement();
            this.isMoving = true;
+
+           if(Game.player.has('Sign'))
+           {
+             Game.player.removeSign();
+             Game.player.removeComponent('Sign')
+           }
         }
 
         if(this.isMoving)
@@ -472,6 +501,8 @@ Crafty.c('PlayerCharacter',
 
       if(tile.obj.has('block'))
       {
+
+
         
         if(tile.obj.has('Sign'))
         {

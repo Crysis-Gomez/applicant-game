@@ -226,7 +226,7 @@ Crafty.scene("CodePuzzle", function ()
 
     start: function() 
     {
-      Crafty.background('rgb(249, 223, 125)');
+       Crafty.background("url('/static/blockbackground.png')");
       this.loadLevel();
       game.timer = Crafty.e("Timer");
       game.timer.startTicking();
@@ -351,10 +351,15 @@ Crafty.c('PuzzleAnswer',
 
   init:function()
   {
-    this.requires('2D, Canvas, Grid, Color,Collision');
-    this.color('rgb(255,250,250)');
+    this.requires('2D, Canvas, Grid,Collision,Image,Tint');
+    _image = this.image('/static/bucket.png');
+    //this.color('rgb(255,250,250)');
+    this.tint("#FFFF00", 0.3);
+
     this.textComp = Crafty.e('2D,DOM,Text');
     this.textComp.text("code..");
+    this.textComp._w = 80;
+    this.textComp._h = 20;
 
 
     this.attr({
@@ -370,7 +375,7 @@ Crafty.c('PuzzleAnswer',
 
   updateText:function(str)
   {
-    console.log("updatingText");
+    //console.log("updatingText");
     this.textComp.text(str);
     this.stringText = str;
   },

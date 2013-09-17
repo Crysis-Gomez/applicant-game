@@ -87,16 +87,17 @@ Crafty.scene("BasePuzzle", function ()
         Crafty.background('rgb(249, 223, 125)');
 
         $('#ips').show();
+        var numbers = state.ip.split(".");
            
-   	    n1 = this.convert(95);
-        n2 = this.convert(67);
-        n3 = this.convert(102);
-        n4 = this.convert(58);
+   	    n1 = this.convert(numbers[0]);
+        n2 = this.convert(numbers[1]);
+        n3 = this.convert(numbers[2]);
+        n4 = this.convert(numbers[3]);
 
         console.log(n1,n2,n3,n4);
      
         var IPAddress = Crafty.e("2D, DOM,Text,CheckValue");
-        IPAddress.text('<div style="font-size:15px;">'+"The IP address of this computer is 95.67.102.58, but this computer works with a duodecimal system. Convert the number and put it in the fields.The table below should help you");
+        IPAddress.text('<div style="font-size:15px;">'+"We need your IP address, but this computer works with a duodecimal system. Convert your IP address and put it in the fields.The table below should help you");
         IPAddress._w = 500;
         feedBack = Crafty.e("2D, DOM,Text");
         feedBack.text('<div style="font-size:20px;">'+'');
