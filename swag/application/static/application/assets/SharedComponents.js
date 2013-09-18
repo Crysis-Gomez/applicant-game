@@ -232,6 +232,7 @@ Crafty.c('Destroy',
        this.bind("Destroy",function()
        {
           this.destroy();
+          
        })
     }
 });
