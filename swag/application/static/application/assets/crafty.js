@@ -6431,6 +6431,14 @@ Crafty.extend({
 			delete Crafty.keydown[e.key];
 			Crafty.trigger("KeyUp", e);
 		}
+        else if(e.type === "keypress")
+        {
+           
+            delete Crafty.keydown[e.key];
+            Crafty.trigger("KeyUp", e);
+        }
+
+
 
 		//prevent default actions for all keys except backspace and F1-F12 and except actions in INPUT and TEXTAREA.
 		//prevent bubbling up for all keys except backspace and F1-F12.
@@ -6455,8 +6463,24 @@ Crafty.extend({
 
 //initialize the input events onload
 Crafty.bind("Load", function () {
+
+    var isOpera = !!window.opera || navigator.userAgent.indexOf('Opera') >= 0;
+    // Opera 8.0+ (UA detection to detect Blink/v8-powered Opera)
+    var isFirefox = typeof InstallTrigger !== 'undefined';   // Firefox 1.0+
+    var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
+    // At least Safari 3+: "[object HTMLElementConstructor]"
+    var isChrome = !!window.chrome;                          // Chrome 1+
+    var isIE = /*@cc_on!@*/false;                            // At least IE6
+
+    // if(isOpera)
+    // {
+    //     Crafty.addEvent(this, "keypress", Crafty.keyboardDispatch);
+    // }else
+    // {
+    Crafty.addEvent(this, "keyup", Crafty.keyboardDispatch);
+    //}
 	Crafty.addEvent(this, "keydown", Crafty.keyboardDispatch);
-	Crafty.addEvent(this, "keyup", Crafty.keyboardDispatch);
+	
 
 	Crafty.addEvent(this, Crafty.stage.elem, "mousedown", Crafty.mouseDispatch);
 	Crafty.addEvent(this, Crafty.stage.elem, "mouseup", Crafty.mouseDispatch);
@@ -6813,6 +6837,7 @@ Crafty.c("Multiway", {
 	},
 
   _keyup: function (e) {
+    
 		if (this._keys[e.key]) {
 			this._movement.x = Math.round((this._movement.x - this._keys[e.key].x) * 1000) / 1000;
 			this._movement.y = Math.round((this._movement.y - this._keys[e.key].y) * 1000) / 1000;

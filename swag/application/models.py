@@ -26,21 +26,20 @@ class Question(models.Model):
     def __unicode__(self):
         return self.title
 
-
 class Vacancy(models.Model):
     title = models.CharField(max_length=200)
     department = models.CharField(max_length=20)
     slug = models.SlugField(max_length=50, unique=True)
-    job_description_input = models.TextField(max_length=500)
+    job_description = models.TextField(max_length=500)
     job_description_output = models.TextField(max_length=500, editable=False)
-    mail_text = models.TextField(max_length=500)
-    mail_text2 = models.TextField(max_length=500)
-    skill_sets = models.ManyToManyField(SkillSet)
-    question = models.ForeignKey(Question, null=True, blank=False)
+    introduction_mail = models.TextField(max_length=500, help_text="fill in the introduction e-mail,which the user wil receive")
+    finalization_mail = models.TextField(max_length=500, help_text="fill in the final e-mail,which the user wil receive")
+    skill_sets = models.ManyToManyField(SkillSet, help_text="Select or create the skill, which you want to ask the player for his experience")
+    question = models.ForeignKey(Question, null=True, blank=False, help_text="Select or create a brainteaser which the player answers")
     pub_date = models.DateTimeField(auto_now=True, auto_now_add=True)
 
     def save(self, *args, **kwargs):
-        self.job_description_output = mark_safe(self.job_description_input.replace("\n", "<br/>"))
+        self.job_description_output = mark_safe(self.job_description.replace("\n", "<br/>"))
         super(Vacancy, self).save(*args, **kwargs)
 
     def was_published(self):
@@ -69,11 +68,32 @@ class GameInstance(models.Model):
     player_unlocked_boss = models.BooleanField(default=False)
     player_name = models.CharField(max_length=50, blank=True)
     player_email = models.EmailField(max_length=100, blank=True)
+    cv_game_skipped = models.BooleanField(default=False)
+    cv_game_time = models.TimeField('completed', blank=True, null=True)
+    motivation_game_skipped = models.BooleanField(default=False)
+    motivation_game_time = models.TimeField('completed', blank=True, null=True)
+    skill_game_skipped = models.BooleanField(default=False)
+    skill_game_time = models.TimeField('completed', blank=True, null=True)
+    links_game_skipped = models.BooleanField(default=False)
+    links_game_time = models.TimeField('completed', blank=True, null=True)
 
     vacancy = models.ForeignKey(Vacancy)
 
     def __unicode__(self):
         return self.name()
+
+    def get_cv_time(self):
+        return self.cv_game_time
+
+    def get_motivation_time(self):
+        return self.motivation_game_time
+
+    def get_skill_time(self):
+        return self.skill_game_time
+
+    def get_links_time(self):
+        return self.links_game_time
+
 
     def get_Intro(self):
         if self.player_finished_intro is True:

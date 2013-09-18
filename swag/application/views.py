@@ -24,6 +24,7 @@ import uuid
 import json
 import mimetypes
 import sys
+import time
 from django.views.decorators.csrf import csrf_exempt
 from database_storage import DatabaseStorage
 from django.template import RequestContext
@@ -31,11 +32,15 @@ from django.core.mail import BadHeaderError
 from django.core.mail import send_mail
 from django.forms.models import inlineformset_factory
 from django.db import IntegrityError
+from premailer import transform
+from django.core.mail import EmailMultiAlternatives
+from lxml import html
+from django.template import Context,loader
+from django.core.mail import EmailMessage
 
 
 def index(request):
     vacancies = Vacancy.objects.all().order_by('title')
-
     return render_to_response('list_vacancies.html', {
         'vacancies': vacancies
     })
@@ -48,7 +53,6 @@ def get_client_ip(request):
     else:
         ip = request.META.get('REMOTE_ADDR')
 
-    print ip
     return ip
 
 
@@ -61,7 +65,6 @@ def start_game(request, slug):
     game_instance.vacancy = _vacancy
     game_instance.save()
     return HttpResponseRedirect(reverse('play', args=(instance_id,)))
-    # return HttpResponseRedirect(reverse('choice'))
 
 
 def statejs(request, unique_id):
@@ -79,6 +82,47 @@ def statejs(request, unique_id):
         'ip': ip
     }
     return render(request, "state.js", context, content_type="application/javascript")
+
+
+@csrf_exempt
+def process_skipped(request, unique_id):
+    game = GameInstance.objects.get(uid=unique_id)
+    if request.method == 'POST':
+        index = request.POST.get('index')
+        print(game.has_rated_skills())
+        if index == "1" and game.has_cv() is False:
+            game.cv_game_skipped = True
+        elif index == "2" and game.has_motivation() is False:
+            game.motivation_game_skipped = True
+        elif index == "3" and game.has_rated_skills() is False:
+            game.skill_game_skipped = True
+        elif index == "4" and game.has_links() is False:
+            game.links_game_skipped = True
+    game.save()
+    return HttpResponse('All went well')
+
+
+@csrf_exempt
+def process_gameTime(request, unique_id):
+    game = GameInstance.objects.get(uid=unique_id)
+    if request.method == 'POST':
+        current_time = request.POST.get('time')
+        current_level = request.POST.get('level')
+
+        current_time = current_time.encode('ascii', 'ingore')
+        current_level = current_level.encode('ascii', 'ingore')
+
+        if current_level == "1" and game.get_cv_time() is None:
+            game.cv_game_time = current_time
+        elif current_level == "2" and game.get_motivation_time() is None:
+            game.motivation_game_time = current_time
+        elif current_level == "3" and game.get_skill_time() is None:
+            game.skill_game_time = current_time
+        elif current_level == "4" and game.get_links_time() is None:
+            game.links_game_time = current_time
+
+        game.save()
+    return HttpResponse('All went well')
 
 
 @csrf_exempt
@@ -188,10 +232,9 @@ def play(request, unique_id):
     context.update({'skill': skillForm})
 
     _ip = get_client_ip(request)
-
     #print sys.argv[-1]
 
-
+    print "template"
     form = UploadFileForm(initial={'title': 'cv'})
     context.update({
         'game': game,
@@ -276,7 +319,6 @@ def show_uploaded_file(request, filename):
     if content_encoding:
         response['Content-Encoding'] = content_encoding
     return response
-
 
 
 @csrf_exempt
@@ -377,25 +419,30 @@ def process_motivation_letter(request, unique_id):
 
 
 def process_first_mail(request, game):
-
-    subject = game.vacancy.title
-    message = game.vacancy.mail_text
+    subject, from_email, to = game.vacancy.title, settings.DEFAULT_FROM_EMAIL, game.player_email
     link = get_current_path(request)
     link = sys.argv[-1]+link['current_path']
     game_link = link.replace("uploadcontact", "game")
-    profile_link = link.replace("uploadcontact", "getprofile")
-    message = message.replace("link1", "http://" + game_link)
-    message = message.replace("link2", "http://" + profile_link)
-    send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
-    [game.player_email], fail_silently=False)
+    game_link = game_link
+    profile_link = game_link.replace("game", "getprofile")
+    ctx = Context({'introduction_mail': game.vacancy.introduction_mail, 'profile': profile_link, 'link': game_link, 'vacancy': game.vacancy.title}, autoescape=False)
+
+    body_template = 'mail.html'
+    body_template = loader.get_template(body_template)
+    body = body_template.render(ctx)
+    test = loader.get_template('htmltemplate.html')
+    html_content = transform(test.render(ctx))
+
+    msg = EmailMultiAlternatives(subject, body, from_email, [to])
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
 
 
 def process_second_mail(request, game):
 
     subject = game.vacancy.title
     message = game.vacancy.mail_text2
-    send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
-    [game.player_email], fail_silently=False)
+    send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [game.player_email], fail_silently=False)
 
 
 @csrf_exempt
@@ -429,7 +476,7 @@ def get_current_path(request):
 def handle_uploaded_motivation(submitted_file, title, unique_id):
     game = GameInstance.objects.get(uid=unique_id)
     name = "{name}-{title}".format(name=game.player_name, title=title)
-    motivation_letter,created = MotivationLetter.objects.get_or_create(game_instance=game)
+    motivation_letter, created = MotivationLetter.objects.get_or_create(game_instance=game)
 
     motivation_letter.game_instance = game
     motivation_letter.title = name
@@ -437,7 +484,6 @@ def handle_uploaded_motivation(submitted_file, title, unique_id):
     motivation_letter.attachment = submitted_file
     motivation_letter.save()
     return True
-
 
 
 @csrf_exempt
@@ -458,8 +504,7 @@ def process_motivation_upload(request, unique_id):
     return render(request, "results_template.js", upload_state, content_type="text/html")
 
 
-
-def handle_uploaded_file(submitted_file, title, unique_id,request):
+def handle_uploaded_file(submitted_file, title, unique_id, request):
 
     game = GameInstance.objects.get(uid=unique_id)
     name = "{name}-{title}".format(name=game.player_name, title=title)

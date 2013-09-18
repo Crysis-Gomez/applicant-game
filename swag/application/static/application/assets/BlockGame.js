@@ -21,6 +21,8 @@ Crafty.scene("BlockGame", function ()
     levelNumber: 0,
     mayStart:false,
     particles:null,
+    timer:null,
+    skipBox:null,
    
     width: function()
     {
@@ -81,7 +83,7 @@ Crafty.scene("BlockGame", function ()
                 break;
 
                 case "2":
-                    Game.player =  Crafty.e('PlayerCharacter,putOnTile,Destroy').at(x, y,0);
+                    Game.player =  Crafty.e('PlayerCharacter,putOnTile,Destroy,Sign').at(x, y,0).setUpSign("/static/you.png",true);
                 break;
 
                 case "3":
@@ -92,7 +94,7 @@ Crafty.scene("BlockGame", function ()
                 case "4":
                   if(this.levelNumber == 0)
                   {
-                     Crafty.e('Block,putOnTile,block,Destroy,Sign').at(x, y,1).putOnTile().setUpSign("/static/sign1.png");
+                     Crafty.e('Block,putOnTile,block,Destroy,Sign').at(x, y,1).putOnTile().setUpSign("/static/sign2.png",true);
                   }
                   else
                   {
@@ -112,21 +114,18 @@ Crafty.scene("BlockGame", function ()
 
       if(this.levelNumber < (block_levels.length-1))
       {
-         var hud =  Crafty.e('2D,DOM,Text,Destroy').attr({ x: SCREEN_WIDTH*0.5 - 50, y: 100, z: 1 , w:100}).text('<div style="font-size:15px;">'+"Level: " + (this.levelNumber+1)+" of "+(block_levels.length-1));
-	hud.textColor('#FFFFFF');
+         var hud =  Crafty.e('2D,DOM,Text,Destroy').attr({ x: SCREEN_WIDTH*0.5 - 90, y: 50, z: 1 , w:180}).text('<div style="font-size:25px; text-shadow: 1px 1px 5px #73F707">'+"Level: " + (this.levelNumber+1)+" of "+(block_levels.length-1));
+	       hud.textColor('#FFFFFF');
       }
     
-     
       this.mayStart = true; 
     },
-
 
     nextLevel:function()
     {
       this.levelNumber +=1;
       this.loadLevel();
     },
-
 
     start: function() 
     {
@@ -142,7 +141,12 @@ Crafty.scene("BlockGame", function ()
       controls.x = SCREEN_WIDTH*0.5 - image._w*0.5;
       controls.y = SCREEN_HEIGHT - image._h-40;
       image.alpha = 0.7;
-
+      Game.timer = Crafty.e("Timer");
+      Game.timer.startTicking();
+      Game.skipBox = Crafty.e("2D,Canvas,WarningBox");
+      Game.skipBox.image("/static/Skip1.png");
+      Game.skipBox.place(SCREEN_WIDTH,SCREEN_HEIGHT);
+      
     }
   }
 
@@ -154,21 +158,12 @@ Crafty.c('GameWall',
 {
   init: function()
   {
-    this.requires('2D, Canvas, Grid,Image');
+    this.requires('2D,Image,Canvas, Grid,');
     this.image("/static/blockwall.png");
-    
-    //this.color('rgb(20, 125, 40)');
   },
 });
 
 
-Crafty.c('Timer',{
-  init:function(){
-
-  }
-});
-
- 
 Crafty.c('Tile',
 {
   obj:null,
@@ -177,8 +172,6 @@ Crafty.c('Tile',
     this.requires('2D, Canvas, Grid');
   },
 });
-
-
 
 
 Crafty.c('GameDoor',
@@ -234,7 +227,6 @@ Crafty.c('GameDoor',
       this.shootParticle();
       this.visible =false;
       //this.destroy();
-
     })
   },
 });
@@ -275,6 +267,16 @@ Crafty.c('Block',
     this.onGridX = (this.x-Game.map_grid.offSetX) / Game.map_grid.tile.width;
     this.onGridY = (this.y-Game.map_grid.offSetY) / Game.map_grid.tile.height;
     Game.myArray[this.onGridX][this.onGridY].obj = this;
+  },
+
+  selectImage:function()
+  {
+    this.image("/static/blockselect.png");
+  },
+
+  deselectImage:function()
+  {
+    this.image("/static/block.png");
   },
 
   checkMovement:function(x,y)
@@ -332,6 +334,16 @@ Crafty.c('PlayerCharacter',
 
       if(!Game.mayStart)return;
 
+      if(e.key == 13)
+      {
+        if(Game.skipBox.selectText(e.key))
+        {
+           skippedLevel(1);
+           state.cvMayUpload();
+           Crafty.scene("BuildingCV");
+        }
+      }
+
       if(e.key == 82)
       {
         Game.restart();
@@ -339,17 +351,26 @@ Crafty.c('PlayerCharacter',
 
       if(e.key == 83)
       {
-        state.cvMayUpload();
-        Crafty.scene("BuildingCV");
+
+        Game.skipBox.showBox();
       }
 
       if(e.key  == 39)
       {
         this.lastDirectionX = 1;
+        if(Crafty.isPaused())
+        {
+          Game.skipBox.selectText(e.key);
+        }
+
       }
       if(e.key == 37)
       {
         this.lastDirectionX = -1;
+        if(Crafty.isPaused())
+        {
+          Game.skipBox.selectText(e.key);
+        }
       }
 
       if(e.key == 40)
@@ -403,6 +424,12 @@ Crafty.c('PlayerCharacter',
            this.startCount = new Date().getTime();
            this.checkMovement();
            this.isMoving = true;
+
+           if(Game.player.has('Sign'))
+           {
+             Game.player.removeSign();
+             Game.player.removeComponent('Sign')
+           }
         }
 
         if(this.isMoving)
@@ -423,6 +450,7 @@ Crafty.c('PlayerCharacter',
     if(Game.levelNumber  == 3)
     {
       state.cvMayUpload();
+      game.timer.stopTicking(1);
       Crafty.e("Win").setBuildingName("BuildingCV");
     }
   },
@@ -474,6 +502,8 @@ Crafty.c('PlayerCharacter',
 
       if(tile.obj.has('block'))
       {
+
+
         
         if(tile.obj.has('Sign'))
         {
