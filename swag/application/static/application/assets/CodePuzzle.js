@@ -6,7 +6,7 @@ Crafty.scene("CodePuzzle", function ()
     {
       width:  20,
       height: 10,
-      offSetX:120,
+      offSetX:145,
       offSetY:120,
       tile: 
       {
@@ -20,13 +20,14 @@ Crafty.scene("CodePuzzle", function ()
     myArray:[],
     pieceArray:[],
     answerArray:[],
-    levelNumber: 0,
+    levelNumber: 3,
     mayStart:false,
     puzzle:"x="+"code1"+"code2 "+" code3",
     puzzletext:null,
     levelNumber:0,
     operators:[],
     timer:null,
+    skipBox:null,
 
     getAnswer:function()
     {
@@ -48,32 +49,34 @@ Crafty.scene("CodePuzzle", function ()
         }
     },
 
-
     getCodes:function()
     {
       switch(this.levelNumber)
-        {
+      {
 
           case 0:
           return "";
           
           case 1:
-          return "b = 1";
+          return "Hint: b = 1";
 
           case 2:
           return "";
 
           case 3:
-          return "function('Spil Games'){ \n return str.code().code().code()\n}";
-
-        }
-
+          return "Hint: function('Spil Games'){ \n return str.code().code().code()\n}";
+      }
     },
 
     restart:function()
     {
       Crafty.trigger("Destroy");
       this.loadLevel();
+    },
+
+    closeLevel:function()
+    {
+
     },
   
     width: function()
@@ -169,26 +172,32 @@ Crafty.scene("CodePuzzle", function ()
          //var hud =  Crafty.e('2D,DOM,Text,Destroy').attr({ x: SCREEN_WIDTH*0.5 - 50, y: 100, z: 1 , w:100}).text('<div style="font-size:15px;">'+"Level: " + (this.levelNumber+1)+" of "+(block_levels.length-1));
       }
 
-      player = Crafty.e("CodePuzzle,Destroy");
-
-
-     
-
+      Game.player = Crafty.e("Code,Destroy");
 
       for (var i = 0; i < this.pieceArray.length; i++) 
       {
         var piece = this.pieceArray[i];
-        Crafty.e('2D,Canvas,Color,Legend,Destroy').attr({x:10,y:100*i+100,w:170}).setUp(piece.codeString,piece._color);
+        Crafty.e('2D,Canvas,Color,Legend,Destroy').attr({x:10,y:100*i+100,w:170}).setUp(piece.codeString,piece.imageUrl);
       };
 
-      Crafty.e('2D,DOM,Text,Destroy').attr({x:655,y:420,w:150}).text('<div style="font-size:15px;">'+"= "+ this.getAnswer().toString());
+      var answer = Crafty.e('2D,DOM,Text,Destroy').attr({x:700,y:420,w:200});
 
-      Crafty.e('2D,DOM,Text,Destroy').attr({x:50,y:400,w:150}).text('<div style="font-size:15px;">'+ this.getCodes());
+      answer.textFont({ size: '20px', weight: 'bold' });
+      answer.textColor('#FFFFFFF', 1);
+      answer.text("="+this.getAnswer().toString());
 
-      Crafty.e('2D,DOM,Text,Destroy').attr({x:10,y:50,w:300}).text('<div style="font-size:15px;">' + "Try to make the sequence complete");
+      var hint = Crafty.e('2D,DOM,Text,Destroy').attr({x:20,y:420,w:300});
+      hint.textFont({ size: '20px', weight: 'bold' });
+      hint.textColor('#FFFFFFF', 1);
+      hint.text(this.getCodes());
+
+      var instructions = Crafty.e('2D,DOM,Text,Destroy').attr({x:10,y:50,w:400});
+      instructions.textFont({ size: '20px', weight: 'bold' });
+      instructions.textColor('#FFFFFFF', 1);
+      instructions.text("Try to make the sequence complete");
       
-      this.operators.push(Crafty.e('2D,DOM,Text,Operator,Destroy').attr({x:525,y:420,w:100}).getOperator(0));
-      this.operators.push(Crafty.e('2D,DOM,Text,Operator,Destroy').attr({x:375,y:420,w:100}).getOperator(1));
+      this.operators.push(Crafty.e('2D,DOM,Text,Operator,Destroy').attr({x:570,y:420,w:100}).getOperator(0));
+      this.operators.push(Crafty.e('2D,DOM,Text,Operator,Destroy').attr({x:420,y:420,w:100}).getOperator(1));
 
 
      for (var i = 1; i < 4; i++) 
@@ -196,7 +205,7 @@ Crafty.scene("CodePuzzle", function ()
         var ans =  Crafty.e('PuzzleAnswer,putOnTile,Destroy');
         var poly1 = new Crafty.polygon([0,0],[ans._w,0],[ans._w,ans._h],[0,ans._h]);
         ans.collision(poly1);
-        ans.x = 150 *i+100;
+        ans.x = 150 *i+150;
         ans.y = 400;
 
         if(Game.levelNumber == 0)
@@ -230,6 +239,9 @@ Crafty.scene("CodePuzzle", function ()
       this.loadLevel();
       game.timer = Crafty.e("Timer");
       game.timer.startTicking();
+      Game.skipBox = Crafty.e("2D,Canvas,WarningBox");
+      Game.skipBox.image("/static/Skip1.png");
+      Game.skipBox.place(SCREEN_WIDTH,SCREEN_HEIGHT);
 
       // var controls = Crafty.e("2D,Image,Canvas");
       // image =  controls.image("/static/controls.png");
@@ -251,15 +263,8 @@ Crafty.c('Operator',
 {
     stringText:null,
     
-    init:function()
-    {
-
-    },
-
-
     getTypeTwo:function()
     {
-       console.log(Game.levelNumber);
       switch(Game.levelNumber)
       {
 
@@ -279,12 +284,13 @@ Crafty.c('Operator',
               this.stringText = ""
         break;
       }
-      this.text('<div style="font-size:20px;">'+this.stringText);
+      this.textFont({ size: '20px', weight: 'bold' });
+      this.textColor('#FFFFFFF', 1);
+      this.text(this.stringText);
     },
 
     getTypeOne:function()
     {
-      console.log(Game.levelNumber);
       switch(Game.levelNumber)
       {
 
@@ -304,8 +310,9 @@ Crafty.c('Operator',
               this.stringText = ""
         break;
       }
-
-      this.text('<div style="font-size:20px;">'+this.stringText);
+      this.textFont({ size: '20px', weight: 'bold' });
+      this.textColor('#FFFFFFF', 1);
+      this.text(this.stringText);
     },
 
     getOperator:function(index)
@@ -323,24 +330,24 @@ Crafty.c('Legend',
     
     init:function()
     {
-        this.textComp = Crafty.e('2D,DOM,Text');
+        this.requires("Image");
+        this.textComp = Crafty.e('2D,DOM,Text,Destroy');
          this.attr({
             w: 100 ,
             h: 50
         });
     },
 
-    setUp:function(str,c)
+    setUp:function(str,url)
     {
-   
         this.textComp.text('<div style="font-size:15px;">'+str);
+        this.textComp.textColor('#FFFFFFF', 1);
         this.textComp._w = 200;
-
-       
         this.attach(this.textComp);
-        this.textComp.x = this.x+10;
-        this.textComp.y = this.y+20;
-        this.color(c);
+      
+        var _image = this.image(url);
+        this.textComp.x = this.x+ _image._w *0.5-str.length*4;
+        this.textComp.y = this.y+_image._h*0.5-5;
     }
 });
 
@@ -348,34 +355,129 @@ Crafty.c('PuzzleAnswer',
 {
   textComp:null,
   stringText:false,
+  filter:null,
 
   init:function()
   {
     this.requires('2D, Canvas, Grid,Collision,Image,Tint');
     _image = this.image('/static/bucket.png');
-    //this.color('rgb(255,250,250)');
-    this.tint("#FFFF00", 0.3);
 
-    this.textComp = Crafty.e('2D,DOM,Text');
+    this.textComp = Crafty.e('2D,DOM,Text,Destroy');
+    this.textComp.textColor('#FFFFFFF', 1);
+    this.textComp.textFont({ size: '15px', weight: 'bold' });
     this.textComp.text("code..");
     this.textComp._w = 80;
     this.textComp._h = 20;
-
 
     this.attr({
         w: 100 ,
         h: 50
     });
-
+   
     this.attach(this.textComp);
+  
     this.textComp.x += 35;
     this.textComp.y += 25;
   
   },
 
+
+  activateFilter:function(url)
+  {
+
+    this.filter = Crafty.e('2D,Canvas,Color,Tint,Destroy');
+    this.attach(this.filter);
+    this.filter.color('rgb(128,0,0)')
+    this.filter._w = 80;
+    this.filter._h = 25;
+    this.filter.x = this.x +10;
+    this.filter.y = this.y +20;
+    
+    switch(url)
+    {
+      case "/static/codeblock1.png":
+            this.filter.tint("#44f409", 0.5);
+      break;
+
+      case "/static/codeblock2.png":
+            this.filter.tint("#0713df", 0.5);
+      break;
+
+      case "/static/codeblock3.png":
+            this.filter.tint("#f3f209", 0.5);
+      break;
+
+    }
+  },
+
+  changeFilter:function(color)
+  {
+    if(this.filter === null)
+    {
+       this.filter = Crafty.e('2D,Canvas,Color,Tint,Destroy');
+       this.attach(this.filter);
+       this.filter.color('rgb(128,0,0)')
+       this.filter._w = 80;
+       this.filter._h = 25;
+       this.filter.x = this.x +10;
+       this.filter.y = this.y +20;
+       this.filter.tint(color, 0.5);
+    }
+    else
+    {
+      this.filter.tint(color, 0.5);
+    }
+  },
+
+  showResults:function(bool)
+  {
+    if(bool)
+    {
+        Game.answerArray.forEach(function(entry) 
+        {
+            entry.changeFilter("#44f409");
+        });
+
+        var timer = setInterval(function()
+        {
+            clearInterval(timer);
+            Crafty.trigger("Destroy");
+            if(Game.levelNumber ==3)
+            {
+              state.skillsMayUpload();
+              game.timer.stopTicking(3);
+              Crafty.scene("BuildingSkills");
+              return;
+            }
+            Game.levelNumber +=1;
+            Game.loadLevel();
+
+        },2000);
+    }
+    else
+    {
+        Game.answerArray.forEach(function(entry) 
+        {
+            entry.changeFilter("#FF0000");
+        });
+
+        var timer = setInterval(function()
+        {
+            clearInterval(timer);
+            Crafty.trigger("Destroy");
+            Game.loadLevel();
+
+        },2000);
+    }
+
+  },
+
+  
+
+
+
   updateText:function(str)
   {
-    //console.log("updatingText");
     this.textComp.text(str);
     this.stringText = str;
   },
@@ -406,35 +508,16 @@ Crafty.c('PuzzleAnswer',
       }
       else
       {
-
        test = eval(checkString);
-       console.log(checkString);
       }
 
-
-      console.log(test);
-       
       if(test == Game.getAnswer())
       {
-
-        Crafty.trigger("Destroy");
-        if(Game.levelNumber ==3)
-        {
-          state.skillsMayUpload();
-          game.timer.stopTicking(3);
-          Crafty.scene("BuildingSkills");
-          return;
-        }
-        Game.levelNumber +=1;
-        Game.loadLevel();
-
+        this.showResults(true);
       }
       else
       {
-        console.log("wrong");
-        Crafty.trigger("Destroy");
-        Game.loadLevel();
-        
+        this.showResults(false);
       }
       return false;
    }
@@ -451,17 +534,16 @@ Crafty.c('Piece',
   codeString:null,
   onGridX:0,
   onGridY:0,
-
+  imageUrl:"",
 
   init:function()
   {
-    this.requires('2D, Canvas, Grid, Color,Collision');
-    this.color('rgb(128,128,128)');
+    this.requires('2D, Canvas, Grid,Collision,Image');
 
-    
     this.onHit('PuzzleAnswer',function(e)
     {
       e[0].obj.updateText(this.codeString);
+      e[0].obj.activateFilter(this.imageUrl);
       Game.pieceArray.splice(this,1);
       this.destroy();
       e[0].obj.check();
@@ -480,7 +562,6 @@ Crafty.c('Piece',
       this.y += this.gravity;
       this.isFalling = true;
 
-      
     
       //if(tile != null) tile.obj = this;
 
@@ -496,13 +577,11 @@ Crafty.c('Piece',
       var tile = Game.myArray[this.onGridX][this.onGridY];
       if(tile != null) tile.obj = this;
 
-
-      //this.resetPostionOnTile();
-
       if(this.y > 600)
       {
+        this.destroy();
         Game.pieceArray.splice(this,1);
-        Game.restart();
+        Game.answerArray[0].showResults(false); 
       }
 
     })
@@ -530,14 +609,11 @@ Crafty.c('Piece',
               case 0:
                   this.codeString = "2";
               break;
-
             }
 
-        break;
+      break;
 
-
-
-        case 1:
+      case 1:
           switch(index)
           {
 
@@ -555,10 +631,10 @@ Crafty.c('Piece',
 
           }
 
-        break;
+      break;
 
 
-        case 2:
+      case 2:
           switch(index)
           {
 
@@ -573,15 +649,13 @@ Crafty.c('Piece',
             case 2:
                 this.codeString = "2";
             break;
-
           }
 
-        break;
+      break;
 
-        case 3:
+      case 3:
           switch(index)
           {
-
             case 0:
                 this.codeString = ".split('Spil')";
             break;
@@ -595,11 +669,8 @@ Crafty.c('Piece',
             break;
 
           }
-
-        break;
-
+      break;
     }
-
   },
 
   setType:function(index)
@@ -609,27 +680,27 @@ Crafty.c('Piece',
     {
 
       case 0:
-          this.color('rgb(128,128,0)');
+          this.imageUrl = "/static/codeblock1.png";
+          this.image("/static/blockcode.png"); 
+
       break;
 
       case 1:
-          this.color('rgb(0,128,0)');
+          this.imageUrl = "/static/codeblock2.png";
+          this.image("/static/blockcode2.png"); 
       break;
 
       case 2:
-          this.color('rgb(0,128,128)');   
+          this.imageUrl = "/static/codeblock3.png";
+          this.image("/static/blockcode3.png");   
       break;
-
-
     }
-
   },
-
 });
 
 
 
-Crafty.c('CodePuzzle',
+Crafty.c('Code',
 {
   lastDirectionX:0,
   lastDirectionY:0,
@@ -640,31 +711,52 @@ Crafty.c('CodePuzzle',
 
   init: function()
   {
-    this.requires('Keyboard,Delay');
+    this.requires('Actor,Keyboard,Delay');
     this.selectBlocks(this.indexCount);
     this.indexCount = 0;
 
-    this.requires('Keyboard').bind('KeyDown', function (e)
-    { 
+    this.bind('KeyDown', function (e)
+    {
+      if(e.key == 13)
+      {
+        
+        if(Game.skipBox.selectText(e.key))
+        {
+          skippedLevel(3);
+          state.skillsMayUpload();
+          Crafty.scene("BuildingSkills");
+        }
+      }
 
-    })
 
-    this.bind('KeyUp', function (e)
-    { 
       if(e.key == 83)
       {
-        skippedLevel(3);
-        state.skillsMayUpload();
-        Crafty.scene("BuildingSkills");
+        Game.skipBox.showBox();
       }
 
       if(e.key  == 39)
       {
-        this.moveBlockRight();
+       
+        if(Crafty.isPaused())
+        {
+          Game.skipBox.selectText(e.key);
+        }
+        else
+        {
+           this.moveBlockRight();
+        }
       }
       if(e.key == 37)
       {
-        this.moveBlockLeft();
+        
+        if(Crafty.isPaused())
+        {
+          Game.skipBox.selectText(e.key);
+        }
+        else
+        {
+          this.moveBlockLeft();
+        }
       }
 
       if(e.key == 40)
@@ -680,27 +772,6 @@ Crafty.c('CodePuzzle',
       this.selectBlocks(this.indexCount);
     });
   },
-
-
-  // checkGameComplete:function()
-  // {
-  //   if(Game.levelNumber  == 3)
-  //   {
-  //     console.log("hereere");
-  //     game.timer.stopTicking(3);
-  //     state.skillsMayUpload();
-  //     Crafty.scene("BuildingSkills");
-  //   }
-  // },
-
-  // endGame:function()
-  // {
-  //   this.checkGameComplete();
-  //   Crafty.trigger("Destroy");
-  //   Game.nextLevel();
-  //   this.mayStart = false;
-  //   this.gameEnded = true;
-  // },
 
   selectBlocks:function(index)
   {
@@ -719,9 +790,7 @@ Crafty.c('CodePuzzle',
         {
            block.deselectImage()
         }
-
     };
-
   },
 
   checkLeftNeighbour:function(x,y)
@@ -734,7 +803,6 @@ Crafty.c('CodePuzzle',
       {
         this.moveArray.push(tile.obj);
         this.checkLeftNeighbour(x,y);
-        
       }
     }
   },
@@ -848,7 +916,5 @@ Crafty.c('CodePuzzle',
     };
     
     if(hasMoved)this.movePieces(32);
-
   },
-
 });

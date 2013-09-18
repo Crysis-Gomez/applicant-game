@@ -237,7 +237,7 @@ var crafty = function() {
 
 			init:function()
 			{
-				console.log(this.x);
+				
 				
 			},
 
@@ -799,13 +799,15 @@ var crafty = function() {
         			 "/static/controls.png","/static/controls2.png", "/static/spriteSheet.png" ,"/static/Sprite.png","/static/house.png",
         			 "/static/Sprite2.png","/static/house2.png","/static/house3.png","/static/house4.png","/static/house5.png","/static/castle.png",
         			 "/static/background.png","/static/background2.png","/static/fence.png","/static/checkmark.png","/static/grayhouse2.png",
-        			 "/static/checkmark2.png","/static/blockselect.png","/static/sign2.png","/static/you.png","/static/Skip1.png","/static/Skip2.png","/static/bucket.png"], function ()
+        			 "/static/checkmark2.png","/static/blockselect.png","/static/sign2.png","/static/you.png","/static/Skip1.png","/static/Skip2.png",
+        			 "/static/bucket.png","/static/codeblock1.png","/static/codeblock2.png","/static/codeblock3.png","/static/blockcode.png","/static/blockcode2.png",
+        			 "/static/blockcode3.png"], function ()
         {
        		 if('{{game.get_Intro}}' == 1)Crafty.scene("main");
              else Crafty.scene("Intro");
 
 
-                Crafty.scene("CodePuzzle");
+                //Crafty.scene("CodePuzzle");
 
         //   	$('#myModal').modal('show');
         //   	$("#modal-backdrop").css('background-color: green')

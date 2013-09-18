@@ -121,13 +121,11 @@ Crafty.scene("BlockGame", function ()
       this.mayStart = true; 
     },
 
-
     nextLevel:function()
     {
       this.levelNumber +=1;
       this.loadLevel();
     },
-
 
     start: function() 
     {
@@ -225,7 +223,6 @@ Crafty.c('GameDoor',
       this.shootParticle();
       this.visible =false;
       //this.destroy();
-
     })
   },
 });

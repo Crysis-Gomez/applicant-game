@@ -6836,9 +6836,8 @@ Crafty.c("Multiway", {
 	},
 
   _keyup: function (e) {
-        console.log("here");
+    
 		if (this._keys[e.key]) {
-            console.log(e.key);
 			this._movement.x = Math.round((this._movement.x - this._keys[e.key].x) * 1000) / 1000;
 			this._movement.y = Math.round((this._movement.y - this._keys[e.key].y) * 1000) / 1000;
 			this.trigger('NewDirection', this._movement);
