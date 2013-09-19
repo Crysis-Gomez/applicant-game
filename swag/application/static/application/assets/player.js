@@ -184,17 +184,25 @@ Crafty.c('Player',
 				
 				if (data.x > 0) 
 				{
-        			this.animate('walk_right', animation_speed, -1);
-      				} else if (data.x < 0) {
+        		   this.animate('walk_right', animation_speed, -1);
+      			} 
+      			else if (data.x < 0) 
+      			{
         				this.animate('walk_left', animation_speed, -1);
-      				} else if (data.y > 0) {
+      			} 
+      			else if (data.y > 0) 
+      			{
         			this.animate('walk_down', animation_speed, -1);
-      				} else if (data.y < 0) {
+      			} 
+      			else if (data.y < 0) 
+      			{
         			this.animate('walk_up', animation_speed, -1);
-      				} else {
+      			} 
+      			else 
+      			{
         			this.stop();
-      				}
-			})
+      			}
+		})
 
 		.bind('Moved',function(e)
 		{

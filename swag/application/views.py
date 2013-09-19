@@ -440,9 +440,21 @@ def process_first_mail(request, game):
 
 def process_second_mail(request, game):
 
-    subject = game.vacancy.title
-    message = game.vacancy.mail_text2
-    send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [game.player_email], fail_silently=False)
+    subject, from_email, to = game.vacancy.title, settings.DEFAULT_FROM_EMAIL, game.player_email
+    link = get_current_path(request)
+    link = sys.argv[-1]+link['current_path']
+    profile_link = link.replace("answer", "getprofile")
+    ctx = Context({'final_mail': game.vacancy.finalization_mail, 'profile': profile_link, 'vacancy': game.vacancy.title}, autoescape=False)
+    body_template = 'finalemail.html'
+    body_template = loader.get_template(body_template)
+    body = body_template.render(ctx)
+    test = loader.get_template('finalhtmltemplate.html')
+    html_content = transform(test.render(ctx))
+
+    msg = EmailMultiAlternatives(subject, body, from_email, [to])
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
+
 
 
 @csrf_exempt
