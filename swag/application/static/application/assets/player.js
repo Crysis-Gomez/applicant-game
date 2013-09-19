@@ -232,11 +232,11 @@ Crafty.c('Player',
 				{
 					if (!this.isPlaying("walk_down"))
 						this.stop().animate("walk_down", 10, -1);
-				}
-				if(!direction.x && !direction.y  && !this.isMoving)
+				}else
 				{
 					this.stop();
 				}
+	
 			})
 
 		.bind('Moved',function(e)

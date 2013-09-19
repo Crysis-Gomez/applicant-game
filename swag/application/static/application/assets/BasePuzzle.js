@@ -90,10 +90,15 @@ Crafty.scene("BasePuzzle", function ()
         $('#ips').show();
         var numbers = state.ip.split(".");
            
-   	    n1 = this.convert(numbers[0]);
-        n2 = this.convert(numbers[1]);
-        n3 = this.convert(numbers[2]);
-        n4 = this.convert(numbers[3]);
+   	    // n1 = this.convert(numbers[0]);
+        // n2 = this.convert(numbers[1]);
+        // n3 = this.convert(numbers[2]);
+        // n4 = this.convert(numbers[3]);
+
+        n1 = this.convert(10);
+        n2 = this.convert(104);
+        n3 = this.convert(0);
+        n4 = this.convert(203);
 
         console.log(n1,n2,n3,n4);
      

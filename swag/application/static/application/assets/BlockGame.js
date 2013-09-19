@@ -129,11 +129,7 @@ Crafty.scene("BlockGame", function ()
 
     start: function() 
     {
-<<<<<<< HEAD
-      Crafty.background('rgb(255, 255, 255)');
-=======
       Crafty.background("url('/static/blockbackground.png')");
->>>>>>> 3cb35912485a3343a1f08a10d4c617b306db5ba0
       this.loadLevel();  
 
       var controls = Crafty.e("2D,Image,Canvas");
