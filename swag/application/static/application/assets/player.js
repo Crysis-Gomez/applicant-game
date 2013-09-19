@@ -33,37 +33,6 @@ Crafty.c('Player',
 	isMoving:false,
 
 
-
-	particleOptions:{
-					maxParticles: 150,
-					size: 14,
-					sizeRandom: 4,
-					speed: 1,
-					speedRandom: 1.2,
-					// Lifespan in frames
-					lifeSpan: 29,
-					lifeSpanRandom: 7,
-					// Angle is calculated clockwise: 12pm is 0deg, 3pm is 90deg etc.
-					angle: 65,
-					angleRandom: 34,
-					startColour: [255, 247, 0, 1],
-					startColourRandom: [0, 0, 0, 0],
-					endColour: [255, 255, 255, 0],
-					endColourRandom: [60, 60, 60, 0],
-					// Only applies when fastMode is off, specifies how sharp the gradients are drawn
-					sharpness: 20,
-					sharpnessRandom: 10,
-					// Random spread from origin
-					spread: 20,
-					// How many frames should this last
-					duration: 10,
-					// Will draw squares instead of circle gradients
-					fastMode: false,
-					gravity: { x: 0, y: -0.1 },
-					// sensible values are 0-3
-					jitter: 0
-				},
-
 	init:function()
 	{
 		this.popUp = Crafty.e("PopUp");
@@ -190,6 +159,7 @@ Crafty.c('Player',
 	Player:function(func)
 	{
 		this.collisionFunction = func;
+		var animation_speed = 8;
 		this.requires("SpriteAnimation")
 		 .animate("walk_left",6,1,8)
 		 .animate("walk_right",6,2,8)
@@ -202,46 +172,32 @@ Crafty.c('Player',
 		
 		
 		.bind("NewDirection",
-			function (direction)
+			function (data)
 			{
 
 				if(!this.mayMove)return;
 
 				
-				this.dirX = direction.x;
-				this.dirY = direction.y;
+				this.dirX = data.x;
+				this.dirY = data.y;
 				if(this.update)this.update();
-
-
-				if (direction.x < 0)
+				
+				if (data.x > 0) 
 				{
-					if (!this.isPlaying("walk_left"))
-						this.stop().animate("walk_left", 10, -1);
-				}
-				if (direction.x > 0)
-				{
-					if (!this.isPlaying("walk_right"))
-						this.stop().animate("walk_right", 10, -1);
-				}
-				if (direction.y < 0)
-				{
-					if (!this.isPlaying("walk_up"))
-						this.stop().animate("walk_up", 10, -1);
-				}
-				if (direction.y > 0)
-				{
-					if (!this.isPlaying("walk_down"))
-						this.stop().animate("walk_down", 10, -1);
-				}else
-				{
-					this.stop();
-				}
-	
+        			this.animate('walk_right', animation_speed, -1);
+      				} else if (data.x < 0) {
+        				this.animate('walk_left', animation_speed, -1);
+      				} else if (data.y > 0) {
+        			this.animate('walk_down', animation_speed, -1);
+      				} else if (data.y < 0) {
+        			this.animate('walk_up', animation_speed, -1);
+      				} else {
+        			this.stop();
+      				}
 			})
 
 		.bind('Moved',function(e)
 		{
-			
 			if(!this.mayMove)return;
 			//I did this because when a player hold the right key during the change of the scene it keeps animating
 			if(this.dirX == 0  && this.dirY == 0 && !this.isPlaying("walk_right"))
