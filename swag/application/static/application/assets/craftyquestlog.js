@@ -3,7 +3,7 @@ Crafty.c("Questlog",{
 
 		init:function(){
 			var that = this;
-			this.addComponent("2D, DOM,Color2");
+			this.addComponent("2D, DOM,Color");
 			this.w = 260;  
 			this.h = 200;   
 			this.color("#fff");
@@ -105,11 +105,12 @@ Crafty.c("Questlog",{
 	{
 
 		init:function(){
-			this.addComponent("2D, DOM,Color2,Text,Image");
+			this.addComponent("2D, DOM,Color,Text,Image");
 			this.w = 100;  
 			this.h = 500;   
-			this.name = "asdasd";
-			this.textColor('#FFFF00');
+			this.name = "";
+			this.textColor("#FFDD40")
+			this.textFont({ size:'20px', weight: 'bold'});
 			this.checkFunction = null;
 			this.completed = false;
 			this.isSelected = false;
@@ -120,6 +121,8 @@ Crafty.c("Questlog",{
 			this.checkImage  = null;
 
 			this._element.setAttribute("id","shadow");
+		
+			
 
 		},
 

@@ -83,7 +83,14 @@ Crafty.scene("BlockGame", function ()
                 break;
 
                 case "2":
-                    Game.player =  Crafty.e('PlayerCharacter,putOnTile,Destroy,Sign').at(x, y,0).setUpSign("/static/you.png",true);
+                    if(this.levelNumber == 0)
+                    { 
+                      Game.player =  Crafty.e('PlayerCharacter,putOnTile,Destroy,Sign').at(x, y,0).setUpSign("/static/you.png",true);
+                    }
+                    else
+                    {
+                      Game.player =  Crafty.e('PlayerCharacter,putOnTile,Destroy').at(x, y,0);
+                    }
                 break;
 
                 case "3":
@@ -446,7 +453,7 @@ Crafty.c('PlayerCharacter',
     if(Game.levelNumber  == 3)
     {
       state.cvMayUpload();
-      game.timer.stopTicking(1);
+      Game.timer.stopTicking(1);
       Crafty.e("Win").setBuildingName("BuildingCV");
     }
   },

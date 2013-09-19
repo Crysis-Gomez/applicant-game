@@ -159,7 +159,7 @@ Crafty.c('Player',
 	Player:function(func)
 	{
 		this.collisionFunction = func;
-		var animation_speed = 8;
+		var animation_speed = 15;
 		this.requires("SpriteAnimation")
 		 .animate("walk_left",6,1,8)
 		 .animate("walk_right",6,2,8)
@@ -181,6 +181,7 @@ Crafty.c('Player',
 				this.dirX = data.x;
 				this.dirY = data.y;
 				if(this.update)this.update();
+				this.stop();
 				
 				if (data.x > 0) 
 				{

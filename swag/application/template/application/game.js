@@ -276,6 +276,8 @@ var crafty = function() {
 		normalImage:null,
 		locked:true,
 		grayImage:null,
+		bindingString:null,
+
 		particleOptions:{
 					maxParticles: 150,
 					size: 14,
@@ -310,6 +312,7 @@ var crafty = function() {
 		{
 			this.sceneString = scene;
 			this.questDone = quest;
+			this.bindingString = string;
 
 			this.locked = !this.getType(string);
 
@@ -318,6 +321,7 @@ var crafty = function() {
 				this.image(this.grayImage);
 			}
 
+			if(!this.locked)return;
 			this.bind(string,function()
 			{
 				this.locked = false;
@@ -339,6 +343,7 @@ var crafty = function() {
 			var particles = Crafty.e("2D,Canvas,Particles").particles(this.particleOptions);
 			particles.x = this.x+this.w*0.5;
 			particles.y = this.y+this.h*0.5;
+			this.unbind(this.bindingString);
 		},
 
 		getType:function(string)
@@ -878,7 +883,7 @@ var crafty = function() {
 
 
 		var canvas = document.getElementById('mycanvas');
-		var Mainplayer = Crafty.e("2D,  Canvas, player,Player,RightControls,Collision,Keyboard,Respawn,StatePosition")
+		var Mainplayer = Crafty.e("2D,Canvas, player,Player,RightControls,Collision,Keyboard,Respawn,StatePosition")
 			.attr({ x: 100, y: 300, z: 1})
 			.rightControls(2);
 		
