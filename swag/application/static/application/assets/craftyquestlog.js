@@ -109,7 +109,7 @@ Crafty.c("Questlog",{
 			this.w = 100;  
 			this.h = 500;   
 			this.name = "";
-			this.textColor("#FFDD40")
+			this.textColor("#A52A2A");
 			this.textFont({ size:'20px', weight: 'bold'});
 			this.checkFunction = null;
 			this.completed = false;
@@ -120,7 +120,6 @@ Crafty.c("Questlog",{
 			this.visible = false;
 			this.checkImage  = null;
 
-			this._element.setAttribute("id","shadow");
 		
 			
 
