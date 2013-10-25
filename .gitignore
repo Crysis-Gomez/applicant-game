@@ -4,3 +4,7 @@
 virtualenv
 *.egg-info
 local_settings.py
+.tox
+results
+
+.coverage
